@@ -58,17 +58,9 @@ class NDB_BVL_FeedbackTest extends Loris_PHPUnit_Database_TestCase
         $ds1 = $this->createMySQLXMLDataSet(
             TABLE_FIXTURES_PATH . 'feedback_bvl_type.xml'
         );
-        $ds2 = $this->createMySQLXMLDataSet(
-            TABLE_FIXTURES_PATH . 'psc.xml'
-        );
-        $ds3 = $this->createMySQLXMLDataSet(
-            TABLE_FIXTURES_PATH . 'NDB_BVL_FeedbackTest.xml'
-        );
 
         $compositeDs = new PHPUnit_Extensions_Database_DataSet_CompositeDataSet();
         $compositeDs->addDataSet($ds1);
-        $compositeDs->addDataSet($ds2);
-        $compositeDs->addDataSet($ds3);
 
         return $compositeDs;
     }
