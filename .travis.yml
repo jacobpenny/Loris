@@ -3,11 +3,23 @@ language: php
 cache:
     directories:
         - vendor
+        - node_modules
+
+env:
+  - TEST_SUITE=unit
+  - TEST_SUITE=lint
 
 php:
+  #- "5.6"
     - "7"
 
 sudo: false
+
+addons:
+  firefox: "44.0"
+
+matrix:
+  fast_finish: true
 
 before_install:
     # Start Xvfb in a desktop screen size,
@@ -59,8 +71,5 @@ before_script:
     - mysql LorisTest -e "UPDATE Config SET Value='$(pwd)/' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='base')"
     - mysql LorisTest -e "UPDATE Config SET Value='http://localhost:8000' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='url')"
 
-#env:
- # - "LORIS_DB_CONFIG=test/config.xml"
-
 script:
-    - npm test
+    - npm run tests:$TEST_SUITE
