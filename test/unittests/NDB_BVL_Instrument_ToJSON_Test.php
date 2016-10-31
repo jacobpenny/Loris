@@ -32,6 +32,10 @@ class NDB_BVL_Instrument_ToJSON_Test extends \PHPUnit_Framework_TestCase
 
         $mockdb = $this->getMockBuilder("\Database")->getMock();
         $mockconfig = $this->getMockBuilder("\NDB_Config")->getMock();
+        // This test file use Smarty which requires the base path to be set
+        $mockconfig->method('getSetting')->will($this->returnValueMap([
+            ['paths', ['base' => '/var/www/loris/']]
+        ]));
 
         \NDB_Factory::$db = $mockdb;
         \NDB_Factory::$testdb = $mockdb;
