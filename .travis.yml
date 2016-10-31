@@ -17,7 +17,7 @@ before_install:
     # Start Xvfb in a desktop screen size,
     # otherwise some tests will fail because the links
     # are hidden when Selenium tries to find them.
-    - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1600x1200x16"
+    #- "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1600x1200x16"
     #- "export DISPLAY=:99.0"
     #- "sh -e /etc/init.d/xvfb start"
     # Ensure node version is up to date
@@ -38,19 +38,19 @@ install:
     - npm -g install eslint-plugin-react
 
     # Download a Selenium Web Driver release
-    - wget "http://selenium-release.storage.googleapis.com/2.52/selenium-server-standalone-2.52.0.jar"
+    ##- wget "http://selenium-release.storage.googleapis.com/2.52/selenium-server-standalone-2.52.0.jar"
 
     - PHP_INI_SCAN_DIR=":test/" php -S localhost:8000 -t htdocs htdocs/router.php 2>1 > /dev/null &
 
     # Extracting firefox and setting PATH variable...
-    - tar -xjf /tmp/firefox-44.0.tar.bz2 --directory /tmp
-    - export PATH="/tmp/firefox:$PATH"
-    - echo "Using firefox version `firefox --version`"
+    # - tar -xjf /tmp/firefox-44.0.tar.bz2 --directory /tmp
+    # - export PATH="/tmp/firefox:$PATH"
+    # - echo "Using firefox version `firefox --version`"
 
     # Start Selenium and redirect Selenium WebDriver
     # output to /dev/null so that it doesn't flood the
     # screen in the middle of our other tests
-    - DISPLAY=:99.0 java -jar selenium-server-standalone-2.52.0.jar  2>1 > /dev/null &
+    ##- DISPLAY=:99.0 java -jar selenium-server-standalone-2.52.0.jar  2>1 > /dev/null &
 
 before_script:
     # Set up the Loris environment
@@ -68,15 +68,11 @@ before_script:
     - mysql LorisTest < docs/instruments/radiology_review.sql
     - mysql LorisTest -u root -e "GRANT UPDATE,INSERT,SELECT,DELETE,DROP,CREATE TEMPORARY TABLES ON LorisTest.* TO 'SQLTestUser'@'localhost' IDENTIFIED BY 'TestPassword' WITH GRANT OPTION"
     - mysql LorisTest -e "UPDATE users SET Password_MD5=CONCAT('aa', MD5('aatestpass')), Pending_approval='N', Password_expiry='2100-01-01' WHERE ID=1"
-    - cp docs/config/config.xml project/config.xml
-    - cp docs/config/config.xml test/config.xml
-    - sed -i -e "s/%HOSTNAME%/127.0.0.1/g" -e "s/%USERNAME%/SQLTestUser/g" -e "s/%PASSWORD%/TestPassword/g" -e "s/%DATABASE%/LorisTest/g" project/config.xml
-    - sed -i -e "s/%HOSTNAME%/127.0.0.1/g" -e "s/%USERNAME%/SQLTestUser/g" -e "s/%PASSWORD%/TestPassword/g" -e "s/%DATABASE%/LorisTest/g" test/config.xml
     - mysql LorisTest -e "UPDATE Config SET Value='$(pwd)/' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='base')"
     - mysql LorisTest -e "UPDATE Config SET Value='http://localhost:8000' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='url')"
 
-#env:
- # - "LORIS_DB_CONFIG=test/config.xml"
+env:
+    - "LORIS_DB_CONFIG=test/config.xml"
 
 script:
     # Run PHP -l on everything to ensure there's no syntax
@@ -128,5 +124,7 @@ script:
     - eslint htdocs/js/util/
     - eslint Gruntfile.js
 
+    - npm test
+
     # Run unit tests to make sure functions still do what they should.
-    - vendor/bin/phpunit --configuration test/phpunit.xml --coverage-clover=coverage.xml
+    # - vendor/bin/phpunit --configuration test/phpunit.xml --coverage-clover=coverage.xml

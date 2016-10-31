@@ -16,16 +16,6 @@
 #       *  Set SyncAccounts to false: <SyncAccounts>false</SyncAccounts>
 
 # set environment variable LORIS_DB_CONFIG to test config.xml file
-host="127.0.0.1"
-database="LorisTest"
-username="SQLTestUser"
-password="TestPassword"
-sed -i \
-    -e "s/%HOSTNAME%/$host/g" \
-    -e "s/%USERNAME%/$username/g" \
-    -e "s/%PASSWORD%/$password/g" \
-    -e "s/%DATABASE%/$database/g" \
-    config.xml
 export LORIS_DB_CONFIG=$(pwd)/config.xml
 
 if [ $# -eq 2 ]; then
@@ -37,6 +27,6 @@ elif [ $# -eq 1 ]; then
   echo Running Unit test: $1;
   ../vendor/bin/phpunit --configuration phpunit.xml   $1 ./unittests/$1.php
 else
- # Run all unittest
-../vendor/bin/phpunit --debug --configuration phpunit.xml --testsuite 'LorisUnitTests for php/libraries'
+  # Run all unittest
+  ../vendor/bin/phpunit --debug --configuration phpunit.xml --testsuite 'LorisUnitTests for php/libraries'
 fi
