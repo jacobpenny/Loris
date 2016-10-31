@@ -17,10 +17,12 @@
     "eslint-plugin-react": "^5.2.2",
     "grunt": "^1.0.1",
     "grunt-babel": "^6.0.0",
+    "jslint": "^0.10.3",
     "load-grunt-tasks": "^3.5.0"
   },
   "scripts": {
-    "test": "cd test && ./unittests.sh"
+    "tests:unit": "./test/unittests.sh",
+    "tests:lint": "./test/run_linters.sh"
   },
   "repository": {
     "type": "git",
