@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # Run PHP -l on everything to ensure there's no syntax
 # errors.
