@@ -19,9 +19,6 @@ php:
 
 sudo: false
 
-addons:
-  firefox: "44.0"
-
 matrix:
   fast_finish: true
 
@@ -41,4 +38,4 @@ install:
     - composer install
     - phpenv rehash
 script:
-    - npm run tests:unit
+    - npm run tests:integration

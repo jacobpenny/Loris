@@ -23,7 +23,7 @@
   "scripts": {
     "tests:unit": "./test/dockerized-unit-tests.sh",
     "tests:lint": "./test/run_linters.sh",
-    "tests:integration": "./vendor/bin/phpunit --verbose --debug --configuration test/phpunit.xml --testsuite 'Loris Module Integration Tests' --filter 'BrainBrowserTestIntegrationTest'"
+    "tests:integration": "./test/dockerized-integration-tests.sh"
   },
   "repository": {
     "type": "git",
