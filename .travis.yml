@@ -36,5 +36,7 @@ install:
     # Install composer modules
     - composer install
     - phpenv rehash
+before_script:
+    - phpenv config-rm xdebug.ini
 script:
     - npm run tests:integration
