@@ -21,7 +21,7 @@
     "load-grunt-tasks": "^3.5.0"
   },
   "scripts": {
-    "tests:unit": "./test/unittests.sh",
+    "tests:unit": "./test/dockerized-unit-tests.sh",
     "tests:lint": "./test/run_linters.sh",
     "tests:integration": "./vendor/bin/phpunit --verbose --debug --configuration test/phpunit.xml --testsuite 'Loris Module Integration Tests' --filter 'BrainBrowserTestIntegrationTest'"
   },
