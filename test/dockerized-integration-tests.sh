@@ -5,6 +5,7 @@ cd $DIR
 
 # TODO run specific test and/or filter
 # TODO service names in variable
+# TODO clean up after it blows up (seg fault)
 
 # Try to docker-compose start, if it fails, do a docker-compose up
 if docker-compose start db web selenium > /dev/null 2>&1 ; then
@@ -20,8 +21,8 @@ done
 echo 'Services ready, running integration tests...'
 
 export LORIS_DB_CONFIG=config.xml
-../vendor/bin/phpunit --configuration phpunit.xml --testsuite 'Loris Core Integration Tests'
-../vendor/bin/phpunit --configuration phpunit.xml --testsuite 'Loris Module Integration Tests'
+../vendor/bin/phpunit --debug --verbose --configuration phpunit.xml --testsuite 'Loris Core Integration Tests'
+../vendor/bin/phpunit --debug --verbose --configuration phpunit.xml --testsuite 'Loris Module Integration Tests'
 
 function finish {
   echo 'Spinning down the database...'
