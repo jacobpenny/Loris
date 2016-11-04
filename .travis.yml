@@ -42,6 +42,8 @@ install:
     - composer install
     - phpenv rehash
 before_script:
-    - docker-compose up
+    - docker-compose up -d
 script:
     - LORIS_DB_CONFIG=test/config.xml npm run tests:integration
+after_script:
+    - docker-compose stop
