@@ -22,7 +22,8 @@
   },
   "scripts": {
     "tests:unit": "./test/unittests.sh",
-    "tests:lint": "./test/run_linters.sh"
+    "tests:lint": "./test/run_linters.sh",
+    "tests:integration": "./vendor/bin/phpunit --verbose --debug --configuration test/phpunit.xml --testsuite 'Loris Module Integration Tests' --filter 'BrainBrowserTestIntegrationTest'"
   },
   "repository": {
     "type": "git",
