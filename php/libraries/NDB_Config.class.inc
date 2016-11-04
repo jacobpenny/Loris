@@ -102,10 +102,10 @@ class NDB_Config
      *
      * @return none, but as side-effect loads $this->_settings
      */
-    function load($configFile = "../project/config.xml")
+    function load($configFile)
     {
         // load the configuration data into a global variable $config
-        $newroot = simplexml_load_file($configFile);
+        $newroot = simplexml_load_file($configFile ? $configFile : dirname(__FILE__).'../../project/config.xml');
 
         if ($newroot === false || $newroot === null) {
             throw new Exception(

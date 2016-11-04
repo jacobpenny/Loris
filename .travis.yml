@@ -1,5 +1,10 @@
 language: php
 
+sudo: required
+
+services:
+  - docker
+
 cache:
     directories:
         - vendor
@@ -36,41 +41,7 @@ install:
     # Install composer modules
     - composer install
     - phpenv rehash
-
-    # Install jslint
-    - npm install -g jslint
-
-    # Install ESLint and plugins
-    - npm -g install eslint@3.8.1
-    - npm -g install eslint-config-google@0.6.0
-    - npm -g install eslint-plugin-react
-
-    # Download a Selenium Web Driver release
-    - wget "http://selenium-release.storage.googleapis.com/2.52/selenium-server-standalone-2.52.0.jar"
-
-    - PHP_INI_SCAN_DIR=":test/" php -S localhost:8000 -t htdocs htdocs/router.php 2>1 > /dev/null &
-
 before_script:
-    # Set up the Loris environment
-    - mkdir -p project smarty/templates_c
-    - chmod 777 smarty/templates_c
-
-    # Set up the MySQL database, install the Schema, create a MySQL user
-    # for the config file, and reset the Loris user's password for testing
-    - mysql -e 'CREATE DATABASE LorisTest'
-    - mysql LorisTest < SQL/0000-00-00-schema.sql
-    - mysql LorisTest < SQL/0000-00-01-Permission.sql
-    - mysql LorisTest < SQL/0000-00-02-Menus.sql
-    - mysql LorisTest < SQL/0000-00-03-ConfigTables.sql
-    - mysql LorisTest < SQL/0000-00-04-Help.sql
-    - mysql LorisTest < docs/instruments/radiology_review.sql
-    - mysql LorisTest -u root -e "GRANT UPDATE,INSERT,SELECT,DELETE,DROP,CREATE TEMPORARY TABLES ON LorisTest.* TO 'SQLTestUser'@'localhost' IDENTIFIED BY 'TestPassword' WITH GRANT OPTION"
-    - mysql LorisTest -e "UPDATE users SET Password_MD5=CONCAT('aa', MD5('aatestpass')), Pending_approval='N', Password_expiry='2100-01-01' WHERE ID=1"
-    - cp docs/config/config.xml project/config.xml
-    - sed -i -e "s/%HOSTNAME%/127.0.0.1/g" -e "s/%USERNAME%/SQLTestUser/g" -e "s/%PASSWORD%/TestPassword/g" -e "s/%DATABASE%/LorisTest/g" project/config.xml
-    - mysql LorisTest -e "UPDATE Config SET Value='$(pwd)/' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='base')"
-    - mysql LorisTest -e "UPDATE Config SET Value='http://localhost:8000' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='url')"
-    - npm install
-
+    - docker-compose up
 script:
-    - npm run tests:$TEST_SUITE
+    - npm run tests:integration

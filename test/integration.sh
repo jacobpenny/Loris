@@ -15,6 +15,9 @@
 #       *  Set sandbox mode to 1: <sandbox>1</sandbox>
 #       *  Set SyncAccounts to false: <SyncAccounts>false</SyncAccounts>
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR
+
 host="127.0.0.1"
 database="LorisTest"
 username="SQLTestUser"

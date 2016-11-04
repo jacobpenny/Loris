@@ -1,0 +1,33 @@
+version: '2'
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.test.MySQL
+      args:
+        BASE_DIR: ${PWD}
+    network_mode: "host"
+    environment:
+      - MYSQL_DATABASE=LorisTest
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+  selenium:
+    image: selenium/standalone-firefox:2.53.1
+    network_mode: "host"
+    ports:
+      - "127.0.0.1:4444:4444"
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    network_mode: "host"
+    volumes:
+      - .:/${PWD}/
+    environment:
+      - LORIS_DB_CONFIG=/${PWD}/test/config.xml
+    command:
+      - php
+      - -S
+      - 127.0.0.1:8000
+      - -t
+      - /${PWD}/htdocs
+      - /${PWD}/htdocs/router.php
