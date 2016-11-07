@@ -19,8 +19,7 @@ while ! mysqladmin ping -h 127.0.0.1 -u SQLTestUser --password="TestPassword" --
 done
 echo 'Database ready, running unit tests...'
 
-export LORIS_DB_CONFIG=config.xml
-../vendor/bin/phpunit --configuration phpunit.xml --testsuite 'LorisUnitTests for php/libraries'
+docker-compose run tests /app/vendor/bin/phpunit --configuration /app/test/phpunit.xml --testsuite 'LorisUnitTests for php/libraries'
 
 function finish {
   echo 'Spinning down the database...'

@@ -39,4 +39,4 @@ install:
 before_script:
     - phpenv config-rm xdebug.ini
 script:
-    - npm run tests:unit
+    - npm run tests:integration
