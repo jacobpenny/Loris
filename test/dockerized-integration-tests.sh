@@ -19,8 +19,8 @@ echo 'Services ready, building app image...'
 docker-compose build tests
 
 echo 'App image built, running tests...'
-docker-compose run --rm tests /app/vendor/bin/phpunit --configuration /app/test/phpunit.xml --testsuite 'Loris Core Integration Tests'
-docker-compose run --rm tests /app/vendor/bin/phpunit --configuration /app/test/phpunit.xml --testsuite 'Loris Module Integration Tests'
+docker-compose run --rm tests /app/vendor/bin/phpunit --configuration /app/test/phpunit.xml --testsuite 'Loris Core Integration Tests' $*
+docker-compose run --rm tests /app/vendor/bin/phpunit --configuration /app/test/phpunit.xml --testsuite 'Loris Module Integration Tests' $*
 
 function finish {
   echo 'Spinning down the services...'
