@@ -12,7 +12,7 @@ services:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
 
   selenium:
-    image: selenium/standalone-firefox:2.53.1
+    image: selenium/standalone-firefox-debug:2.53.1
     network_mode: "host"
 
   web:
@@ -24,10 +24,22 @@ services:
       - LORIS_DB_CONFIG=/app/test/config.xml
     command: php -S 127.0.0.1:8000 -t /app/htdocs /app/htdocs/router.php
 
-  tests:
+  unit-tests:
     build:
       context: .
       dockerfile: Dockerfile.test.app
     network_mode: "host"
-    environment:
-      - LORIS_DB_CONFIG=/app/test/config.xml
+    depends_on:
+      - db
+    entrypoint: /app/test/wait-for-mysql.sh 127.0.0.1 --
+
+  integration-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test.app
+    network_mode: "host"
+    depends_on:
+      - db
+      - selenium
+      - web
+    entrypoint: /app/test/wait-for-mysql.sh 127.0.0.1 --

@@ -10,8 +10,8 @@ cache:
         - vendor
 
 env:
-  - TEST_SUITE=lint-javascript
-  - TEST_SUITE=lint-php
+  - TEST_SUITE=lint:javascript
+  - TEST_SUITE=lint:php
   - TEST_SUITE=unit
   - TEST_SUITE=integration
 

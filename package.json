@@ -21,10 +21,12 @@
     "load-grunt-tasks": "^3.5.0"
   },
   "scripts": {
-    "tests:lint-javascript": "./test/run-js-linter.sh",
-    "tests:lint-php": "./test/run-php-linter.sh",
+    "tests:lint:javascript": "./test/run-js-linter.sh",
+    "tests:lint:php": "./test/run-php-linter.sh",
     "tests:unit": "./test/dockerized-unit-tests.sh",
-    "tests:integration": "./test/dockerized-integration-tests.sh"
+    "tests:unit:quick": "DISABLE_LORIS_SERVICES_PROVISION=true ./test/dockerized-unit-tests.sh",
+    "tests:integration": "./test/dockerized-integration-tests.sh",
+    "tests:integration:quick": "DISABLE_LORIS_SERVICES_PROVISION=true ./test/dockerized-integration-tests.sh"
   },
   "repository": {
     "type": "git",
