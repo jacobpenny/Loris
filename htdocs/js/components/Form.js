@@ -156,7 +156,6 @@ var SelectElement = React.createClass({
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
     emptyOption: React.PropTypes.bool,
-    hasError: React.PropTypes.bool,
     errorMessage: React.PropTypes.string,
     onUserInput: React.PropTypes.func
   },
@@ -173,39 +172,15 @@ var SelectElement = React.createClass({
       disabled: false,
       required: false,
       emptyOption: true,
-      hasError: false,
-      errorMessage: 'The field is required!',
+      errorMessage: null,
       onUserInput: function onUserInput() {
         console.warn('onUserInput() callback is not set');
       }
     };
   },
-  componentDidMount: function componentDidMount() {
-    if (this.props.value) {
-      this.setState({
-        value: this.props.value
-      });
-    }
-  },
-  componentWillReceiveProps: function componentWillReceiveProps() {
-    if (this.props.hasError) {
-      this.setState({
-        hasError: this.props.hasError
-      });
-    }
-  },
-  getInitialState: function getInitialState() {
-    var value = this.props.multiple ? [] : '';
-    return {
-      value: value,
-      hasError: false
-    };
-  },
   handleChange: function handleChange(e) {
     var value = e.target.value;
     var options = e.target.options;
-    var hasError = false;
-    var isEmpty = value === "";
 
     // Multiple values
     if (this.props.multiple && options.length > 1) {
@@ -215,18 +190,7 @@ var SelectElement = React.createClass({
           value.push(options[i].value);
         }
       }
-      isEmpty = value.length > 1;
     }
-
-    // Check for errors
-    if (this.props.required && isEmpty) {
-      hasError = true;
-    }
-
-    this.setState({
-      value: value,
-      hasError: hasError
-    });
 
     this.props.onUserInput(this.props.name, value);
   },
@@ -255,7 +219,7 @@ var SelectElement = React.createClass({
     }
 
     // Add error message
-    if (this.state.hasError) {
+    if (this.props.errorMessage) {
       errorMessage = React.createElement(
         'span',
         null,
@@ -283,9 +247,8 @@ var SelectElement = React.createClass({
             multiple: multiple,
             className: 'form-control',
             id: this.props.label,
-            value: this.state.value,
+            value: this.props.value,
             onChange: this.handleChange,
-            required: required,
             disabled: disabled
           },
           emptyOptionHTML,
@@ -334,20 +297,7 @@ var TextareaElement = React.createClass({
       }
     };
   },
-  getInitialState: function getInitialState() {
-    return {
-      value: ''
-    };
-  },
-  componentDidMount: function componentDidMount() {
-    if (this.props.value) {
-      this.setState({ value: this.props.value });
-    }
-  },
   handleChange: function handleChange(e) {
-    this.setState({
-      value: e.target.value
-    });
     this.props.onUserInput(this.props.name, e.target.value);
   },
   render: function render() {
@@ -382,7 +332,7 @@ var TextareaElement = React.createClass({
           className: 'form-control',
           name: this.props.name,
           id: this.props.id,
-          value: this.state.value,
+          value: this.props.value,
           required: required,
           disabled: disabled,
           onChange: this.handleChange
@@ -408,11 +358,6 @@ var TextboxElement = React.createClass({
     required: React.PropTypes.bool,
     onUserInput: React.PropTypes.func
   },
-  getInitialState: function getInitialState() {
-    return {
-      value: ''
-    };
-  },
   getDefaultProps: function getDefaultProps() {
     return {
       name: '',
@@ -426,17 +371,7 @@ var TextboxElement = React.createClass({
       }
     };
   },
-  componentDidMount: function componentDidMount() {
-    if (this.props.value) {
-      this.setState({
-        value: this.props.value
-      });
-    }
-  },
   handleChange: function handleChange(e) {
-    this.setState({
-      value: e.target.value
-    });
     this.props.onUserInput(this.props.name, e.target.value);
   },
   render: function render() {
@@ -470,7 +405,7 @@ var TextboxElement = React.createClass({
           className: 'form-control',
           name: this.props.name,
           id: this.props.id,
-          value: this.state.value,
+          value: this.props.value,
           required: required,
           disabled: disabled,
           onChange: this.handleChange
@@ -511,20 +446,7 @@ var DateElement = React.createClass({
       }
     };
   },
-  getInitialState: function getInitialState() {
-    return {
-      value: ''
-    };
-  },
-  componentDidMount: function componentDidMount() {
-    if (this.props.value) {
-      this.setState({ value: this.props.value });
-    }
-  },
   handleChange: function handleChange(e) {
-    this.setState({
-      value: e.target.value
-    });
     this.props.onUserInput(this.props.name, e.target.value);
   },
   render: function render() {
@@ -561,7 +483,7 @@ var DateElement = React.createClass({
           min: this.props.minYear,
           max: this.props.maxYear,
           onChange: this.handleChange,
-          value: this.state.value,
+          value: this.props.value,
           required: required,
           disabled: disabled
         })
@@ -588,11 +510,6 @@ var NumericElement = React.createClass({
     required: React.PropTypes.bool,
     onUserInput: React.PropTypes.func
   },
-  getInitialState: function getInitialState() {
-    return {
-      value: ''
-    };
-  },
   getDefaultProps: function getDefaultProps() {
     return {
       name: '',
@@ -608,17 +525,7 @@ var NumericElement = React.createClass({
       }
     };
   },
-  componentDidMount: function componentDidMount() {
-    if (this.props.value) {
-      this.setState({
-        value: this.props.value
-      });
-    }
-  },
   handleChange: function handleChange(e) {
-    this.setState({
-      value: e.target.value
-    });
     this.props.onUserInput(this.props.name, e.target.value);
   },
   render: function render() {
@@ -657,7 +564,7 @@ var NumericElement = React.createClass({
 
 /**
  * File Component
- * React wrapper for a simple or 'multiple' <select> element.
+ * React wrapper for an <input type="file"> element.
  */
 var FileElement = React.createClass({
   displayName: 'FileElement',
@@ -669,15 +576,8 @@ var FileElement = React.createClass({
     id: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
-    hasError: React.PropTypes.bool,
     errorMessage: React.PropTypes.string,
     onUserInput: React.PropTypes.func
-  },
-  getInitialState: function getInitialState() {
-    return {
-      value: '',
-      hasError: false
-    };
   },
   getDefaultProps: function getDefaultProps() {
     return {
@@ -687,37 +587,15 @@ var FileElement = React.createClass({
       id: null,
       disabled: false,
       required: false,
-      hasError: false,
-      errorMessage: 'The field is required!',
+      errorMessage: null,
       onUserInput: function onUserInput() {
         console.warn('onUserInput() callback is not set');
       }
     };
   },
-  componentDidMount: function componentDidMount() {
-    if (this.props.value) {
-      this.setState({
-        value: this.props.value
-      });
-    }
-  },
-  componentWillReceiveProps: function componentWillReceiveProps() {
-    if (this.props.hasError) {
-      this.setState({
-        hasError: this.props.hasError
-      });
-    }
-  },
   handleChange: function handleChange(e) {
-    var hasError = false;
-    if (this.props.required && e.target.value === "") {
-      hasError = true;
-    }
-    this.setState({
-      value: e.target.value.split(/(\\|\/)/g).pop(),
-      hasError: hasError
-    });
     // pass current file to parent form
+    //const value = e.target.value.split(/(\\|\/)/g).pop();
     var file = e.target.files[0];
     this.props.onUserInput(this.props.name, file);
   },
@@ -725,12 +603,10 @@ var FileElement = React.createClass({
   render: function render() {
     var required = this.props.required ? 'required' : null;
     var requiredHTML = null;
-    var errorMessage = '';
     var elementClass = 'row form-group';
 
     // Add error message
-    if (this.state.hasError) {
-      errorMessage = this.props.errorMessage;
+    if (this.props.errorMessage) {
       elementClass = 'row form-group has-error';
     }
 
@@ -777,7 +653,7 @@ var FileElement = React.createClass({
             React.createElement(
               'span',
               { style: truncateEllipsisChild },
-              this.state.value
+              this.props.value
             )
           )
         )
@@ -809,7 +685,7 @@ var FileElement = React.createClass({
               React.createElement(
                 'span',
                 { style: truncateEllipsisChild },
-                this.state.value
+                this.props.value
               )
             ),
             React.createElement('div', { className: 'file-caption-name', id: 'video_file' })
@@ -826,8 +702,7 @@ var FileElement = React.createClass({
                 type: 'file',
                 className: 'fileUpload',
                 name: this.props.name,
-                onChange: this.handleChange,
-                required: required
+                onChange: this.handleChange
               })
             )
           )
@@ -835,7 +710,7 @@ var FileElement = React.createClass({
         React.createElement(
           'span',
           null,
-          errorMessage
+          this.props.errorMessage
         )
       )
     );
@@ -952,9 +827,6 @@ var ButtonElement = React.createClass({
     label: React.PropTypes.string,
     type: React.PropTypes.string,
     onUserInput: React.PropTypes.func
-  },
-  getInitialState: function getInitialState() {
-    return {};
   },
   getDefaultProps: function getDefaultProps() {
     return {

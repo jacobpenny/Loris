@@ -1,3 +1,4 @@
+/* global FormValidation */
 /* exported RMediaUploadForm */
 
 /**
@@ -10,25 +11,36 @@
  * @version 1.0.0
  *
  * */
-var MediaUploadForm = React.createClass({
+class MediaUploadForm extends React.Component {
+  constructor(props) {
+    super(props);
 
-  propTypes: {
-    DataURL: React.PropTypes.string.isRequired,
-    action: React.PropTypes.string.isRequired
-  },
-
-  getInitialState: function() {
-    return {
+    this.state = {
       Data: {},
       formData: {},
+      validationErrors: {},
       uploadResult: null,
       errorMessage: null,
       isLoaded: false,
       loadedData: 0
     };
-  },
 
-  componentDidMount: function() {
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.isValidForm = this.isValidForm.bind(this);
+    this.setFormData = this.setFormData.bind(this);
+    this.showAlertMessage = this.showAlertMessage.bind(this);
+    this.customFileNameRule = this.customFileNameRule.bind(this);
+
+    this.fieldValidations = {
+      pscid: FormValidation.createValidator('pscid', 'PSCID', FormValidation.rules.required),
+      visitLabel: FormValidation.createValidator('visitLabel', 'Visit Label', FormValidation.rules.required),
+      forSite: FormValidation.createValidator('forSite', 'Site', FormValidation.rules.required),
+      file: FormValidation.createValidator('file', 'File', this.customFileNameRule)
+    };
+
+  }
+
+  componentDidMount() {
     var self = this;
     $.ajax(this.props.DataURL, {
       dataType: 'json',
@@ -45,9 +57,9 @@ var MediaUploadForm = React.createClass({
         });
       }
     });
-  },
+  }
 
-  render: function() {
+  render() {
     // Data loading error
     if (this.state.error !== undefined) {
       return (
@@ -120,8 +132,8 @@ var MediaUploadForm = React.createClass({
             label="PSCID"
             options={this.state.Data.candidates}
             onUserInput={this.setFormData}
-            ref="pscid"
-            hasError={false}
+            value={this.state.formData.pscid}
+            errorMessage={this.state.validationErrors.pscid}
             required={true}
           />
           <SelectElement
@@ -129,7 +141,8 @@ var MediaUploadForm = React.createClass({
             label="Visit Label"
             options={this.state.Data.visits}
             onUserInput={this.setFormData}
-            ref="visitLabel"
+            value={this.state.formData.visitLabel}
+            errorMessage={this.state.validationErrors.visitLabel}
             required={true}
           />
           <SelectElement
@@ -137,7 +150,8 @@ var MediaUploadForm = React.createClass({
             label="Site"
             options={this.state.Data.sites}
             onUserInput={this.setFormData}
-            ref="forSite"
+            value={this.state.formData.forSite}
+            errorMessage={this.state.validationErrors.forSite}
             required={true}
           />
           <SelectElement
@@ -145,7 +159,7 @@ var MediaUploadForm = React.createClass({
             label="Instrument"
             options={this.state.Data.instruments}
             onUserInput={this.setFormData}
-            ref="instrument"
+            value={this.state.formData.instrument}
           />
           <DateElement
             name="dateTaken"
@@ -153,27 +167,29 @@ var MediaUploadForm = React.createClass({
             minYear="2000"
             maxYear="2017"
             onUserInput={this.setFormData}
-            ref="dateTaken"
+            value={this.state.formData.dateTaken}
           />
           <TextareaElement
             name="comments"
             label="Comments"
             onUserInput={this.setFormData}
-            ref="comments"
+            value={this.state.formData.comments}
           />
           <FileElement
             name="file"
             id="mediaUploadEl"
             onUserInput={this.setFormData}
-            ref="file"
+            value={this.state.formData.file ? this.state.formData.file.name : null}
+            errorMessage={this.state.validationErrors.file}
             label="File to upload"
             required={true}
           />
+          
           <ButtonElement label="Upload File" />
         </FormElement>
       </div>
     );
-  },
+  }
 
  /** *******************************************************************************
  *                      ******     Helper methods     *******
@@ -187,37 +203,25 @@ var MediaUploadForm = React.createClass({
    * @param {string} instrument - Instrument selected from the dropdown
    * @return {string} - Generated valid filename for the current selection
    */
-  getValidFileName: function(pscid, visitLabel, instrument) {
+  getValidFileName(pscid, visitLabel, instrument) {
     var fileName = pscid + "_" + visitLabel;
     if (instrument) fileName += "_" + instrument;
 
     return fileName;
-  },
+  }
 
   /**
    * Handle form submission
    * @param {object} e - Form submission event
    */
-  handleSubmit: function(e) {
+  handleSubmit(e) {
     e.preventDefault();
 
     var myFormData = this.state.formData;
     var formRefs = this.refs;
 
     // Validate the form
-    if (!this.isValidForm(formRefs, myFormData)) {
-      return;
-    }
-
-    // Validate uploaded file name
-    var instrument = myFormData.instrument ? myFormData.instrument : null;
-    var fileName = myFormData.file ? myFormData.file.name : null;
-    var requiredFileName = this.getValidFileName(
-      myFormData.pscid, myFormData.visitLabel, instrument
-    );
-
-    if (!this.isValidFileName(requiredFileName, fileName)) {
-      alert("File name should begin with: " + requiredFileName);
+    if (!this.isValidForm(myFormData)) {
       return;
     }
 
@@ -287,7 +291,7 @@ var MediaUploadForm = React.createClass({
       }
 
     });
-  },
+  }
 
   /**
    * Checks if the inputted file name is valid
@@ -296,49 +300,34 @@ var MediaUploadForm = React.createClass({
    * @param {string} fileName - Provided file name
    * @return {boolean} - true if fileName starts with requiredFileName, false otherwise
    */
-  isValidFileName: function(requiredFileName, fileName) {
-    if (fileName === null || requiredFileName === null) {
+  isValidFileName(requiredFileName, fileName) {
+    if (!fileName || !requiredFileName) {
       return false;
     }
 
     return (fileName.indexOf(requiredFileName) === 0);
-  },
+  }
 
   /**
    * Validate the form
    *
-   * @param {object} formRefs - Object containing references to React form elements
    * @param {object} formData - Object containing form data inputed by user
    * @return {boolean} - true if all required fields are filled, false otherwise
    */
-  isValidForm: function(formRefs, formData) {
-    var isValidForm = true;
-    var requiredFields = {
-      pscid: null,
-      visitLabel: null,
-      file: null
-    };
-
-    Object.keys(requiredFields).map(function(field) {
-      if (formData[field]) {
-        requiredFields[field] = formData[field];
-      } else if (formRefs[field]) {
-        formRefs[field].props.hasError = true;
-        isValidForm = false;
-      }
-    });
-    this.forceUpdate();
-
-    return isValidForm;
-  },
+  isValidForm(formData) {
+    const validationErrors = FormValidation.generateValidationErrors(formData, this.fieldValidations);
+    this.setState({validationErrors});
+    const hasValidationErrors = Object.values(validationErrors).reduce((a,b) => a || b);
+    return !hasValidationErrors;
+  }
 
   /**
-   * Set the form data based on state values of child elements/componenets
+   * Updates formData and validationErrors state when a form value changes
    *
    * @param {string} formElement - name of the selected element
    * @param {string} value - selected value for corresponding form element
    */
-  setFormData: function(formElement, value) {
+  setFormData(formElement, value) {
     // Only display visits and sites available for the current pscid
     if (formElement === "pscid" && value !== "") {
       this.state.Data.visits = this.state.Data.sessionData[value].visits;
@@ -348,15 +337,18 @@ var MediaUploadForm = React.createClass({
     var formData = this.state.formData;
     formData[formElement] = value;
 
+    const validationError = FormValidation.validateField(formData, formElement, this.fieldValidations);
+
     this.setState({
-      formData: formData
+      formData: formData,
+      validationErrors: Object.assign(this.state.validationErrors, validationError)
     });
-  },
+  }
 
   /**
    * Display a success/error alert message after form submission
    */
-  showAlertMessage: function() {
+  showAlertMessage() {
     var self = this;
 
     if (this.refs["alert-message"] === null) {
@@ -371,6 +363,31 @@ var MediaUploadForm = React.createClass({
     });
   }
 
-});
+  customFileNameRule(formData, file) {
+    if (!file) {
+      return (fieldName) => `${fieldName} is required`
+    }
+
+    if (!formData.pscid || !formData.visitLabel) {
+      return null;
+    }
+
+    const requiredFileName = this.getValidFileName(
+      formData.pscid, formData.visitLabel, formData.instrument
+    );
+
+    if (!this.isValidFileName(requiredFileName, file.name)) {
+      return (fieldName) => `${fieldName} should begin with: ${requiredFileName}`;
+    } else {
+      return null;
+    }
+  }
+}
+
+
+MediaUploadForm.propTypes = {
+  DataURL: React.PropTypes.string.isRequired,
+  action: React.PropTypes.string.isRequired
+}
 
 var RMediaUploadForm = React.createFactory(MediaUploadForm);
