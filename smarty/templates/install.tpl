@@ -48,6 +48,10 @@
 			<div>
 				<label for="lorispassword">Password: <input type="password" value="{$lorismysqlpassword}" name="lorismysqlpassword" placeholder="ie. LORISISTHEBEST!!!1">
 			</div>
+			<div>
+				<label for="skipusercreation">User already exists:</label>
+				<input id="skipusercreation" value="1" type="checkbox" name="skipusercreation">
+			</div>
 			</fieldset>
 			<fieldset>
 				<legend>LORIS Front End Admin</legend>
@@ -149,6 +153,14 @@
 				</div>
 				<div class="col-md-10">
 					<input id="dbname" value="{if $dbname}{$dbname}{else}LORIS{/if}" type="text" name="dbname">
+				</div>
+			</div>
+			<div>
+				<div class="col-md-2">
+					<label for="skipdbcreation">Database already exists:</label>
+				</div>
+				<div class="col-md-10">
+					<input id="skipdbcreation" value="1" type="checkbox" name="skipdbcreation">
 				</div>
 			</div>
 			</fieldset>

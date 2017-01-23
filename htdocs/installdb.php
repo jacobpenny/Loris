@@ -95,7 +95,7 @@ case 'validaterootaccount':
     // This will connect to MySQL, check the permissions of the
     // account provided, check that the database doesn't already
     // exist, and create the database.
-    if ($installer->CreateMySQLDB($_POST) === false) {
+    if (!isset($_POST['skipdbcreation']) && $installer->CreateMySQLDB($_POST) === false) {
         $tpl_data['error'] = $installer->GetLastError();
         $tpl_data['Page']  = "";
         break;
@@ -114,7 +114,7 @@ case 'validaterootaccount':
     $tpl_data['Page'] = "MySQLUserPrompt";
     break;
 case 'createmysqlaccount':
-    if ($installer->CreateMySQLAccount($_POST) === false) {
+    if (!isset($_POST['skipusercreation']) && $installer->CreateMySQLAccount($_POST) === false) {
         $tpl_data['error'] = $installer->GetLastError();
         $tpl_data['Page']  = "MySQLUserPrompt";
         break;
