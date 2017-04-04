@@ -400,5 +400,24 @@ class User extends UserPermissions
 
         $this->update($updateArray);
     }
+
+    /**
+     * Returns the timestamp of the user's last login
+     *
+     * @return string
+     */
+    function getLastLoginTimestamp()
+    {
+        $DB =& Database::singleton();
+        return $DB->pselectOne(
+            "SELECT MAX(Login_timestamp)
+             FROM user_login_history
+             WHERE Login_timestamp < (SELECT MAX(Login_timestamp)
+                FROM user_login_history
+                WHERE userID=:UserID AND Success='Y')
+             AND userID=:UserID AND Success='Y'",
+            array('UserID' => $this->getUsername())
+        );
+    }
 }
 ?>
