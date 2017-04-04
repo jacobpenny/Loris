@@ -29,116 +29,162 @@ class NDB_Form_Dashboard extends NDB_Form
     /**
      * Creates the template data for the dashboard
      *
-     * @return void
+     * @return void As a side-effect merges required data into $this->tpl_data
      */
     function dashboard()
     {
         $DB     = Database::singleton();
         $user   = User::singleton();
         $config = NDB_Config::singleton();
-        $site   = explode(';', $user->getSiteName());
+        $last_login = $user->getLastLoginTimestamp();
+        $useProjects = $config->getSetting('useProjects');
 
-        $userID     = $user->getUsername();
-        $last_login = $DB->pselectOne(
-            "SELECT MAX(Login_timestamp)
-             FROM user_login_history
-             WHERE Login_timestamp < (SELECT MAX(Login_timestamp)
-                FROM user_login_history
-                WHERE userID=:UserID AND Success='Y')
-             AND userID=:UserID AND Success='Y'",
-            array('UserID' => $userID)
+        $this->tpl_data = array_merge(
+            $this->tpl_data,
+            array(
+                'username'            => $user->getFullname(),
+                'user_site'           => $user->getCenterID(),
+                'last_login'          => $last_login ?: "...never. Welcome!",
+                'project_description' => $config->getSetting('projectDescription'),
+                'useProjects'         => $useProjects,
+                'dashboard_links'     => $this->_dashboardExternalLinks($config),
+                'recruitment'         => $this->_dashboardRecruitment($config),
+                'total_scans'         => $this->_dashboardTotalScans($DB),
+            ),
+            $this->_dashboardNewScans($user, $DB),
+            $this->_dashboardDataEntryConflicts($user, $DB),
+            $this->_dashboardIncompleteForms($user, $DB),
+            $this->_dashboardFinalRadiologicalReview($user, $DB),
+            $this->_dashboardAccountsPendingApproval($user, $DB),
+            $this->_dashboardViolatedScans($user, $DB),
+            $this->_dashboardDocumentRepositoryItems($user, $DB, $last_login),
+            $this->_dashboardAssignedIssues($user, $DB),
+            $this->_dashboardBehaviouralFeedbackItems($user, $DB, $last_login)
         );
+    }
 
-        $siteID = $user->getCenterID();
-        $this->tpl_data['user_site'] = $siteID;
+    /**
+     * @param NDB_Config $config Reference config object
+     *
+     * @return array Array of objects which describe external links
+     */
+    private function _dashboardExternalLinks($config) {
+        $result = array();
 
-        // Welcome panel
-        $this->tpl_data['username'] = $user->getFullname();
-        if ($last_login) {
-            $this->tpl_data['last_login'] = $last_login;
-        } else {
-            $this->tpl_data['last_login'] = "...never. Welcome!";
+        foreach ($config->getExternalLinks('dashboard') as $text => $url) {
+            $result[] = array(
+                'url'        => $url,
+                'label'      => $text,
+                'WindowName' => md5($url),
+            );
         }
-        $this->tpl_data['project_description']
-            = $config->getSetting('projectDescription');
-        $dashboard_links = $config->getExternalLinks('dashboard');
-        if (!empty($dashboard_links)) {
-            foreach ($dashboard_links as $text => $url) {
-                $this->tpl_data['dashboard_links'][]
-                    = array(
-                       'url'        => $url,
-                       'label'      => $text,
-                       'WindowName' => md5($url),
-                      );
-            }
-        }
+
+        return $result;
+    }
+
+    /**
+     * @param NDB_Config $config Reference to config object
+     *
+     * @return array Array of objects which describe project recruitment
+     */
+    private function _dashboardRecruitment($config) {
+        $useProjects = $config->getSetting('useProjects');
+
+        $result = array();
 
         $recruitmentTarget = $config->getSetting('recruitmentTarget');
-        $this->createProjectProgressBar(
+        $overallRecruitment = $this->createProjectProgressBar(
             'overall',
             "Overall Recruitment",
             $recruitmentTarget,
             $this->getTotalRecruitment()
         );
 
-        $useProjects = $config->getSetting('useProjects');
-        $this->tpl_data['useProjects'] = $useProjects;
+        $result = array_merge($result, $overallRecruitment);
+
         if ($useProjects == "true") {
             $projects = Utility::getProjectList();
             foreach ($projects as $projectID => $project) {
                 $projectInfo = $config->getProjectSettings($projectID);
-                $this->createProjectProgressBar(
+                $projectRecruitment = $this->createProjectProgressBar(
                     $projectID,
                     $projectInfo['Name'],
                     $projectInfo['recruitmentTarget'],
                     $this->getTotalRecruitmentByProject($projectID)
                 );
+                $result = array_merge($result, $projectRecruitment);
             }
         }
+        return $result;
+    }
 
-        // Charts
-        $this->tpl_data['total_scans'] = $DB->pselectOne(
+    /**
+     * @param Database $DB Reference to database object
+     *
+     * @return int Number of total scans
+     */
+    private function _dashboardTotalScans($DB) {
+        return $DB->pselectOne(
             "SELECT COUNT(*) FROM files f
-		LEFT JOIN session s ON (s.ID=f.SessionID)
-		LEFT JOIN candidate c ON (s.CandID=c.CandID)
-		WHERE s.Active='Y' AND c.Active='Y'
-			AND s.CenterID <> 1",
+             LEFT JOIN session s ON (s.ID=f.SessionID)
+             LEFT JOIN candidate c ON (s.CandID=c.CandID)
+             WHERE s.Active='Y' AND c.Active='Y'
+			 AND s.CenterID <> 1",
             array()
         );
+    }
 
-        // Tasks
+    /**
+     * @param User $user Reference to user object
+     * @param Database $DB Reference to database object
+     *
+     * @return object Data related to new scans
+     */
+    private function _dashboardNewScans($user, $DB) {
+        $result = array();
 
-        // New scans
         if ($user->hasPermission('imaging_browser_qc')) {
-            $this->tpl_data['new_scans']      = $DB->pselectOne(
+            $result['new_scans'] = $DB->pselectOne(
                 "SELECT COUNT(DISTINCT s.ID)
                  FROM files f 
                  LEFT JOIN files_qcstatus fqc ON (fqc.FileID=f.FileID)
                  LEFT JOIN session s ON (s.ID=f.SessionID)
-		LEFT JOIN candidate c ON (s.CandID=c.CandID)
+                 LEFT JOIN candidate c ON (s.CandID=c.CandID)
                  WHERE fqc.QCStatus IS NULL
-			AND s.Active='Y' AND c.Active='Y'
-			AND s.CenterID <> 1",
+                 AND s.Active='Y' AND c.Active='Y'
+                 AND s.CenterID <> 1",
                 array()
             );
-            $this->tpl_data['new_scans_site'] = 'Sites: all';
+            $result['new_scans_site'] = 'Sites: all';
         }
 
-        // Data entry conflicts
+        return $result;
+    }
+
+    /**
+     * @param User $user Reference to user object
+     * @param Database $DB Reference to database object
+     *
+     * @return object Data related to data entry conflicts
+     */
+    private function _dashboardDataEntryConflicts($user, $DB) {
+        $result = array();
+
         if ($user->hasPermission('conflict_resolver')) {
             if ($user->hasPermission('access_all_profiles')) {
-                $this->tpl_data['conflicts']      = $DB->pselectOne(
+                $result['conflicts'] = $DB->pselectOne(
                     "SELECT COUNT(*) FROM conflicts_unresolved cu
-                    LEFT JOIN flag ON (cu.CommentId1=flag.CommentID) 
+                     LEFT JOIN flag ON (cu.CommentId1=flag.CommentID)
                      LEFT JOIN session s ON (flag.SessionID=s.ID)
-			LEFT JOIN candidate c ON (s.CandID=c.CandID)
-                      WHERE s.CenterID <> 1
-			AND s.Active='Y' AND c.Active='Y'",
+                     LEFT JOIN candidate c ON (s.CandID=c.CandID)
+                     WHERE s.CenterID <> 1
+                     AND s.Active='Y' AND c.Active='Y'
+                    ",
                     array()
                 );
-                $this->tpl_data['conflicts_site'] = 'Sites: all';
+                $result['conflicts_site'] = 'Sites: all';
             } else {
-                $this->tpl_data['conflicts']      = $DB->pselectOne(
+                $result['conflicts'] = $DB->pselectOne(
                     "SELECT COUNT(*) FROM conflicts_unresolved cu 
                      LEFT JOIN flag ON (cu.CommentId1=flag.CommentID) 
                      LEFT JOIN session s ON (flag.SessionID=s.ID)
@@ -146,91 +192,153 @@ class NDB_Form_Dashboard extends NDB_Form
                      LEFT JOIN psc ON (psc.CenterID=s.CenterID) 
                      WHERE FIND_IN_SET(psc.CenterID, :siteID) 
 			            AND s.Active='Y' AND c.Active='Y'",
-                    array('siteID' => implode(',', $siteID))
+                    array('siteID' => implode(',', $user->getCenterID()))
                 );
-                $this->tpl_data['conflicts_site'] = 'Sites: All User Sites';
+                $result['conflicts_site'] = 'Sites: All User Sites';
             }
         }
-        // Incomplete forms
+
+        return $result;
+    }
+
+    /**
+     * @param User $user Reference to user object
+     * @param Database $DB Reference to database object
+     *
+     * @return object Data related to incomplete forms
+     */
+    private function _dashboardIncompleteForms($user, $DB) {
+        $result = array();
+
         if ($user->hasPermission('data_entry')) {
             if ($user->hasPermission('access_all_profiles')) {
-                $this->tpl_data['incomplete_forms']      = $DB->pselectOne(
+                $result['incomplete_forms'] = $DB->pselectOne(
                     "SELECT COUNT(*) FROM flag
-			LEFT JOIN session s ON (s.ID=flag.SessionID)
-			LEFT JOIN candidate c ON (s.CandID=c.CandID)
-		     WHERE flag.Data_entry='In Progress'
-			AND s.Active='Y' AND c.Active='Y' AND s.CenterID <> 1",
+                     LEFT JOIN session s ON (s.ID=flag.SessionID)
+                     LEFT JOIN candidate c ON (s.CandID=c.CandID)
+                     WHERE flag.Data_entry='In Progress'
+                     AND s.Active='Y' AND c.Active='Y' AND s.CenterID <> 1
+                     ",
                     array()
                 );
-                $this->tpl_data['incomplete_forms_site'] = 'Sites: all';
+                $result['incomplete_forms_site'] = 'Sites: all';
             } else {
-                $this->tpl_data['incomplete_forms']      = $DB->pselectOne(
+                $result['incomplete_forms'] = $DB->pselectOne(
                     "SELECT COUNT(*) FROM flag
-                    LEFT JOIN session s ON (flag.SessionID=s.ID)
-			LEFT JOIN candidate c ON (s.CandID=c.CandID)
-                    LEFT JOIN psc ON (psc.CenterID=s.CenterID) 
-                    WHERE Data_entry='In Progress' 
-                    AND FIND_IN_SET(psc.CenterID, :siteID)
-			          AND s.Active='Y' AND c.Active='Y'",
-                    array('siteID' => implode(',', $siteID))
+                     LEFT JOIN session s ON (flag.SessionID=s.ID)
+                     LEFT JOIN candidate c ON (s.CandID=c.CandID)
+                     LEFT JOIN psc ON (psc.CenterID=s.CenterID)
+                     WHERE Data_entry='In Progress'
+                     AND FIND_IN_SET(psc.CenterID, :siteID)
+			         AND s.Active='Y' AND c.Active='Y'
+			         ",
+                    array('siteID' => implode(',', $user->getCenterID()))
                 );
-                $this->tpl_data['incomplete_forms_site'] = $site;
+                $result['incomplete_forms_site'] = explode(';', $user->getSiteName());
             }
         }
-        // Final radiological review
+
+        return $result;
+    }
+
+    /**
+     * @param User $user Reference to user object
+     * @param Database $DB Reference to database object
+     *
+     * @return object Data related to radiological review
+     */
+    private function _dashboardFinalRadiologicalReview($user, $DB) {
+        $result = array();
+
         if ($user->hasPermission('edit_final_radiological_review')
             && $user->hasPermission('view_final_radiological_review')
         ) {
-            $this->tpl_data['radiology_review']      = $DB->pselectOne(
+            $result['radiology_review'] = $DB->pselectOne(
                 "SELECT COUNT(*) FROM final_radiological_review f
-			LEFT JOIN flag fg ON (fg.CommentID=f.CommentID)
-			LEFT JOIN session s ON (s.ID=fg.SessionID)
-			LEFT JOIN candidate c ON (c.CandID=s.CandID)
-                WHERE Review_Done IS NULL
-			AND c.Active='Y' AND s.Active='Y'",
+                 LEFT JOIN flag fg ON (fg.CommentID=f.CommentID)
+                 LEFT JOIN session s ON (s.ID=fg.SessionID)
+                 LEFT JOIN candidate c ON (c.CandID=s.CandID)
+                 WHERE Review_Done IS NULL
+                 AND c.Active='Y' AND s.Active='Y'
+                ",
                 array()
             );
-            $this->tpl_data['radiology_review_site'] = 'Sites: all';
+            $result['radiology_review_site'] = 'Sites: all';
         }
 
-        // Accounts pending approval
+        return $result;
+    }
+
+    /**
+     * @param User $user Reference to user object
+     * @param Database $DB Reference to database object
+     *
+     * @return object Data related to pending users
+     */
+    private function _dashboardAccountsPendingApproval($user, $DB) {
+        $result = array();
+
         if ($user->hasPermission('user_accounts_multisite')
             && $user->hasPermission('user_accounts')
         ) {
-            $this->tpl_data['pending_users']      = $DB->pselectOne(
+            $result['pending_users'] = $DB->pselectOne(
                 "SELECT COUNT(*) FROM users 
-                LEFT JOIN user_psc_rel as upr ON (upr.UserID=users.ID)
-		        WHERE users.Pending_approval='Y' 
-                AND (upr.CenterID <> 1 OR upr.CenterID IS NULL)",
+                 LEFT JOIN user_psc_rel as upr ON (upr.UserID=users.ID)
+		         WHERE users.Pending_approval='Y'
+                 AND (upr.CenterID <> 1 OR upr.CenterID IS NULL)
+                ",
                 array()
             );
-            $this->tpl_data['pending_users_site'] = 'Sites: all';
+            $result['pending_users_site'] = 'Sites: all';
         } elseif ($user->hasPermission('user_accounts')) {
-            $site_arr = $user->getCenterID();
-            $this->tpl_data['pending_users'] = $DB->pselectOne(
+            $result['pending_users'] = $DB->pselectOne(
                 "SELECT COUNT(*) FROM users 
                 LEFT JOIN user_psc_rel as upr ON (upr.UserID=users.ID)
 		        WHERE users.Pending_approval='Y' AND upr.CenterID IN (:CID)",
-                array('CID' => implode(",", $site_arr))
+                array('CID' => implode(",", $user->getCenterID()))
             );
 
-            $this->tpl_data['pending_users_site'] = 'Sites: ' . $site;
+            $result['pending_users_site'] = 'Sites: ' . explode(';', $user->getSiteName());
         }
 
-        // Violated scans
+        return $result;
+    }
+
+    /**
+     * @param User $user Reference to user object
+     * @param Database $DB Reference to database object
+     *
+     * @return object Data related to violated scans
+     */
+    private function _dashboardViolatedScans($user, $DB) {
+        $result = array();
+
         if ($user->hasPermission('violated_scans_view_allsites')) {
-            $this->tpl_data['violated_scans'] = $DB->pselectOne(
+            $result['violated_scans'] = $DB->pselectOne(
                 "SELECT COUNT(*) FROM mri_protocol_violated_scans
-			LEFT JOIN candidate c USING (CandID)
-		WHERE COALESCE(c.CenterID, 0) <> 1",
+                 LEFT JOIN candidate c USING (CandID)
+                 WHERE COALESCE(c.CenterID, 0) <> 1
+                ",
                 /* include null CenterIDs so we don't accidentally
                 filter things out */
                 array()
             );
-            $this->tpl_data['violated_scans_site'] = 'Sites: all';
+            $result['violated_scans_site'] = 'Sites: all';
         }
 
-        // Document Repository Items
+        return $result;
+    }
+
+    /**
+     * @param User $user Reference to user object
+     * @param Database $DB Reference to database object
+     * @param string $last_login Timestamp for user's last login
+     *
+     * @return object Data related to document repository items
+     */
+    private function _dashboardDocumentRepositoryItems($user, $DB, $last_login) {
+        $result = array();
+
         if ($user->hasPermission('document_repository_view')
             || $user->hasPermission('document_repository_delete')
         ) {
@@ -246,11 +354,22 @@ class NDB_Form_Dashboard extends NDB_Form
                     $document_repository[$i]['new'] = 0;
                 }
             }
-            $this->tpl_data['document_repository_notifications']
+            $result['document_repository_notifications']
                 = $document_repository;
         }
 
-        // Issue Tracker Assigned Issues
+        return $result;
+    }
+
+    /**
+     * @param User $user Reference to user object
+     * @param Database $DB Reference to database object
+     *
+     * @return object Data related to assigned issues
+     */
+    private function _dashboardAssignedIssues($user, $DB) {
+        $result = array();
+
         if ($user->hasPermission('issue_tracker_developer')) {
             $issue_tracker = $DB->pselectOne(
                 "SELECT COUNT(*) FROM issues
@@ -258,19 +377,30 @@ class NDB_Form_Dashboard extends NDB_Form
                  AND assignee=:userID",
                 array('userID' => $user->getData('UserID'))
             );
-            $this->tpl_data['issues_assigned']
-                = $issue_tracker;
+            $result['issues_assigned'] = $issue_tracker;
 
             // I suppose you could also base it on your query
             if ($user->hasPermission('access_all_profiles')) {
-                $this->tpl_data['issues_assigned_site'] = 'Sites: all';
+                $result['issues_assigned_site'] = 'Sites: all';
             } else {
-                $this->tpl_data['issues_assigned_site'] = 'Sites: '.
+                $result['issues_assigned_site'] = 'Sites: '.
                     $user->getSiteName();
             }
         }
 
-        // Behavioural Feedback Items
+        return $result;
+    }
+
+    /**
+     * @param User $user Reference to user object
+     * @param Database $DB Reference to database object
+     * @param string $last_login Timestamp for user's last login
+     *
+     * @return object Data related to behavioural feedback items
+     */
+    private function _dashboardBehaviouralFeedbackItems($user, $DB, $last_login) {
+        $result = array();
+
         if ($user->hasPermission('bvl_feedback')) {
             $bvl_feedback = $DB->pselect(
                 "SELECT fbt.Name, fbe.Testdate, fbe.Comment, fbth.FieldName, 
@@ -303,9 +433,10 @@ class NDB_Form_Dashboard extends NDB_Form
                     }
                 }
             }
-            $this->tpl_data['bvl_feedback_notifications']
-                = $bvl_feedback;
+            $result['bvl_feedback_notifications'] = $bvl_feedback;
         }
+
+        return $result;
     }
 
     /**
@@ -343,6 +474,25 @@ class NDB_Form_Dashboard extends NDB_Form
         );
         return $totalRecruitment;
     }
+
+    /**
+     * Gets the total count of candidates associated with a list of projects
+     *
+     * @return int
+     */
+    function getTotalRecruitmentForProjects($projectIDs)
+    {
+        $DB = Database::singleton();
+        $totalRecruitment = $DB->pselectOne(
+            "SELECT COUNT(*)
+             FROM candidate c
+             WHERE c.Active='Y' AND c.ProjectID=:PIDs AND c.Entity_type='Human'
+             AND c.CenterID <> 1",
+            array('PIDs' => implode(",", $projectIDs))
+        );
+        return $totalRecruitment;
+    }
+
 
     /**
      * Gets the total count of candidates of a specific gender
@@ -397,17 +547,18 @@ class NDB_Form_Dashboard extends NDB_Form
      * @param int    $recruitmentTarget Target number of candidates
      * @param int    $totalRecruitment  Total number of candidates
      *
-     * @return void
+     * @return array
      */
     function createProjectProgressBar(
         $ID, $title, $recruitmentTarget, $totalRecruitment
     ) {
-        $this->tpl_data['recruitment'][$ID]['total_recruitment'] = $totalRecruitment;
-        $this->tpl_data['recruitment'][$ID]['title'] = $title;
-        $this->tpl_data['recruitment'][$ID]['title'] = $title;
+        $result = array();
+
+        $result[$ID]['total_recruitment'] = $totalRecruitment;
+        $result[$ID]['title'] = $title;
 
         if (!empty($recruitmentTarget)) {
-            $this->tpl_data['recruitment'][$ID]['recruitment_target']
+            $result[$ID]['recruitment_target']
                 = $recruitmentTarget;
 
             if ($ID == 'overall') {
@@ -415,8 +566,8 @@ class NDB_Form_Dashboard extends NDB_Form
             } else {
                 $totalFemales = $this->getTotalGenderByProject("Female", $ID);
             }
-            $this->tpl_data['recruitment'][$ID]['female_total']   = $totalFemales;
-            $this->tpl_data['recruitment'][$ID]['female_percent']
+            $result[$ID]['female_total']   = $totalFemales;
+            $result[$ID]['female_percent']
                 = round($totalFemales / $recruitmentTarget * 100);
 
             if ($ID == 'overall') {
@@ -424,21 +575,22 @@ class NDB_Form_Dashboard extends NDB_Form
             } else {
                 $totalMales = $this->getTotalGenderByProject("Male", $ID);
             }
-            $this->tpl_data['recruitment'][$ID]['male_total']   = $totalMales;
-            $this->tpl_data['recruitment'][$ID]['male_percent']
+            $result[$ID]['male_total']   = $totalMales;
+            $result[$ID]['male_percent']
                 = round($totalMales / $recruitmentTarget * 100);
 
             if ($totalRecruitment > $recruitmentTarget) {
-                $this->tpl_data['recruitment'][$ID]['surpassed_recruitment']
+                $result[$ID]['surpassed_recruitment']
                     = "true";
 
-                $this->tpl_data['recruitment'][$ID]['female_full_percent']
+                $result[$ID]['female_full_percent']
                     = round($totalFemales / $totalRecruitment * 100);
 
-                $this->tpl_data['recruitment'][$ID]['male_full_percent']
+                $result[$ID]['male_full_percent']
                     = round($totalMales / $totalRecruitment * 100);
             }
         }
+        return $result;
     }
 
     /**
