@@ -1,4 +1,15 @@
 <?php
+function factHelper1 ($n) {
+    if ($n == 0) return 1;
+    return factHelper1($n-1)*$n;
+}
+
+function factHelper2 ($n) {
+    if ($n == 0.5) return sqrt(M_PI)/2;
+    return factHelper2($n-1)*$n;
+}
+
+
 $FUNCTIONS = array(
     '_eq' => function ($a, $b) {
         return $a == $b;
@@ -60,11 +71,11 @@ $FUNCTIONS = array(
             throw "Factorial for a number not divisible by 0.5 or greater than 0 is not supported.";
         }
     },
-    '_actHelper1' => function ($n) {
+    '_factHelper1' => function ($n) {
         if ($n == 0) return 1;
         return rec($n-1)*$n;
     },
-    '_actHelper2' => function ($n) {
+    '_factHelper2' => function ($n) {
         if ($n == 0.5) return sqrt(M_PI)/2;
         return rec($n-1)*$n;
     },
@@ -143,4 +154,27 @@ $FUNCTIONS = array(
         return $interval->format("%$units");
     }
 );
+
+$BINARY_OPS = array(
+    '_+' => $FUNCTIONS['_add'],
+    '_-' => $FUNCTIONS['_sub'],
+    '_=' => $FUNCTIONS['_eq'],
+    '_<>' => $FUNCTIONS['_neq'],
+    '_>' => $FUNCTIONS['_gt'],
+    '_<' => $FUNCTIONS['_lt'],
+    '_>=' => $FUNCTIONS['_geq'],
+    '_<=' => $FUNCTIONS['_leq'],
+    '_*' => $FUNCTIONS['_mul'],
+    '_/' => $FUNCTIONS['_div'],
+    '_^' => $FUNCTIONS['_pow'],
+    '_and' => $FUNCTIONS['_and'],
+    '_or' => $FUNCTIONS['_or']
+);
+
+$UNARY_OPS = array(
+    '_!' => $FUNCTIONS['_fact'],
+    '_%' => $FUNCTIONS['_per'],
+    '_not' => $FUNCTIONS['_not']
+);
+
 ?>

@@ -46,11 +46,12 @@
         function parseBoolTerm() {
             $bt = $this->getBacktrack();
             $left = $this->parseUnaryBool();
-            $op = $this->expect('and') || $this->expect('or');
-            if ($op === false) {
+            $filt = array_values(array_filter(["and","or"], array($this, 'expect')));
+            if (count($filt) === 0) {
                 return $left;
             }
             $this->next();
+            $op = $filt[0];
             $right = $this->parseBoolTerm();
             if ($right === false) {
                 $this->backtrack($bt);
@@ -89,9 +90,6 @@
             }
             $this->next();
             $op = $filt[0];
-            if ($op === false) {
-                return $left;
-            }
             $right = $this->parseBoolComp();
             if ($right === false) {
                 $this->backtrack($bt);
@@ -164,7 +162,7 @@
         }
         function parseUnaryFact() {
             $arg = $this->parseUnaryPercent();
-            $op = $this->expect("%");
+            $op = $this->expect("!");
             if ($op === false) {
                 return $arg;
             }
@@ -236,23 +234,31 @@
             }
             $this->next();
             return array(
-                'tag' => 'Literal',
+                'tag' => 'Number',
                 'args' => array($num),
             );
         }
         function parseString() {
-            $str = $this->expect("STRING") || $this->expect("ESTRING");
+            $str = $this->expect("STRING");
             if ($str === false) {
-                return false;
+                $str =$this->expect("ESTRING");
+                if ($str === false) {
+                    return false;
+                }
+                $this->next();
+                return array(
+                    'tag' => 'EString',
+                    'args' => array($str),
+                );
             }
             $this->next();
             return array(
-                'tag' => 'Literal',
+                'tag' => 'String',
                 'args' => array($str),
             );
         }
         function parseConstant() {
-            $filt = array_values(array_filter(["E", "PI"], array($this, 'expect')));
+            $filt = array_values(array_filter(["false", "true", "null", "E", "PI"], array($this, 'expect')));
             if (count($filt) === 0) {
                 return false;
             }
