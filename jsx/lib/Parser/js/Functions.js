@@ -110,9 +110,9 @@ export default {
     const mid = cpy.length / 2
     cpy.sort();
     if (cpy.length % 2 === 0) {
-      return (cpy[mid] + cpy[mid + 1]) / 2;
+      return (cpy[mid] + cpy[mid - 1]) / 2;
     } else {
-      return cpy[mid + 1];
+      return cpy[mid - 0.5];
     }
   },
   sum(...ns) {
