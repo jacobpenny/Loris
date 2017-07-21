@@ -4,10 +4,14 @@
 
     class Evaluator {
         static function evalAST($tree, $scope) {
-            var_dump($tree);
-            global $FUNCTIONS;
-            global $UNARY_OPS;
-            global $BINARY_OPS;
+            //var_dump($tree);
+            //global $FUNCTIONS;
+            //global $UNARY_OPS;
+            //global $BINARY_OPS;
+            $FUNCTIONS = getFunctions();
+            $UNARY_OPS = getUnary();
+            $BINARY_OPS = getBinary();
+
             $evalarg = function($a) use ($scope) {
                 return static::evalAST($a, $scope);
             };
@@ -49,7 +53,7 @@
                         if (static::evalAST($tree['args'][1][0], $scope)) {
                             return static::evalAST($tree['args'][1][1], $scope);
                         }
-                        return static::evalAST($tree['args'][1][2]);
+                        return static::evalAST($tree['args'][1][2], $scope);
                     }
                     $funcName = '_'.$tree['args'][0];
                     if (!isset($FUNCTIONS[$funcName])) {
@@ -68,14 +72,21 @@
                     return $BINARY_OPS[$funcName](...$funcArgs);
             }
         }
-        static function eval($expression, $scope) {
+        static function evaluate($expression, $scope) {
+            if(!isset($expression)) {
+                return null;
+            }
+            if($expression === '') {
+                return '';
+            }
             $tree = (new Parser($expression))->parse();
-            return static::evalAST($tree, $scope);
+            $res = static::evalAST($tree, $scope);
+            var_dump($res);
+            return $res;
         }
     }
 
     // For testing:
     // php evaluator.php 'eq([x][z(0)], 33)'
-
-    var_dump(Evaluator::eval($argv[1], array('x' => array('z' => 33))));
+    // var_dump(Evaluator::evaluate($argv[1], array('x' => array('z' => 33))));
 ?>
