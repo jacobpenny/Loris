@@ -346,28 +346,31 @@
                 return false;
             }
             $this->next();
-            $num = $this->parseNestedNumber();
+            $nest = $this->parseNestedVar();
             if ($this->expect("]") === false) {
                 $this->backtrack($bt);
                 return false;
             }
             $this->next();
-            if ($num === false) {
+            if ($nest === false) {
                 return array('var' => $var);
             }
-            return array('var' => $var, 'num' => $num);
+            return array('var' => $var, 'num' => $nest);
         }
-        function parseNestedNumber() {
+        function parseNestedVar() {
             $bt = $this->getBacktrack();
             if ($this->expect("(") === false) {
                 $this->backtrack($bt);
                 return false;
             }
             $this->next();
-            $num = $this->expect("NUMBER");
-            if ($num === false) {
-                $this->backtrack($bt);
-                return false;
+            $nest = $this->expect("NUMBER");
+            if ($nest === false) {
+                $nest = $this->expect("VARIABLE");
+                if ($nest === false) {
+                    $this->backtrack($bt);
+                    return false;
+                }
             }
             $this->next();
             if ($this->expect(")") === false) {
@@ -375,7 +378,7 @@
                 return false;
             }
             $this->next();
-            return $num;
+            return $nest;
         }
     }
 ?>

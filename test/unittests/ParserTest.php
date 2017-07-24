@@ -37,9 +37,10 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'age_mths'=>144,
                 'visit'=>'V1',
                 'lang'=>array(
-                    'en-ca'=>true,
-                    'fr-ca'=>false
+                    'en'=>true,
+                    'fr'=>false
                 ),
+                4=>true,
             ),
             'a'=>1,
             'b'=>50,
@@ -317,8 +318,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
     }
 
     public function testDateDiff(){
-        $equation = 'true';
-        $expected = true;
+        $equation = 'datediff("2017-01-01","2018-07-01","y")';
+        $expected = 1.5;
         try {
             $res = Evaluator::evaluate($equation, $this->scope);
         } catch (Exception $e) {
@@ -330,6 +331,39 @@ class ParserTest extends PHPUnit_Framework_TestCase
     public function testString(){
         $equation = '"STRINGS"';
         $expected = "STRINGS";
+        try {
+            $res = Evaluator::evaluate($equation, $this->scope);
+        } catch (Exception $e) {
+            $res = "$e";
+        }
+        $this->assertEquals($res, $expected);
+    }
+
+    public function testScope(){
+		$equation = '[t1_arm_1][lang][en]';
+        $expected = true;                                                                                                         
+        try {                                                                                                                          
+            $res = Evaluator::evaluate($equation, $this->scope);                                                                       
+        } catch (Exception $e) {
+            $res = "$e";
+        }
+        $this->assertEquals($res, $expected);                                                                                          
+    }
+
+    public function testNestedScope(){
+        $equation = '[t1_arm_1(4)]';
+        $expected = true;
+        try {
+            $res = Evaluator::evaluate($equation, $this->scope);
+        } catch (Exception $e) {
+            $res = "$e";
+        }
+        $this->assertEquals($res, $expected);
+    }
+
+    public function testNestedNestedScope(){
+        $equation = '[t1_arm_1(lang)][fr]';
+        $expected = false;
         try {
             $res = Evaluator::evaluate($equation, $this->scope);
         } catch (Exception $e) {

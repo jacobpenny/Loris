@@ -146,7 +146,7 @@ export default {
     let res;
     switch (units) {
         case 'y':
-            res = 1000*60*60*24*365.2425
+            res = 1000*60*60*24*365
             break;
         case 'm':
             res = 1000*60*60*24*30.44
@@ -155,8 +155,11 @@ export default {
             res = 1000*60*60*24
             break;
     }
-    const diff = (dt1.getTime() - dt2.getTime())/res;
-    return diff;
+    if (returnSigned) {
+        return (dt1.getTime() - dt2.getTime())/res;
+    } else {
+        return Math.abs((dt1.getTime() - dt2.getTime())/res);
+    }
     /*let mdate1, mdate2;
     switch (format) {
       case 'ymd': {
