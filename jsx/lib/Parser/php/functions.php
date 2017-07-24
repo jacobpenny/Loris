@@ -161,8 +161,20 @@ function getFunctions() {
     	    $dt1 = new DateTime($date1);
     	    $dt2 = new DateTime($date2);
     	    $interval = date_diff($dt1, $dt2, !$returnSigned);
-    	    //deal with units
-    	    return $interval->format("%$units");
+    	    $res;
+            if ($units === 'y') {
+        	    $res = ($interval->format("%y")+$interval->format("%m")/12+$interval->format("%d")/365);
+            } else if ($units === 'm') {
+                $res = ($interval->format("%y")*12+$interval->format("%m")+$interval->format("%d")/30.44);
+            } else if ($units === 'd') {
+                $res = ($interval->format("%y")*365+$interval->format("%m")*30.44+$interval->format("%d"));
+            } else {
+                return 0;
+            }
+            if (!$returnSigned) {
+                $res = abs($res);
+            }
+            return $res;
     	}
 	);
 }
