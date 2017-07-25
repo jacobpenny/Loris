@@ -4,10 +4,6 @@
 
     class Evaluator {
         static function evalAST($tree, $scope) {
-            //var_dump($tree);
-            //global $FUNCTIONS;
-            //global $UNARY_OPS;
-            //global $BINARY_OPS;
             $FUNCTIONS = getFunctions();
             $UNARY_OPS = getUnary();
             $BINARY_OPS = getBinary();
