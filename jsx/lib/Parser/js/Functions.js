@@ -147,7 +147,7 @@ export default {
         dt1 = new Date(d1[0],d1[1],d1[2]);
         dt2 = new Date(d2[0],d2[1],d2[2]);
     } catch (e) {
-        throw e;
+        return 0;
     }
     let res;
     switch (units) {
@@ -168,7 +168,7 @@ export default {
             return Math.abs((dt1.getTime() - dt2.getTime())/res);
         }
     } catch (e) {
-        throw e;
+        return 0;
     }
     /*let mdate1, mdate2;
     switch (format) {
