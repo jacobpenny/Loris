@@ -170,11 +170,6 @@ export default {
     } catch (e) {
         return 0;
     }
-    if (returnSigned) {
-        return (dt1.getTime() - dt2.getTime())/res;
-    } else {
-        return Math.abs((dt1.getTime() - dt2.getTime())/res);
-    }
     /*let mdate1, mdate2;
     switch (format) {
       case 'ymd': {

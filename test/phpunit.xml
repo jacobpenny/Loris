@@ -7,6 +7,10 @@
         <testsuite name='PHPParserTest'>
             <file>./unittests/ParserTest.php</file>
         </testsuite>
+        
+        <testsuite name='NAIPTests'>
+          <file>./unittests/NDB_BVL_Instrument_JSON.php</file>
+        </testsuite>
 
         <testsuite name='LorisUnitTests'>
             <directory>./unittests/</directory>
