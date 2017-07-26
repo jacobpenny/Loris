@@ -68,7 +68,7 @@ Note that all whitespace (spaces or tabs) is ignored in the parser.
 | Type              	| Syntax                 	| Notes                                              	|
 |-------------------	|------------------------	|----------------------------------------------------	|
 | number            	| 1<br>900<br>123.456          	|                                                    	|
-| text              	| "this is my text!_123" 	| empty text is supported; ' can be used instead of " 	|
+| text              	| "this is my text!_123" 	| empty text is supported<br>' can be used instead of " 	|
 | variable          	| [my_variable_name]<br>[nested_variable(array_access)]<br>[my_var][nested_var]|                                                |
 | nested expression 	| (expression)           	|                                                    	|
 
@@ -91,7 +91,7 @@ Note that all whitespace (spaces or tabs) is ignored in the parser.
 | divide    	| a / b  	| cannot divide by 0                                                	|
 | exponent  	| a ^ b  	|                                                                     	|
 | percentage  	| a %   	| divides the value of a by 100                                         |
-| factorial  	| a !   	| returns a factorial; supports 0 or positive numbers divisible by 0.5  |
+| factorial  	| a !   	| returns a factorial<br>supports 0 or positive numbers divisible by 0.5  |
 
 ### Boolean/Comparison Operations (returns true or false)
 | Operation        	| Syntax  	| Notes                            	|
@@ -139,5 +139,5 @@ Note that all whitespace (spaces or tabs) is ignored in the parser.
 |--------------	|---------------------------------------	|-------------------------------------------------------------------------------------------------------------------------------------------	|
 | date         	| "YYYY-MM-DD" 	| YMD is the only accepted format (ISO standard)                                           |
 | units        	| "y","m","d"               	| specifies the return value unit: years, months, days, |
-| signed       	| true/false                            	| if true, negative differences will be allowed. if false, the difference will always be positive                                           	|
+| signed       	| true/false                            	| if true, negative differences will be allowed<br>if false, the difference will always be positive                                           	|
 | return value 	|                                       	| returns date1 - date 2 in the specified unit                                                                                              	|
