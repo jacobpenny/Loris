@@ -67,7 +67,7 @@ Note that all whitespace (spaces or tabs) is ignored in the parser.
 ### Value Inputs
 | Type              	| Syntax                 	| Notes                                              	|
 |-------------------	|------------------------	|----------------------------------------------------	|
-| number            	| 1; 900; 123.456          	|                                                    	|
+| number            	| 1<br>900<br>123.456          	|                                                    	|
 | text              	| "this is my text!_123" 	| empty text is supported; ' can be used instead of " 	|
 | variable          	| [my_variable_name]<br>[nested_variable(array_access)]<br>[my_var][nested_var]|                                                |
 | nested expression 	| (expression)           	|                                                    	|
