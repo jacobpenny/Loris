@@ -1,8 +1,11 @@
 # ZAIN Rules
 
 [JS Use](#js)
+
 [PHP Use](#php)
+
 [Development](#dev)
+
 [Syntax](#syntax)
 
 The parser provides a human readable syntax for front end equation building, real-time calculations, and back end validation. 
