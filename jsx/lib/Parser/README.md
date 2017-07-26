@@ -1,8 +1,12 @@
-# ZAIN Rules (Working Title)
+# ZAIN Rules
 
-The parser provides a human readable syntax for front end equation building, real-time calculations, and back end validation.
+The parser provides a human readable syntax for front end equation building, real-time calculations, and back end validation. The syntax can be used to determine whether instrument fields are shown, hidden (survey), required, as well as to perform real-time scoring or branching logic calculations while referencing other fields or subject meta-data.
 
-This Readme breaks down the different parts of the Parser and lists syntax rules.
+Fun features: infinite variable nesting, easily managed evaluation, human readable syntax, AST evaluation, fraction factorials, variance and standard deviation, date calculations, boolean operations, type checking and much more.
+
+Putting the fun in functions: developers can easily add or change functions without editing syntax or actually knowing how a parser works.
+
+This ReadMe breaks down the different parts of the Parser and lists syntax rules.
 
 Note that this parser is made up of two separate components: a JS parser and a PHP parser, both of which use the same syntax detailed below.
 
