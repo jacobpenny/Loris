@@ -73,7 +73,7 @@ Note that all whitespace (spaces or tabs) is ignored in the parser.
 ### Numerical Operations
 | Operation 	| Syntax 	| Notes                                                             	|
 |-----------	|--------	|--------------------------------------------------------------------   |
-| add       	| a + b  	| can be used to concatenate strings                                  	|
+| add       	| a + b  	|                                                                   	|
 | subtract  	| a - b  	|                                                                    	|
 | negate    	| - a    	|                                                                    	|
 | multiply  	| a * b  	|                                                                     	|
