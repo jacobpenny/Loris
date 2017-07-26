@@ -20,11 +20,11 @@ Note that this parser is made up of two separate components: a JS parser and a P
 
 # <a name="js"></a>JS Use
 At the top of your JS file add `import { Evaluator } from 'Parser';` (change the path based on your directory location).
-Call `Evaluator(LOGIC_STRING, SCOPE)` to evaluate an equation.
+<br>Call `Evaluator(LOGIC_STRING, SCOPE)` to evaluate an equation.
 
 # <a name="php"></a>PHP Use
 At the top of your PHP file add `include 'Parser/php/evaluator.php';`. 
-Call the evaluator with `Evaluator::evaluate($equation, $this->scope);`.
+<br>Call the evaluator with `Evaluator::evaluate($equation, $this->scope);`.
 
 # <a name="dev"></a>Development
 To add, delete, or edit functions, simply edit `js/Functions.js` and `php/functions.php`.
