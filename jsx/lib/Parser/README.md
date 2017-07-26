@@ -17,7 +17,7 @@ Note that this parser is made up of two separate components: a JS parser and a P
  Note that end users do not require Jison, only the Jison-generated parser file.
  
 # Development and Use
-NOTE: Please make sure all changes are mirrored on both the JS and PHP sides of the parser. Discrepancies will cause more headaches than you or I wish to deal with.
+NOTE: Please make sure all changes are mirrored on both the JS and PHP sides of the parser. Discrepancies will cause more headaches than you or I wish to deal with. Integration tests to come.
 
 ### Syntax and Operator Changes
 Changing syntax (or adding unary/binary operators) requires changes to `jison/logicParser.jison` as well as `php/lexer.php` and `php/parser.php`.
