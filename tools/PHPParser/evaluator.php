@@ -53,7 +53,7 @@
                     }
                     $funcName = '_'.$tree['args'][0];
                     if (!isset($FUNCTIONS[$funcName])) {
-                        throw `{$tree['args'][0]} is not a defined function.`;
+                        throw new Exception(`{$tree['args'][0]} is not a defined function.`);
                     }
                     $funcArgs = array_map($evalarg, $tree['args'][1]);
                     return $FUNCTIONS[$funcName](...$funcArgs);
@@ -75,7 +75,11 @@
             if($expression === '') {
                 return '';
             }
-            $tree = (new Parser($expression))->parse();
+            try {
+                $tree = (new Parser($expression))->parse();
+            } catch (Exception $e) {
+                throw new Exception("Parser error; review Syntax\n$e");
+            }
             $res = static::evalAST($tree, $scope);
             var_dump($res);
             return $res;
