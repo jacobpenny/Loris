@@ -42,8 +42,8 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
 
     function _getContext() {
         return array(
-            't1_arm_1' => array(
-                "age_mths" => 1000
+            "t1_arm_1" => array(
+                "age_mths" => 200
             )
         );
     }
@@ -80,6 +80,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
             $this->instrument = json_decode($json, true);
             $this->instrument["Elements"] = self::inlineCalcFormulas($this->instrument["Elements"]);
             $this->table = $this->instrument['Meta']['ShortName'];
+            return $json;
         }
     }
 
