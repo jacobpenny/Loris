@@ -40,6 +40,12 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $this->page          = $page;
     }
 
+    /**
+     * Returns candidate-related context variables to be accessed during runtime
+     * Allows access to: date of birth, age in months (calculated)
+     * 
+     * @return array containing context variables
+     */
     function _getContext() {
         return array(
             "t1_arm_1" => array(
