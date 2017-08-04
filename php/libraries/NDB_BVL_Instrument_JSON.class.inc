@@ -61,10 +61,12 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $gender = $candidate->getCandidateGender();
         return array(
             "context" => array(
-                "dob" => $dob,
                 "age_mths" => $ageM,
+                "dob" => $dob,
                 "gender" => $gender
-            )
+            ),
+            "age_mths" => $ageM,
+            "dob" => $dob
         );
     }
 

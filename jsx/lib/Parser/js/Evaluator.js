@@ -29,10 +29,10 @@ function evalAST(tree, scope) {
       var res = scope[tree.args[0]];
       for (var i = 0; i < tree.args[1].length; i++) {
         if (typeof res[tree.args[1][i]] === 'undefined') {
-          throw new Error(`Unbound sub-variable: ${tree.args[0]}`);
+          throw new Error(`Unbound sub-variable: ${tree.args[1][i]}`);
         }
         if (res[tree.args[1][i]] === null) {
-          throw new TypeError(`Null sub-variable: ${tree.args[0]}`);
+          throw new TypeError(`Null sub-variable: ${tree.args[1][i]}`);
         }
         res = res[tree.args[1][i]];
       }

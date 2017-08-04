@@ -37,7 +37,7 @@
                         $i = 0;
                         for($i; $i < count($tree['args'][1]); $i++) {
                             if (!isset($res[$tree['args'][1][$i]])) {
-                                throw new Exception("Unbound sub-variable: " . $tree['args'][1][$i]);
+                                throw new Exception("Unbound sub-variable: " . $tree['args'][1] . ":" . $tree['args'][1][$i]);
                             }
                             $res = $res[$tree['args'][1][$i]];
                         }
