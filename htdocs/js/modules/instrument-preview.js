@@ -40,7 +40,7 @@ class InstrumentPreview extends React.Component {
       data: initialData,
       lang: 'en-ca',
       context: {
-        t1_arm_1: {
+        context: {
           lang: '2',
           age_mths,
         },
@@ -104,7 +104,7 @@ class InstrumentPreview extends React.Component {
 
   updateDOB(date) {
     const age_mths = getAgeInMonths(new Date(date));
-    const t1_arm_1 = Object.assign({}, this.state.context.t1_arm_1, {age_mths});
+    const context = Object.assign({}, this.state.context.context, {age_mths});
     this.setState({
       context: Object.assign({}, this.state.context, { t1_arm_1, age_mths, dob: date })
     });
