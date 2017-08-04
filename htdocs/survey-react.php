@@ -251,7 +251,6 @@ class DirectDataEntryMainPage
         $this->tpl_data['lang'] = $json_class->_getLang();
         $this->tpl_data['json'] = htmlspecialchars($json);
         //$this->tpl_data['initialData'] = $json_class->_getInstrumentData($DB);
-        echo serialize($json_class->_getContext());
         $contextArray = $json_class->_getContext();
         $contextJSON = json_encode($contextArray);
         $this->tpl_data['context'] = htmlspecialchars($contextJSON);

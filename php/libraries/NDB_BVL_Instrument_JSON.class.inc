@@ -60,7 +60,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
                 +$interval->format("%d")/30.44);
         $gender = $candidate->getCandidateGender();
         return array(
-            "t1_arm_1" => array(
+            "context" => array(
                 "dob" => $dob,
                 "age_mths" => $ageM,
                 "gender" => $gender
@@ -69,8 +69,11 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
     }
 
     function _getLang() {
-        // This should grab lang from the timepoint associated with this instrument instance
-        return 'en-ca';
+        $timepoint = \TimePoint::singleton($this->getSessionID());
+        $candID = $timepoint->getCandID();
+        $candidate = \Candidate::singleton($candID);
+        $lang = $candidate->getCandidateLanguage();
+        return $lang ? $lang : "en-ca";
     }
 
     function _getInstrumentData($db) {

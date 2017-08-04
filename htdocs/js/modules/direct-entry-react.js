@@ -49,7 +49,6 @@ class DirectEntry extends React.Component {
 
   render() {
     const { rawInstrument, rawContext, lang } = this.props;
-
     const instrumentCopy = JSON.parse(JSON.stringify(rawInstrument));
     instrumentCopy['Meta']['LongName'] = instrumentCopy['Meta']['LongName'][lang];
     const instrument = removeHiddenSurveyElements(instrumentCopy, lang);
@@ -119,6 +118,6 @@ window.onload = function() {
   const instrumentEl = document.querySelector('#instrument');
   const rawInstrument = JSON.parse(instrumentEl.dataset.json);
   const rawContext = JSON.parse(instrumentEl.dataset.context);
-  const lang = 'en-ca';
+  const lang = instrumentEl.dataset.inst_lang;
   ReactDOM.render(<DirectEntry rawInstrument={rawInstrument} rawContext={rawContext} lang={lang}/>, document.getElementById("container"));
 };
