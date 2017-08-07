@@ -75,7 +75,7 @@ class InstrumentPreview extends React.Component {
 
   updateInstrumentData(fieldName, value) {
     const instrumentData = Object.assign({}, this.state.data[this.state.selectedInstrument], {[fieldName]: value});
-
+    console.log(instrumentData);
     const calcElements = this.props.instruments[this.state.selectedInstrument].Elements.filter(
       (element) => (element.Type === 'calc')
     );
@@ -105,7 +105,7 @@ class InstrumentPreview extends React.Component {
 
   updateDOB(date) {
     const age_mths = getAgeInMonths(new Date(date));
-    const contextObj = Object.assign({}, this.state.contextObj.context, {age_mths});
+    const context = Object.assign({}, this.state.contextObj.context, {age_mths});
     this.setState({
       contextObj: Object.assign({}, this.state.contextObj, { context, age_mths, dob: date })
     });
