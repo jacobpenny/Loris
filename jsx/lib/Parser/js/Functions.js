@@ -154,12 +154,15 @@ export default {
     }
     let res;
     switch (units) {
+        case 'Y': 
         case 'y':
             res = 1000*60*60*24*365
             break;
+        case 'M':
         case 'm':
             res = 1000*60*60*24*30.44
             break;
+        case 'D':
         case 'd':
             res = 1000*60*60*24
             break;
