@@ -223,7 +223,7 @@ function localizeInstrument(rawInstrument, lang = 'en-ca') {
           element['Description'] = element['Description'][lang];
         } else {
           if (['text', 'date'].includes(element.Type)) {
-            element['Description'] = element.fieldNote ? element.fieldNote : "Enter a value: ";
+            element['Description'] = element.Comment ? element.Comment : "Enter a value: ";
           } else if (['select', 'radio', 'checkbox'].includes(element.Type)) {
             element['Description'] = "Choose a value: ";
           } else if (['label'].includes(element.Type)) {
