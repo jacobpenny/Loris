@@ -2,7 +2,8 @@ import InstrumentForm from '../../../jsx/InstrumentForm';
 //
 const translations = {
   finalize: {
-    'en-ca': 'Save and Finalize'
+    'en-ca': 'Save and Finalize',
+    'fr-ca': 'Save and Finalize (french tho)'
   }
 };
 
