@@ -1,12 +1,13 @@
 import InstrumentForm from '../../../jsx/InstrumentForm';
-
+//
 const translations = {
   finalize: {
-    'en-ca': 'Save and Finalize'
+    'en-ca': 'Save and Finalize',
+    'fr-ca': 'Save and Finalize (french tho)'
   }
 };
 
-const INPUT_ELEMENT_TYPES = ['radio', 'text', 'calc', 'checkbox'];
+const INPUT_ELEMENT_TYPES = ['date', 'radio', 'text', 'calc', 'checkbox'];
 
 function getInitialData(instrument) {
   return instrument.Elements.filter((element) => (
@@ -48,19 +49,20 @@ class DirectEntry extends React.Component {
   }
 
   render() {
-    const { rawInstrument, lang } = this.props;
-
+    const { rawInstrument, rawContext, lang } = this.props;
     const instrumentCopy = JSON.parse(JSON.stringify(rawInstrument));
     instrumentCopy['Meta']['LongName'] = instrumentCopy['Meta']['LongName'][lang];
     const instrument = removeHiddenSurveyElements(instrumentCopy, lang);
-
     return (
       <div>
         <InstrumentForm
           instrument={instrument}
-          lang={lang}
+          instrument={localizeInstrument(instrument, lang)}
           data={this.state.data}
+          context={rawContext}
+          options={false}
           onUpdate={this.updateInstrumentData}
+          onSave={null}
         />
         <button onClick={(e) => {
           e.preventDefault();
@@ -116,6 +118,7 @@ function localizeInstrument(rawInstrument, lang = 'en-ca') {
 window.onload = function() {
   const instrumentEl = document.querySelector('#instrument');
   const rawInstrument = JSON.parse(instrumentEl.dataset.json);
-  const lang = 'en-ca';
-  ReactDOM.render(<DirectEntry rawInstrument={rawInstrument} lang={lang}/>, document.getElementById("container"));
+  const rawContext = JSON.parse(instrumentEl.dataset.context);
+  const lang = instrumentEl.dataset.inst_lang;
+  ReactDOM.render(<DirectEntry rawInstrument={rawInstrument} rawContext={rawContext} lang={lang}/>, document.getElementById("container"));
 };

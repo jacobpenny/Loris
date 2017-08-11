@@ -39,10 +39,11 @@ class InstrumentPreview extends React.Component {
       selectedInstrument: this.names[2],
       data: initialData,
       lang: 'en-ca',
-      context: {
-        t1_arm_1: {
+      contextObj: {
+        context: {
           lang: '2',
           age_mths,
+          dob
         },
         age_mths,
         lang: '2',
@@ -74,12 +75,12 @@ class InstrumentPreview extends React.Component {
 
   updateInstrumentData(fieldName, value) {
     const instrumentData = Object.assign({}, this.state.data[this.state.selectedInstrument], {[fieldName]: value});
-
+    console.log(instrumentData);
     const calcElements = this.props.instruments[this.state.selectedInstrument].Elements.filter(
       (element) => (element.Type === 'calc')
     );
 
-    const evaluatorContext = Object.assign({}, this.state.context, instrumentData);
+    const evaluatorContext = Object.assign({}, this.state.contextObj, instrumentData);
     const calculatedValues = calcElements.reduce((result, element) => {
       try {
         result[element.Name] = String(Evaluator(element.Formula, evaluatorContext));
@@ -104,9 +105,9 @@ class InstrumentPreview extends React.Component {
 
   updateDOB(date) {
     const age_mths = getAgeInMonths(new Date(date));
-    const t1_arm_1 = Object.assign({}, this.state.context.t1_arm_1, {age_mths});
+    const context = Object.assign({}, this.state.contextObj.context, {age_mths});
     this.setState({
-      context: Object.assign({}, this.state.context, { t1_arm_1, age_mths, dob: date })
+      contextObj: Object.assign({}, this.state.contextObj, { context, age_mths, dob: date })
     });
   }
 
@@ -116,11 +117,11 @@ class InstrumentPreview extends React.Component {
       'fr-ca': '1'
     };
 
-    const t1_arm_1 = Object.assign({}, this.state.context.t1_arm_1, {lang: langMap[lang]});
+    const context = Object.assign({}, this.state.contextObj.context, {lang: langMap[lang]});
 
     this.setState({
       lang,
-      context: Object.assign({}, this.state.context, { t1_arm_1, lang: langMap[lang] })
+      contextObj: Object.assign({}, this.state.contextObj, { context, lang: langMap[lang] })
     });
   }
 
@@ -174,10 +175,10 @@ class InstrumentPreview extends React.Component {
                 type="date"
                 className="form-control"
                 name="dob"
-                value={this.state.context.dob}
+                value={this.state.contextObj.dob}
                 onChange={(e) => { this.updateDOB(e.target.value)}}
               />
-              &nbsp;<small>{`(Age In Months: ${this.state.context.age_mths})`}</small>
+              &nbsp;<small>{`(Age In Months: ${this.state.contextObj.age_mths})`}</small>
               </div>
             </label>
             <br />
@@ -198,7 +199,7 @@ class InstrumentPreview extends React.Component {
             instrument={localizeInstrument(instruments[this.state.selectedInstrument], this.state.lang)}
             lang={this.state.lang}
             data={this.state.data[this.state.selectedInstrument]}
-            context={this.state.context}
+            context={this.state.contextObj}
             onUpdate={this.updateInstrumentData}
             options={this.state.options}
           />
@@ -217,12 +218,23 @@ function localizeInstrument(rawInstrument, lang = 'en-ca') {
     const convertedElements = [];
 
     instrument['Elements'].forEach((element) => {
-      if (['label', 'text', 'calc', 'date'].includes(element.Type)  && element['Description'][lang]) {
-        element['Description'] = element['Description'][lang];
-        convertedElements.push(element);
-      } else if (['select', 'radio', 'checkbox'].includes(element.Type) && element['Description'][lang]) {
-        element['Description'] = element['Description'][lang];
-        element['Options']['Values'] = element['Options']['Values'][lang];
+      if (['label', 'text', 'calc', 'date', 'select', 'radio', 'checkbox'].includes(element.Type)) {
+        if (element['Description'][lang]) {
+          element['Description'] = element['Description'][lang];
+        } else {
+          if (['text', 'date'].includes(element.Type)) {
+            element['Description'] = element.Comment ? element.Comment : "Enter a value: ";
+          } else if (['select', 'radio', 'checkbox'].includes(element.Type)) {
+            element['Description'] = "Choose a value: ";
+          } else if (['label'].includes(element.Type)) {
+            element['Description'] = "";
+          } else if (['calc'].includes(element.Type)) {
+            element['Description'] = "Result: ";
+          }
+        }
+        if (['select', 'radio', 'checkbox'].includes(element.Type)) {
+          element['Options']['Values'] = element['Options']['Values'][lang];
+        }
         convertedElements.push(element);
       } else if (['radio-labels'].includes(element.Type) && element['Labels'][lang]) {
         element['Labels'] = element['Labels'][lang];

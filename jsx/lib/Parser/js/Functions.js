@@ -73,14 +73,17 @@ export default {
     return isNaN(a);
   },
   round(n, places) {
+    places = places ? places : 0;
     const shift = Math.pow(10, places);
     return Math.round(n * shift) / shift;
   },
   roundup(n, places) {
+    places = places ? places : 0;
     const shift = Math.pow(10, places);
     return Math.ceil(n * shift) / shift;
   },
   rounddown(n, places) {
+    places = places ? places : 0;
     const shift = Math.pow(10, places);
     return Math.floor(n * shift) / shift;
   },
@@ -151,12 +154,15 @@ export default {
     }
     let res;
     switch (units) {
+        case 'Y': 
         case 'y':
             res = 1000*60*60*24*365
             break;
+        case 'M':
         case 'm':
             res = 1000*60*60*24*30.44
             break;
+        case 'D':
         case 'd':
             res = 1000*60*60*24
             break;
