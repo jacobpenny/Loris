@@ -92,6 +92,7 @@ function getFunctions() {
             }
 		},
 		'_round' => function ($n, $places) {
+
 			$places = $places ? $places : 0;
             $shift = 10 ** $places;
 			return round($n * $shift) / $shift;
@@ -104,6 +105,7 @@ function getFunctions() {
     	'_rounddown' => function ($n, $places) {
     	    $places = $places ? $places : 0;
             $shift = 10 ** $places;
+
     	    return floor($n * $shift) / $shift;
     	},
     	'_sqrt' => function ($a) {
@@ -165,11 +167,13 @@ function getFunctions() {
     	    $dt2 = new DateTime($date2);
     	    $interval = date_diff($dt1, $dt2, !$returnSigned);
     	    $res;
+
             if ($units === 'y' || $units === 'Y') {
         	    $res = ($interval->format("%y")+$interval->format("%m")/12+$interval->format("%d")/365);
             } else if ($units === 'm' || $units === 'M') {
                 $res = ($interval->format("%y")*12+$interval->format("%m")+$interval->format("%d")/30.44);
             } else if ($units === 'd' || $units === 'D') {
+
                 $res = ($interval->format("%y")*365+$interval->format("%m")*30.44+$interval->format("%d"));
             } else {
                 return 0;

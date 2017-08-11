@@ -11,6 +11,7 @@ const InstrumentForm = ({instrument, data, context, options, onUpdate, onSave}) 
       {renderMeta(instrument.Meta)}
       {
         instrument.Elements.filter((element, index) => {
+
           if(options) {
             if (options.surveyMode && element.HiddenSurvey) return false;
           } else {
