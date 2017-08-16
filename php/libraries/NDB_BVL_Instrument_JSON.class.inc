@@ -75,7 +75,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
      *                          when no file has yet been saved to the
      *                          instruments/ directory
      *
-     * @return none, but as a side effect displays the Instrument page
+     * @return json   returns the instrument from the .json
      */
     function loadInstrumentFile($filename, $base64 = false)
     {
