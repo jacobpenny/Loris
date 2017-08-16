@@ -1,15 +1,20 @@
 .instrument-label {
-    margin-bottom: 20px;
+    margin-bottom: 0px;
+}
+
+h1 {
+    font-size: 28px;
 }
 
 body {
-    margin-left: 0%;
-    margin-right: 0%;
-    margin-top: 0%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 5%;
 }
 
 .title {
-    margin-bottom: 30px;
+    text-align: center;
+    margin-bottom: 0px;
 }
 
 label {
