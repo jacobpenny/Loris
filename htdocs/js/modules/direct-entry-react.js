@@ -2,7 +2,8 @@ import InstrumentForm from '../../../jsx/InstrumentForm';
 //
 const translations = {
   finalize: {
-    'en-ca': 'Save and Finalize'
+    'en-ca': 'Save and Finalize',
+    'fr-ca': 'Enregistrer et Finaliser'
   }
 };
 
@@ -49,9 +50,7 @@ class DirectEntry extends React.Component {
 
   render() {
     const { rawInstrument, rawContext, lang } = this.props;
-
     const instrumentCopy = JSON.parse(JSON.stringify(rawInstrument));
-    instrumentCopy['Meta']['LongName'] = instrumentCopy['Meta']['LongName'][lang];
     const instrument = removeHiddenSurveyElements(instrumentCopy, lang);
     return (
       <div>
@@ -90,13 +89,14 @@ function localizeInstrument(rawInstrument, lang = 'en-ca') {
 
   try {
     instrument['Meta']['LongName'] = instrument['Meta']['LongName'][lang];
-
+    const longName = instrument['Meta']['LongName'];
     const convertedElements = [];
-
     instrument['Elements'].forEach((element) => {
       if (element.Type === 'label' && element['Description'][lang]) {
         element['Description'] = element['Description'][lang];
-        convertedElements.push(element);
+        if (!element['Description'].includes(longName)) {
+          convertedElements.push(element);
+        }
       } else if (['select', 'radio', 'checkbox'].includes(element.Type) && element['Description'][lang]) {
         element['Description'] = element['Description'][lang];
         element['Options']['Values'] = element['Options']['Values'][lang];
@@ -119,6 +119,6 @@ window.onload = function() {
   const instrumentEl = document.querySelector('#instrument');
   const rawInstrument = JSON.parse(instrumentEl.dataset.json);
   const rawContext = JSON.parse(instrumentEl.dataset.context);
-  const lang = 'en-ca';
+  const lang = instrumentEl.dataset.inst_lang;
   ReactDOM.render(<DirectEntry rawInstrument={rawInstrument} rawContext={rawContext} lang={lang}/>, document.getElementById("container"));
 };

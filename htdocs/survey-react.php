@@ -239,15 +239,22 @@ class DirectDataEntryMainPage
      */
     function display()
     {
+        $DB = \Database::singleton();
         $this->logRequest();
         $factory = \NDB_Factory::singleton();
         $config  = $factory->config();
         $json_class = new NDB_BVL_Instrument_JSON();
+        $json_class->setup($this->CommentID);
         $base    = $config->getSetting('base');
         $json    = file_get_contents($base."project/instruments/$this->TestName.json");
         $this->updateStatus('In Progress');
         $this->tpl_data['lang'] = $json_class->_getLang();
         $this->tpl_data['json'] = htmlspecialchars($json);
+        //$this->tpl_data['initialData'] = $json_class->_getInstrumentData($DB);
+        $contextArray = $json_class->_getContext();
+        $contextJSON = json_encode($contextArray);
+        $this->tpl_data['context'] = htmlspecialchars($contextJSON);
+        $smarty = new \Smarty_neurodb;
         $this->tpl_data['initialData'] = $_REQUEST['initialData'];
         $contextArray = $json_class->_getContext();
         $contextJSON = json_encode($contextArray);
