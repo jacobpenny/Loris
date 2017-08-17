@@ -254,9 +254,12 @@ class DirectDataEntryMainPage
         $contextArray = $json_class->_getContext();
         $contextJSON = json_encode($contextArray);
         $this->tpl_data['context'] = htmlspecialchars($contextJSON);
-		//$jsDependencies = $json_class->getJSDependencies();
-        //$this->tpl_data['jsfiles'] = $jsDependencies;
         $smarty = new \Smarty_neurodb;
+        $this->tpl_data['initialData'] = $_REQUEST['initialData'];
+        $contextArray = $json_class->_getContext();
+        $contextJSON = json_encode($contextArray);
+        $this->tpl_data['context'] = htmlspecialchars($contextJSON);
+		$smarty = new \Smarty_neurodb;
         $smarty->assign($this->tpl_data);
         $smarty->display('directentry-react.tpl');
     }

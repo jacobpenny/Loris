@@ -1,5 +1,5 @@
 import InstrumentForm from '../../../jsx/InstrumentForm';
-
+//
 const translations = {
   finalize: {
     'en-ca': 'Save and Finalize',
