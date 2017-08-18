@@ -46,17 +46,37 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
      * @return array containing context variables
      */
     function _getContext() {
+        $timepoint = \TimePoint::singleton($this->getSessionID());
+        $candID = $timepoint->getCandID();
+        $candidate = \Candidate::singleton($candID);
+        $dob = $candidate->getCandidateDoB();
+        $dobDT = new \DateTime($dob);
+        $curDate = new \DateTime("now");
+        $interval = date_diff($curDate, $dobDT, true);
+        $ageM = ($interval->format("%y")*12
+                +$interval->format("%m")
+                +$interval->format("%d")/30.44);
+        $gender = $candidate->getCandidateGender();
         return array(
-            "t1_arm_1" => array(
-                "age_mths" => 200
-            )
+            "context" => array(
+                "age_mths" => $ageM,
+                "dob" => $dob,
+                "gender" => $gender
+            ),
+            "age_mths" => $ageM,
+            "dob" => $dob
         );
     }
 
     function _getLang() {
-        // This should grab lang from the timepoint associated with this instrument instance
-        return 'en-ca';
+        //$timepoint = \TimePoint::singleton($this->getSessionID());
+        //$candID = $timepoint->getCandID();
+        //$candidate = \Candidate::singleton($candID);
+        //$lang = $candidate->getCandidateLanguage();
+        $lang = "en-ca";
+        return $lang ? $lang : "en-ca";
     }
+
 
     function _getInstrumentData($db) {
         $result = $db->pselect(
