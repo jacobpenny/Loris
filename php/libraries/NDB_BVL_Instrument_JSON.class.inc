@@ -47,7 +47,8 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
      * @return array containing context variables
      */
     function _getContext() {
-        $timepoint = \TimePoint::singleton($this->getSessionID());
+        echo $this->getSessionID();
+        /*$timepoint = \TimePoint::singleton($this->getSessionID());
         $candID = $timepoint->getCandID();
         $candidate = \Candidate::singleton($candID);
         $dob = $candidate->getCandidateDoB();
@@ -66,7 +67,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
             ),
             "age_mths" => $ageM,
             "dob" => $dob
-        );
+        );*/
     }
 
     function _getLang() {
