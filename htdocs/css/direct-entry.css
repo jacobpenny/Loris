@@ -13,5 +13,6 @@ body {
 }
 
 label {
+  text-align: justify;
   font-weight: normal;
 }
