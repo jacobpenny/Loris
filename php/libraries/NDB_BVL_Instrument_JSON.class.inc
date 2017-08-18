@@ -37,6 +37,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
     {
         $this->commentID     = $commentID;
         $this->page          = $page;
+        parent::setup($commentID, $page);
     }
 
     /**
