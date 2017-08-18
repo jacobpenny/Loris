@@ -243,6 +243,7 @@ class DirectDataEntryMainPage
         $factory = \NDB_Factory::singleton();
         $config  = $factory->config();
         $json_class = new NDB_BVL_Instrument_JSON();
+        $json_class->setup($this->CommentID);
         $base    = $config->getSetting('base');
         $json    = file_get_contents($base."project/instruments/$this->TestName.json");
         $this->updateStatus('In Progress');
