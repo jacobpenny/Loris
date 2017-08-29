@@ -57,6 +57,9 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $ageM = $this->calculateAgeMonths(array('year' => $interval->format("%y"),
                                          'mon'  => $interval->format("%m"),
                                          'day'  => $interval->format("%d")));
+        //$ageTEST = $this->getCandidateAge($curDate); //TODO replace the hacky age function with this
+        echo $ageM;
+        echo $ageTEST;
         $gender = $candidate->getCandidateGender();
         return array(
             "age_mths" => $ageM,
@@ -102,6 +105,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
             $this->instrument = json_decode($json, true);
             $this->instrument["Elements"] = self::inlineCalcFormulas($this->instrument["Elements"]);
             $this->table = $this->instrument['Meta']['ShortName'];
+            $this->testName = $this->table;
             return $json;
         }
     }
