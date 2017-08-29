@@ -58,8 +58,6 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
                                          'mon'  => $interval->format("%m"),
                                          'day'  => $interval->format("%d")));
         //$ageTEST = $this->getCandidateAge($curDate); //TODO replace the hacky age function with this
-        echo $ageM;
-        echo $ageTEST;
         $gender = $candidate->getCandidateGender();
         return array(
             "age_mths" => $ageM,
