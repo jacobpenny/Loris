@@ -54,9 +54,9 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $dobDT = new \DateTime($dob);
         $curDate = new \DateTime("now");
         $interval = date_diff($curDate, $dobDT, true);
-        $ageM = ($interval->format("%y")*12
-                +$interval->format("%m")
-                +$interval->format("%d")/30.44);
+        $ageM = calculateAgeMonths(array('year' => $interval->format("%y"),
+                                         'mon'  => $interval->format("%m"),
+                                         'day'  => $interval->format("%d")));
         $gender = $candidate->getCandidateGender();
         return array(
             "age_mths" => $ageM,
