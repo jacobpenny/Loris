@@ -18,5 +18,22 @@ body {
 }
 
 label {
-  font-weight: normal;
+    font-weight: normal;
+}
+
+#banner {
+    background: #08245b;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 105px;
+    z-index: -1;
+}
+
+#logo {
+    max-height: 75px;
+    margin-top: 10px;
+    z-index: 0;
 }
