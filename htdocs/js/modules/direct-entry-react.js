@@ -21,7 +21,7 @@ class DirectEntryReact extends React.Component {
   }
 
   render() {
-    const { instrument, initialData, lang, context, options } = this.props;
+    const { instrument, initialData, lang, context, options, logo, curDateSt } = this.props;
     const { complete, error } = this.state;
 
     if (error) {
@@ -43,7 +43,7 @@ class DirectEntryReact extends React.Component {
           lang={lang}
           context={context}
           options={options}
-          onSave={onSave}
+          onSave={this.onSave}
         />
       </div>
     );
@@ -68,6 +68,8 @@ window.onload = function() {
       lang={lang}
       context={context}
       options={options}
+      logo={logo}
+      curDateSt={curDateSt}
     />,
     document.getElementById("container")
   );
