@@ -37,3 +37,14 @@ label {
     margin-top: 10px;
     z-index: 0;
 }
+
+#save {
+    margin: auto;
+    display: block;
+    color: white;
+    background-color: #08245b;
+}
+
+#warning {
+    color: red;
+}
