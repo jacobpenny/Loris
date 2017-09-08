@@ -246,6 +246,14 @@ const RadioGroupElement = React.createClass({
               })}
             </div>
           </RadioGroup>
+          <div><button className="asText" onClick={() => { var el = document.getElementsByName(this.props.name);
+                                   for (var i=0; i < el.length; i++){
+                                     el[i].checked = false;
+                                   this.handleChange(null);}
+                                 }
+                          } type="button">
+            <span className="" aria-hidden="true"></span> Reset/Réinitialiser
+          </button></div>
           {errorMessage}
         </div>
       </div>
