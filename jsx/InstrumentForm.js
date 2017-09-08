@@ -7,6 +7,7 @@ const { SelectElement, RadioGroupLabels, RadioGroupElement, CheckboxGroupElement
  * The meta and elements passed to this component must already be 'localized' 
  * (see ./lib/localize-instrument).
  */
+
 const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, onSave, saveText, saveWarning}) => {
   return (
     <div>
@@ -151,7 +152,7 @@ const SaveButton = ({onClick, saveText, saveWarning}) => {
       <button onClick={onClick} id="save" type="button" className="btn btn-default btn-lg">
         <span className="" aria-hidden="true"></span> {saveText}
       </button>
-      <p id="warning"><center>{saveWarning}</center></p>
+      <center><p id="warning">{saveWarning}</p></center>
     </div>
   );
 }
