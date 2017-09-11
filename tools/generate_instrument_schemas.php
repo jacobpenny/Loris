@@ -105,7 +105,8 @@ class schema_generator
             $output .= "`$elName` $type DEFAULT NULL,\n";
 		}
 
-        $output .= "PRIMARY KEY (`CommentID`))";
+        $output .= "PRIMARY KEY (`CommentID`));\n";
+        $output .= "INSERT INTO test_names (Test_name, Full_name, Sub_group, IsDirectEntry) VALUES ('$tableName', \"$fullName\", 1, 1);";
         return $output;
 	}
     
