@@ -82,7 +82,7 @@ function renderRadio(element, key, onUpdate, isRequired) {
                                    onUpdate(element.Name, null);}
                                  }
                           } type="button">
-        <span className="" aria-hidden="true"></span> Reset/Réinitialiser
+        <span className="" aria-hidden="true"></span> Reset
       </button> 
       </div>
   );
