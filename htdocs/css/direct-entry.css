@@ -58,3 +58,14 @@ label {
     padding-bottom: 15px;
     text-decoration: underline;
 }
+
+#save {
+    margin: auto;
+    display: block;
+    color: white;
+    background-color: #08245b;
+}
+
+#warning {
+    color: red;
+}
