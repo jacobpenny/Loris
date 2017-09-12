@@ -76,8 +76,7 @@ function renderRadio(element, key, onUpdate, isRequired) {
           hasError={isRequired && (!element.Value)}
           errorMessage="This field is required"
         />
-        <button className="asText" onClick={() => { var el = document.getElementsByName(element.Name);
-                                                    onUpdate(element.Name, null); }
+        <button className="asText" onClick={() => { onUpdate(element.Name, null); }
                                            } type="button">
           Reset
         </button> 
