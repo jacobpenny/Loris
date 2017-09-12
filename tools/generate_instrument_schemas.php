@@ -29,7 +29,8 @@ class schema_generator
 	{
 		//Handle meta info
 		$metaInfo = $elements['Meta'];
-		$tableName = $metaInfo['ShortName'];
+		$tableName = htmlspecialchars($metaInfo['ShortName']);
+        $fullName = htmlspecialchars($metaInfo['LongName']);
         
         $output = '';
         $output .= "DROP TABLE IF EXISTS `$tableName`;\n";
