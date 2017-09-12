@@ -51,6 +51,14 @@ label {
   font-size: 2em;
 }
 
+.asText {
+    background: none;
+    border: none;
+    margin: 0;
+    padding-bottom: 15px;
+    text-decoration: underline;
+}
+
 #save {
     margin: auto;
     display: block;
