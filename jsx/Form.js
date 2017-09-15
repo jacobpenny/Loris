@@ -147,7 +147,7 @@ const RadioGroupLabels = ({ labels }) => (
     </label>
     <div style={{marginTop: 30, display: 'flex', justifyContent: 'space-around'}} className="col-sm-9">
       {labels.map((label, index) => (
-        <div key={index} style={{color: 'brown', textAlign: 'center', minWidth: '10em', maxWidth: '10em'}}>
+        <div key={index} style={{color: 'brown', textAlign: 'center', minWidth: '6em', maxWidth: '6em'}}>
           {label}
         </div>
       ))}
