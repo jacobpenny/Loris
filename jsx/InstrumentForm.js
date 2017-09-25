@@ -116,7 +116,7 @@ function renderCheckbox(element, key, onUpdate, isRequired) {
 
 function renderText(element, key, onUpdate, isRequired) {
   return (
-    <TextboxElement
+    <TextareaElement
       key={key}
       name={element.Name}
       label={element.Description}
