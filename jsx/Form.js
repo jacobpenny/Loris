@@ -223,8 +223,7 @@ const RadioGroupElement = React.createClass({
 
     return (
       <div className={elementClass}>
-        <label className="col-sm-3 control-label">
-          {this.props.label}
+        <label className="col-sm-3 control-label" dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
         </label>
         <div className="col-sm-9">
