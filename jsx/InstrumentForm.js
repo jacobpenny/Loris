@@ -53,8 +53,6 @@ function renderElement(element, key, onUpdate, required = false) {
     return renderCalc(element, key, onUpdate)
   } else if (element.Type === 'date') {
     return renderDate(element, key, onUpdate, required)
-  } else if (element.Type === 'textArea') {
-    return renderTextArea(element, key, onUpdate, required)
   }
 }
 
