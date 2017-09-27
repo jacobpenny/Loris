@@ -44,7 +44,11 @@ function renderElement(element, key, onUpdate, required = false) {
   } else if (element.Type === 'checkbox') {
     return renderCheckbox(element, key, onUpdate, required)
   } else if (element.Type === 'text') {
-    return renderText(element, key, onUpdate, required)
+    if (element.Options['Type'] === 'large') {
+        return renderTextArea(element, key, onUpdate, required)
+    } else {
+        return renderText(element, key, onUpdate, required)
+    }
   } else if (element.Type === 'calc') {
     return renderCalc(element, key, onUpdate)
   } else if (element.Type === 'date') {
@@ -117,6 +121,18 @@ function renderCheckbox(element, key, onUpdate, isRequired) {
 function renderText(element, key, onUpdate, isRequired) {
   return (
     <TextboxElement
+      key={key}
+      name={element.Name}
+      label={element.Description}
+      onUserInput={onUpdate}
+      value={element.Value}
+    />
+  );
+}
+
+function renderTextArea(element, key, onUpdate, isRequired) {
+  return (
+    <TextareaElement
       key={key}
       name={element.Name}
       label={element.Description}
