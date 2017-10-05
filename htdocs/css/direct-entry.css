@@ -20,7 +20,7 @@ h1 {
 .blue {
     border: 0px solid blue;
     background-color: lightblue;
-    text-align: center;
+    padding: 5px;
 }
 
 label {

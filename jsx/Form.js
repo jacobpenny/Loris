@@ -517,8 +517,7 @@ var TextareaElement = React.createClass({
 
     return (
       <div className="row form-group">
-        <label className="col-sm-3 control-label" htmlFor={this.props.id}>
-          {this.props.label}
+        <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
         </label>
         <div className="col-sm-9">
@@ -582,8 +581,7 @@ var TextboxElement = React.createClass({
 
     return (
       <div className="row form-group">
-        <label className="col-sm-3 control-label" htmlFor={this.props.id}>
-          {this.props.label}
+        <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
         </label>
         <div className="col-sm-9">

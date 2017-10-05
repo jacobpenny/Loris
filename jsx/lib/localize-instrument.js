@@ -8,17 +8,19 @@ function localizeInstrument(rawInstrument, lang = 'en-ca') {
 
     instrument['Elements'].forEach((element) => {
       if (['label', 'text', 'calc', 'date', 'select', 'radio', 'checkbox'].includes(element.Type)) {
-        if (element['Description'][lang]) {
+        if (element['Description'][lang] && element['Description'][lang] !== " " && element['Comment']) {
+          element['Description'] = element['Description'][lang] + "<br>" + element['Comment'];
+        } else if (element['Description'][lang] && element['Description'][lang] !== " " && !element['Comment']) {
           element['Description'] = element['Description'][lang];
         } else {
           if (['text', 'date'].includes(element.Type)) {
-            element['Description'] = element.fieldNote ? element.fieldNote : "Enter a value: ";
+            element['Description'] = element.Comment ? element.Comment : "";
           } else if (['select', 'radio', 'checkbox'].includes(element.Type)) {
-            element['Description'] = "Choose a value: ";
+            element['Description'] = "";
           } else if (['label'].includes(element.Type)) {
             element['Description'] = "";
           } else if (['calc'].includes(element.Type)) {
-            element['Description'] = "Result: ";
+            element['Description'] = element.Comment ? element.Comment : "";
           }
         }
         if (['select', 'radio', 'checkbox'].includes(element.Type)) {
