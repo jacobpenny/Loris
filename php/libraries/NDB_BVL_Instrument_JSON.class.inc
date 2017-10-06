@@ -68,11 +68,10 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
     }
 
     function _getLang() {
-        //$timepoint = \TimePoint::singleton($this->getSessionID());
-        //$candID = $timepoint->getCandID();
-        //$candidate = \Candidate::singleton($candID);
-        //$lang = $candidate->getCandidateLanguage();
-        $lang = "en-ca";
+        $timepoint = \TimePoint::singleton($this->getSessionID());
+        $candID = $timepoint->getCandID();
+        $candidate = \Candidate::singleton($candID);
+        $lang = $candidate->getData("DisplayParameters")['Preferred survey language'];
         return $lang ? $lang : "en-ca";
     }
 
