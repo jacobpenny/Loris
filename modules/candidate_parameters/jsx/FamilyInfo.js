@@ -76,7 +76,10 @@ var FamilyInfo = React.createClass({
     var relationshipOptions = {
       "full_sibling": "Full Sibling",
       "half_sibling": "Half Sibling",
-      "1st_cousin": "First Cousin"
+      "1st_cousin": "First Cousin",
+      "father": "Father",
+      "mother": "Mother",
+      "legal_guardian": "Legal Guardian"
     };
 
     var disabled = true;
