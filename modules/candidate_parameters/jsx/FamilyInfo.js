@@ -79,7 +79,6 @@ var FamilyInfo = React.createClass({
       "1st_cousin": "First Cousin",
       "father": "Father",
       "mother": "Mother",
-      "legal_guardian": "Legal Guardian"
     };
 
     var disabled = true;
