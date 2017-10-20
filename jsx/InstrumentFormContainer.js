@@ -18,6 +18,7 @@ class InstrumentFormContainer extends React.Component {
       localizedInstrument: localizeInstrument(this.props.instrument, this.props.lang),
       showRequired: false,
       errorMessage: null,
+      isFrozen: this.props.isFrozen ? this.props.isFrozen : false,
     };
     
     this.updateInstrumentData = this.updateInstrumentData.bind(this);
@@ -214,7 +215,6 @@ class InstrumentFormContainer extends React.Component {
   render() {
     const { data, localizedInstrument } = this.state;
     const { context, options, lang } = this.props;
-
     return (
       <InstrumentForm
         meta={localizedInstrument.Meta}
@@ -231,6 +231,7 @@ class InstrumentFormContainer extends React.Component {
         onSave={this.onSaveButtonClick}
         saveText={this.getSaveText(lang)}
         saveWarning={this.getSaveWarning(lang)}
+        isFrozen={this.state.isFrozen}
       />
     );
   }

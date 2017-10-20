@@ -75,6 +75,11 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return $lang ? $lang : "en-ca";
     }
 
+    function _isComplete() {
+        $status  = new \NDB_BVL_InstrumentStatus;
+        $success = $status->select($this->commentID);
+        return $status->getDataEntryStatus()==='Complete' ? true : false;
+    }
 
     function _getInstrumentData($db) {
         $result = $db->pselect(
@@ -168,6 +173,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $smarty->assign('initialData', htmlspecialchars(json_encode($this->_getInstrumentData($db))));
         $smarty->assign('context', htmlspecialchars(json_encode($this->_getContext())));
         $smarty->assign('lang', htmlspecialchars($this->_getLang()));
+        $smarty->assign('complete', htmlspecialchars($this->_isComplete()));
         $html = $smarty->fetch("instrument_react.tpl");
         return $html;
     }
