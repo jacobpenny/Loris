@@ -19,7 +19,7 @@ const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, o
           renderElement(element, index, onUpdate, showRequired && element.Options.RequireResponse, isFrozen ? true : false )
         ))
       }
-      <SaveButton onClick={onSave} saveText={saveText} saveWarning={saveWarning}/>
+      <SaveButton isDisabled={isFrozen ? true : false} onClick={onSave} saveText={saveText} saveWarning={saveWarning}/>
     </div>
   );
 };
@@ -82,7 +82,7 @@ function renderRadio(element, key, onUpdate, isRequired, isDisabled) {
           disabled={isDisabled}
         />
         <button className="asText" onClick={() => { onUpdate(element.Name, null); }
-                                           } type="button">
+                                           } type="button" disabled={isDisabled}>
           Reset
         </button> 
       </div>
@@ -172,10 +172,10 @@ function renderDate(element, key, onUpdate, isRequired, isDisabled) {
   )
 }
 
-const SaveButton = ({onClick, saveText, saveWarning}) => {
+const SaveButton = ({isDisabled, onClick, saveText, saveWarning}) => {
   return (
     <div>
-      <button onClick={onClick} id="save" type="button" className="btn btn-default btn-lg">
+      <button disabled={isDisabled} onClick={onClick} id="save" type="button" className="btn btn-default btn-lg">
         <span className="" aria-hidden="true"></span> {saveText}
       </button>
       <center><p id="warning">{saveWarning}</p></center>
