@@ -239,7 +239,7 @@ const RadioGroupElement = React.createClass({
               {Object.keys(options).map(function(optionValue, index) {
                 return (
                   <div key={index}>
-                    <Radio value={optionValue} key={optionValue}/> {options[optionValue]}
+                    <Radio value={optionValue} key={optionValue} disabled={disabled}/> {options[optionValue]}
                   </div>
                 );
               })}

@@ -15,6 +15,7 @@ window.onload = function() {
   const initialData = JSON.parse(instrumentEl.dataset.initial);
   const lang = instrumentEl.dataset.lang;
   const context = JSON.parse(instrumentEl.dataset.context);
+  const isFrozen = instrumentEl.dataset.complete;
 
   ReactDOM.render(
     <InstrumentFormContainer
@@ -24,6 +25,7 @@ window.onload = function() {
       context={context}
       onSave={onSave}
       options={{}}
+      isFrozen={isFrozen}
     />,
     document.getElementById("container")
   );
