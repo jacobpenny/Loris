@@ -47,6 +47,7 @@ label {
 
 .instrumentContainer {
   padding: 1% 2% 2% 2%;
+  
 }
 
 .complete {
@@ -63,6 +64,15 @@ label {
     margin: 0;
     padding-bottom: 15px;
     text-decoration: underline;
+    float: right;
+}
+
+.asText:before {
+
+}
+
+.asText:after {
+
 }
 
 #save {
@@ -74,4 +84,8 @@ label {
 
 #warning {
     color: red;
+}
+
+.col-sm-9 {
+    width: 72%;
 }

@@ -175,7 +175,8 @@ const RadioGroupElement = React.createClass({
     hasError: React.PropTypes.bool,
     orientation: React.PropTypes.string,
     errorMessage: React.PropTypes.string,
-    onUserInput: React.PropTypes.func
+    onUserInput: React.PropTypes.func,
+    elementClassOverride: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -193,7 +194,8 @@ const RadioGroupElement = React.createClass({
       errorMessage: 'The field is required!',
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
-      }
+      },
+      elementClassOverride: false
     };
   },
 
@@ -222,7 +224,7 @@ const RadioGroupElement = React.createClass({
     }
 
     return (
-      <div className={elementClass}>
+      <div className={this.props.elementClassOverride ? "" : elementClass}>
         <label className="col-sm-3 control-label" dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
         </label>

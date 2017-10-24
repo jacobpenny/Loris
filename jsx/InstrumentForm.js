@@ -70,7 +70,7 @@ function renderRadioLabels(element, key) {
 
 function renderRadio(element, key, onUpdate, isRequired, isDisabled) {
   return (
-      <div key={key}>
+      <div className="row form-group" key={key}>
         <RadioGroupElement
           name={element.Name}
           label={element.Description}
@@ -80,6 +80,7 @@ function renderRadio(element, key, onUpdate, isRequired, isDisabled) {
           value={element.Value}
           hasError={isRequired && (!element.Value)}
           disabled={isDisabled}
+          elementClassOverride={true}
         />
         <button className="asText" onClick={() => { onUpdate(element.Name, null); }
                                            } type="button" disabled={isDisabled}>
