@@ -1,15 +1,15 @@
 <?php
 /**
-* The user account page
-*
-* PHP Version 5,7
-*
-* @category Main
-* @package  User_Account
-* @author   Loris Team <loris.mni@bic.mni.mcgill.ca>
-* @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
-* @link     https://www.github.com/aces/Loris/
-*/
+ * The user account page
+ *
+ * PHP Version 5,7
+ *
+ * @category Main
+ * @package  User_Account
+ * @author   Loris Team <loris.mni@bic.mni.mcgill.ca>
+ * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
+ * @link     https://www.github.com/aces/Loris/
+ */
 
 /**
  * Implements the user account page
@@ -129,11 +129,13 @@ class NDB_Form_User_Accounts extends NDB_Form
                 }
                 //gets radiologist Y/N from any of the active sites
                 if ($vals[0]=='Y') {
-                    $defaults['examiner_radiologist'] =$vals[1];
+                    if ($vals[1]==='1') {
+                        $defaults['examiner_radiologist'] = 'Y';
+                    } else {
+                        $defaults['examiner_radiologist'] = 'N';
+                    }
                 }
-                if ($vals[0]=='Y'
-                    || ($vals[0]=='N' && $defaults['examiner_pending']=='Y')
-                ) {
+                if ($vals[0]=='Y') {
                     $defaults['ex_'.$cid] ='on';
                 }
             }
@@ -168,7 +170,7 @@ class NDB_Form_User_Accounts extends NDB_Form
     {
         $editor = User::singleton();
         return !$this->isCreatingNewUser()
-            && ($editor->getUsername() == $this->identifier);
+        && ($editor->getUsername() == $this->identifier);
     }
 
     /**
@@ -286,61 +288,11 @@ class NDB_Form_User_Accounts extends NDB_Form
             // END multi-project UPDATE
 
             // EXAMINER UPDATE
-            $examinerID = $DB->pselect(
-                "SELECT e.examinerID
-             FROM examiners e
-             WHERE e.full_name=:fn",
-                array(
-                 "fn" => $values['Real_name'],
-                )
-            );
-
-            // If examiner not in table add him,
-            // otherwise update the radiologist field
-            if (empty($examinerID)) {
-                $DB->insert(
-                    'examiners',
-                    array(
-                     'full_name'   => $values['Real_name'],
-                     'radiologist' => $values['examiner_radiologist'],
-                     'userID'      => $uid,
-                    )
-                );
-                $examinerID = $examinerID = $DB->pselectOne(
-                    "SELECT examinerID
-             FROM examiners
-             WHERE full_name=:fullName",
-                    array('fullName' => $values['Real_name'])
-                );
-            } else {
-                $DB->update(
-                    'examiners',
-                    array(
-                     'radiologist' => $values['examiner_radiologist'],
-                     'userID'      => $uid,
-                    ),
-                    array(
-                     "full_name" => $values['Real_name'],
-                    )
-                );
-                $examinerID = $examinerID[0]['examinerID'];
-            }
-
-            // Update CenterIDs
-            $ex_curr_sites = array();
-            $ex_prev_sites = array();
-
-            $prev_sites = $DB->pselect(
-                "SELECT centerID
-             FROM examiners_psc_rel epr
-             WHERE examinerID=:eid",
-                array("eid" => $examinerID)
-            );
-
-            //get sites where user is already an examiner at for compare
-            foreach ($prev_sites as $row => $center) {
-                array_push($ex_prev_sites, $center['centerID']);
-            }
+            // get all fields that are related to examiners
+            $ex_curr_sites  = array();
+            $ex_prev_sites  = array();
+            $ex_radiologist = 'N';
+            $ex_pending     = 'Y';
 
             foreach ($values as $k => $v) {
                 //examiner fields
@@ -348,16 +300,90 @@ class NDB_Form_User_Accounts extends NDB_Form
                     //get centerID
                     $parse_key = explode('_', $k);
                     $cid       = $parse_key[1];
-                    array_push($ex_curr_sites, $cid);
+                    $ex_curr_sites[$k] = $cid;
+                }
+                if ($k === 'examiner_radiologist') {
+                    $ex_radiologist = $v;
+                }
+                if ($k === 'examiner_pending') {
+                    $ex_pending = $v;
+                }
+            }
+
+            // first check if an update is needed then actually do it
+            if (!empty($ex_radiologist)
+                && !empty($ex_pending)
+                && !empty($ex_curr_sites)
+            ) {
+                //modify examiner radiologist to be in the binary format 0-1
+                $ex_radiologist = $ex_radiologist === 'Y' ? 1:0;
+
+                $examinerID = $DB->pselect(
+                    "SELECT e.examinerID
+                     FROM examiners e
+                     WHERE e.full_name=:fn",
+                    array(
+                     "fn" => $values['Real_name'],
+                    )
+                );
+
+                // If examiner not in table add him,
+                // otherwise update the radiologist field and get the current sites
+                $values = Utility::nullifyEmpty($values, 'examiner_radiologist');
+                if (empty($examinerID)) {
+
+                    $DB->insert(
+                        'examiners',
+                        array(
+                         'full_name'   => $values['Real_name'],
+                         'radiologist' => $ex_radiologist,
+                         'userID'      => $uid,
+                        )
+                    );
+                    $examinerID = $examinerID = $DB->pselectOne(
+                        "SELECT examinerID
+                         FROM examiners
+                         WHERE full_name=:fullName",
+                        array('fullName' => $values['Real_name'])
+                    );
+                } else {
+
+                    $DB->update(
+                        'examiners',
+                        array(
+                         'radiologist' => $ex_radiologist,
+                         'userID'      => $uid,
+                        ),
+                        array(
+                         "full_name" => $values['Real_name'],
+                        )
+                    );
+                    $examinerID = $examinerID[0]['examinerID'];
+
+                    //get existing sites for examiner
+                    $prev_sites = $DB->pselect(
+                        "SELECT centerID
+                     FROM examiners_psc_rel epr
+                     WHERE examinerID=:eid",
+                        array("eid" => $examinerID)
+                    );
+
+                    //get sites where user is already an examiner at for compare
+                    foreach ($prev_sites as $row => $center) {
+                        array_push($ex_prev_sites, $center['centerID']);
+                    }
+                }
+
+                foreach ($ex_curr_sites as $k => $v) {
 
                     //Check if examiner already in db for site
                     $result = $DB->pselectRow(
                         "SELECT epr.centerID
-                     FROM examiners_psc_rel epr 
-                     WHERE epr.examinerID=:eid AND epr.centerID=:cid",
+                             FROM examiners_psc_rel epr 
+                             WHERE epr.examinerID=:eid AND epr.centerID=:cid",
                         array(
                          "eid" => $examinerID,
-                         "cid" => $cid,
+                         "cid" => $v,
                         )
                     );
 
@@ -367,9 +393,9 @@ class NDB_Form_User_Accounts extends NDB_Form
                             'examiners_psc_rel',
                             array(
                              'examinerID'       => $examinerID,
-                             'centerID'         => $cid,
+                             'centerID'         => $v,
                              'active'           => 'Y',
-                             'pending_approval' => $values['examiner_pending'],
+                             'pending_approval' => $ex_pending,
                             )
                         );
                     } else {
@@ -377,33 +403,33 @@ class NDB_Form_User_Accounts extends NDB_Form
                             'examiners_psc_rel',
                             array(
                              'active'           => 'Y',
-                             'pending_approval' => $values['examiner_pending'],
+                             'pending_approval' => $ex_pending,
                             ),
                             array(
                              'examinerID' => $examinerID,
-                             'centerID'   => $cid,
+                             'centerID'   => $v,
                             )
                         );
                     }
                     unset($values[$k]);
                 }
-            }
 
-            //de-activate examiner if sites where no longer checked
-            $ex_inactive = array_diff($ex_prev_sites, $ex_curr_sites);
+                //de-activate examiner if sites where no longer checked
+                $ex_inactive = array_diff($ex_prev_sites, $ex_curr_sites);
 
-            foreach ($ex_inactive as $cid) {
-                $DB->update(
-                    'examiners_psc_rel',
-                    array("active" => 'N'),
-                    array(
-                     'examinerID' => $examinerID,
-                     'centerID'   => $cid,
-                    )
-                );
+                foreach ($ex_inactive as $cid) {
+                    $DB->update(
+                        'examiners_psc_rel',
+                        array("active" => 'N'),
+                        array(
+                         'examinerID' => $examinerID,
+                         'centerID'   => $cid,
+                        )
+                    );
+                }
             }
-            unset($values['examiner_pending']);
             unset($values['examiner_radiologist']);
+            unset($values['examiner_pending']);
             //END EXAMINER UPDATE
         }
 
@@ -463,7 +489,11 @@ class NDB_Form_User_Accounts extends NDB_Form
 
         // make the set
         foreach ($values as $key => $value) {
-            $set[$key] = $value;
+            if (!empty($value)) {
+                $set[$key] = $value;
+            } else {
+                $set[$key] = null;
+            }
         }
 
         // update the user
@@ -761,8 +791,8 @@ class NDB_Form_User_Accounts extends NDB_Form
                 "Radiologist: ",
                 array(
                  null => "",
-                 '1'  => 'Yes',
-                 '0'  => 'No',
+                 'Y'  => 'Yes',
+                 'N'  => 'No',
                 )
             );
             $groupB[] = $this->createLabel(
@@ -905,16 +935,16 @@ class NDB_Form_User_Accounts extends NDB_Form
     }
 
     /**
-    * Query database on UserID to check that password has doesn't
-    * exist and account is still pending approval, to ensure the
-    * users with account activity can't be rejected by setting
-    * their status to pending.
-    *
-    * @param string $id identifier of account to verify
-    *
-    * @return boolean true is Password_hash is null and
-    * Pending_approval is Yes, false otherwsie
-    */
+     * Query database on UserID to check that password has doesn't
+     * exist and account is still pending approval, to ensure the
+     * users with account activity can't be rejected by setting
+     * their status to pending.
+     *
+     * @param string $id identifier of account to verify
+     *
+     * @return boolean true is Password_hash is null and
+     * Pending_approval is Yes, false otherwsie
+     */
     function _canRejectAccount($id)
     {
         $DB     = Database::singleton();
@@ -1262,20 +1292,28 @@ class NDB_Form_User_Accounts extends NDB_Form
         //======================================
         //        Validate Examiner Status
         //======================================
-
+        $matched =false;
         foreach ($values as $k=>$v) {
-            if (preg_match("/^ex_[1-9]+$/", $k)
-                && $values['examiner_radiologist'] == ''
-            ) {
-                $errors['examiner_group'] = "Please specify if examiner is a ".
-                    "radiologist";
+            if (preg_match("/^ex_[1-9]+$/", $k)) {
+                $matched =true;
+                if ($values['examiner_radiologist'] == '') {
+                    $errors['examiner_group'] = "Please specify if examiner is a " .
+                        "radiologist";
+
+                }
+                if ($values['examiner_radiologist'] !== ''
+                    && $values['examiner_pending'] == ''
+                ) {
+                    $errors['examiner_group'] = "Please set pending approval Yes ".
+                        "or No";
+                }
             }
-            if (preg_match("/^ex_[1-9]+$/", $k)
-                && $values['examiner_radiologist'] !== ''
-                && $values['examiner_pending'] == ''
-            ) {
-                $errors['examiner_group'] = "Please set pending approval Yes or No";
-            }
+        }
+        if (!$matched
+            && ($values['examiner_radiologist'] !== ''
+            || $values['examiner_pending'] !== '')
+        ) {
+            $errors['examiner_sites'] = "Please select at least one examiner site.";
         }
         return $errors;
     }
