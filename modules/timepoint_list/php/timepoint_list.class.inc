@@ -33,9 +33,9 @@ class Timepoint_List extends \NDB_Menu
     function _hasAccess()
     {
         // create user object
-        $user =& User::singleton();
-        $config =& NDB_Config::singleton();
-        $candidate =& Candidate::singleton($_REQUEST['candID']);
+        $user =& \User::singleton();
+        $config =& \NDB_Config::singleton();
+        $candidate =& \Candidate::singleton($_REQUEST['candID']);
 
         if ($config->getSetting("useProjectPermissions")) {
             if (!$user->hasAccessToProject($candidate->getData("ProjectID"))) {
