@@ -41,7 +41,6 @@ function renderMeta(meta) {
 }
 
 function renderElement(element, key, onUpdate, required = false, disabled = false) {
-  console.log("THIS ELEMENT IS DISABLED : " + disabled);
   if (element.Type === 'label') {
     return renderLabel(element, key)
   } else if (element.Type === 'radio-labels') {
