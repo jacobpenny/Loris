@@ -19,10 +19,18 @@ const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, o
           renderElement(element, index, onUpdate, showRequired && element.Options.RequireResponse, isFrozen ? true : false )
         ))
       }
-      <SaveButton isDisabled={isFrozen ? true : false} onClick={onSave} saveText={saveText} saveWarning={saveWarning}/>
+      {renderSave(isFrozen ? true : false, onSave, saveText, saveWarning)}
     </div>
   );
 };
+
+function renderSave(disabled = false, onSave, saveText, saveWarning) {
+  if (!disabled) {
+    return (
+      <SaveButton onClick={onSave} saveText={saveText} saveWarning={saveWarning}/>
+    )
+  }
+}
 
 function renderMeta(meta) {
   return (
@@ -33,7 +41,6 @@ function renderMeta(meta) {
 }
 
 function renderElement(element, key, onUpdate, required = false, disabled = false) {
-  console.log("THIS ELEMENT IS DISABLED : " + disabled);
   if (element.Type === 'label') {
     return renderLabel(element, key)
   } else if (element.Type === 'radio-labels') {
@@ -82,12 +89,20 @@ function renderRadio(element, key, onUpdate, isRequired, isDisabled) {
           disabled={isDisabled}
           elementClassOverride={true}
         />
-        <button className="asText" onClick={() => { onUpdate(element.Name, null); }
-                                           } type="button" disabled={isDisabled}>
-          Reset
-        </button> 
+        {renderReset(isDisabled, onUpdate, element)}
       </div>
   );
+}
+
+function renderReset(disabled = false, onUpdate, element) {
+  if (!disabled) {
+    return (
+      <button className="asText" onClick={() => { onUpdate(element.Name, null); }
+                                         } type="button">
+        Reset
+      </button>
+    )
+  }
 }
 
 function renderSelect(element, key, onUpdate, isRequired, isDisabled) {
@@ -173,10 +188,10 @@ function renderDate(element, key, onUpdate, isRequired, isDisabled) {
   )
 }
 
-const SaveButton = ({isDisabled, onClick, saveText, saveWarning}) => {
+const SaveButton = ({onClick, saveText, saveWarning}) => {
   return (
     <div>
-      <button disabled={isDisabled} onClick={onClick} id="save" type="button" className="btn btn-default btn-lg">
+      <button onClick={onClick} id="save" type="button" className="btn btn-default btn-lg">
         <span className="" aria-hidden="true"></span> {saveText}
       </button>
       <center><p id="warning">{saveWarning}</p></center>
