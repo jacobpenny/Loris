@@ -19,6 +19,7 @@ class InstrumentFormContainer extends React.Component {
       showRequired: false,
       errorMessage: null,
       isFrozen: this.props.isFrozen ? this.props.isFrozen : false,
+      dataEntryMode: this.props.dataEntryMode ? this.props.dataEntryMode : false,
     };
     
     this.updateInstrumentData = this.updateInstrumentData.bind(this);
@@ -232,6 +233,9 @@ class InstrumentFormContainer extends React.Component {
         saveText={this.getSaveText(lang)}
         saveWarning={this.getSaveWarning(lang)}
         isFrozen={this.state.isFrozen}
+        ageMonths={context.age_mths}
+        dataEntryMode={this.state.dataEntryMode}
+        metaData={[data.Date_taken, data.Window_Difference, data.Examiner]}
       />
     );
   }

@@ -7,13 +7,14 @@ const { SelectElement, RadioGroupLabels, RadioGroupElement, CheckboxGroupElement
  * The meta and elements passed to this component must already be 'localized' 
  * (see ./lib/localize-instrument).
  */
-const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, onSave, saveText, saveWarning, isFrozen}) => {
+const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, onSave, saveText, saveWarning, isFrozen, ageMonths, dataEntryMode, metaData}) => {
   return (
     <div>
       <div id="instrument-error">
         { errorMessage ? <div className="alert alert-danger">{errorMessage}</div> : null }
       </div>
-      {renderMeta(meta)}
+      {renderTitle(meta)}
+      {renderMeta(dataEntryMode, metaData, ageMonths, isFrozen ? true : false)}
       {
         elements.map((element, index) => (
           renderElement(element, index, onUpdate, showRequired && element.Options.RequireResponse, isFrozen ? true : false )
@@ -32,12 +33,50 @@ function renderSave(disabled = false, onSave, saveText, saveWarning) {
   }
 }
 
-function renderMeta(meta) {
+function renderTitle(meta) {
   return (
     <div className="title">
       <h1>{meta.LongName}</h1>
     </div>
   )
+}
+
+function renderMeta(dataEntryMode, metaData, ageMonths, isDisabled) {
+  if (dataEntryMode) {
+    return (
+      <div className="meta">
+        <div className="col-xs-12">
+          <DateElement
+            label={"<b>Date of Administration</b>"}
+            value={metaData[0]}
+            disabled={isDisabled}
+          />
+        </div>
+        <div className="col-xs-12">
+          <TextboxElement
+            label={"<b>Candidate Age (Months)</b>"}
+            value={ageMonths}
+            disabled={true}
+          />
+        </div>
+        <div className="col-xs-12">
+          <TextboxElement
+            label={"<b>Window Difference (+/- Days)</b>"}
+            value={metaData[1].toString()}
+            disabled={true}
+          />
+        </div>
+        <div className="col-xs-12">
+          <SelectElement
+            label={"<b>Examiner</b>"}
+            value={metaData[2]}
+            disabled={isDisabled}
+            options={[metaData[2]]}
+          />
+        </div>
+      </div>
+    )
+  }
 }
 
 function renderElement(element, key, onUpdate, required = false, disabled = false) {
