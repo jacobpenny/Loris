@@ -233,9 +233,8 @@ class InstrumentFormContainer extends React.Component {
         saveText={this.getSaveText(lang)}
         saveWarning={this.getSaveWarning(lang)}
         isFrozen={this.state.isFrozen}
-        ageMonths={context.age_mths}
         dataEntryMode={this.state.dataEntryMode}
-        metaData={[data.Date_taken, data.Window_Difference, data.Examiner]}
+        metaData={[data.Date_taken, data.Candidate_Age, data.Window_Difference, data.Examiner]}
       />
     );
   }

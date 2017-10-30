@@ -7,14 +7,14 @@ const { SelectElement, RadioGroupLabels, RadioGroupElement, CheckboxGroupElement
  * The meta and elements passed to this component must already be 'localized' 
  * (see ./lib/localize-instrument).
  */
-const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, onSave, saveText, saveWarning, isFrozen, ageMonths, dataEntryMode, metaData}) => {
+const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, onSave, saveText, saveWarning, isFrozen, dataEntryMode, metaData}) => {
   return (
     <div>
       <div id="instrument-error">
         { errorMessage ? <div className="alert alert-danger">{errorMessage}</div> : null }
       </div>
       {renderTitle(meta)}
-      {renderMeta(dataEntryMode, metaData, ageMonths, isFrozen ? true : false)}
+      {renderMeta(dataEntryMode, metaData, isFrozen ? true : false, onUpdate)}
       {
         elements.map((element, index) => (
           renderElement(element, index, onUpdate, showRequired && element.Options.RequireResponse, isFrozen ? true : false )
@@ -41,37 +41,46 @@ function renderTitle(meta) {
   )
 }
 
-function renderMeta(dataEntryMode, metaData, ageMonths, isDisabled) {
+function renderMeta(dataEntryMode, metaData, isDisabled, onUpdate) {
   if (dataEntryMode) {
+    const key = -1;
     return (
-      <div className="meta">
+      <div className="meta" key={key}>
         <div className="col-xs-12">
           <DateElement
+            name={"Date_taken"}
             label={"<b>Date of Administration</b>"}
             value={metaData[0]}
             disabled={isDisabled}
+            onUserInput={onUpdate}
           />
         </div>
         <div className="col-xs-12">
           <TextboxElement
+            name={"Candidate_Age"}
             label={"<b>Candidate Age (Months)</b>"}
-            value={ageMonths}
-            disabled={true}
+            value={metaData[1]}
+            disabled={false}
+            onUserInput={onUpdate}
           />
         </div>
         <div className="col-xs-12">
           <TextboxElement
+            name={"Window_Difference"}
             label={"<b>Window Difference (+/- Days)</b>"}
-            value={metaData[1].toString()}
-            disabled={true}
+            value={metaData[2] ? metaData[2].toString() : ""}
+            disabled={false}
+            onUserInput={onUpdate}
           />
         </div>
         <div className="col-xs-12">
           <SelectElement
+            name={"Examiner"}
             label={"<b>Examiner</b>"}
-            value={metaData[2]}
+            value={metaData[3]}
             disabled={isDisabled}
-            options={[metaData[2]]}
+            options={[metaData[3]]}
+            onUserInput={onUpdate}
           />
         </div>
       </div>
