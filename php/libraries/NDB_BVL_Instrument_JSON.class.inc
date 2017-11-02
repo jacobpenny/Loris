@@ -174,6 +174,10 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $smarty->assign('context', htmlspecialchars(json_encode($this->_getContext())));
         $smarty->assign('lang', htmlspecialchars($this->_getLang()));
         $smarty->assign('complete', htmlspecialchars($this->_isComplete()));
+        $examiners = $this->_getExaminerNames();
+        reset($examiners);
+        unset($examiners[key($examiners)]);
+        $smarty->assign('examiners', htmlspecialchars(json_encode($examiners)));
         $html = $smarty->fetch("instrument_react.tpl");
         return $html;
     }

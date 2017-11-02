@@ -7,14 +7,14 @@ const { SelectElement, RadioGroupLabels, RadioGroupElement, CheckboxGroupElement
  * The meta and elements passed to this component must already be 'localized' 
  * (see ./lib/localize-instrument).
  */
-const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, onSave, saveText, saveWarning, isFrozen, dataEntryMode, metaData}) => {
+const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, onSave, saveText, saveWarning, isFrozen, dataEntryMode, metaData, examiners}) => {
   return (
     <div>
       <div id="instrument-error">
         { errorMessage ? <div className="alert alert-danger">{errorMessage}</div> : null }
       </div>
       {renderTitle(meta)}
-      {renderMeta(dataEntryMode, metaData, isFrozen ? true : false, onUpdate)}
+      {renderMeta(dataEntryMode, metaData, isFrozen ? true : false, onUpdate, examiners)}
       {
         elements.map((element, index) => (
           renderElement(element, index, onUpdate, showRequired && element.Options.RequireResponse, isFrozen ? true : false )
@@ -41,9 +41,11 @@ function renderTitle(meta) {
   )
 }
 
-function renderMeta(dataEntryMode, metaData, isDisabled, onUpdate) {
+function renderMeta(dataEntryMode, metaData, isDisabled, onUpdate, examiners) {
   if (dataEntryMode) {
     const key = -1;
+    examiners = JSON.parse(examiners);
+
     return (
       <div className="meta" key={key}>
         <div className="col-xs-12">
@@ -78,8 +80,9 @@ function renderMeta(dataEntryMode, metaData, isDisabled, onUpdate) {
             name={"Examiner"}
             label={"<b>Examiner</b>"}
             value={metaData[3]}
+            selected={metaData[3]}
             disabled={isDisabled}
-            options={[metaData[3]]}
+            options={examiners}
             onUserInput={onUpdate}
           />
         </div>

@@ -20,6 +20,7 @@ class InstrumentFormContainer extends React.Component {
       errorMessage: null,
       isFrozen: this.props.isFrozen ? this.props.isFrozen : false,
       dataEntryMode: this.props.dataEntryMode ? this.props.dataEntryMode : false,
+      examiners: this.props.examiners,
     };
     
     this.updateInstrumentData = this.updateInstrumentData.bind(this);
@@ -235,6 +236,7 @@ class InstrumentFormContainer extends React.Component {
         isFrozen={this.state.isFrozen}
         dataEntryMode={this.state.dataEntryMode}
         metaData={[data.Date_taken, data.Candidate_Age, data.Window_Difference, data.Examiner]}
+        examiners={this.state.examiners}
       />
     );
   }
