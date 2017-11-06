@@ -16,6 +16,7 @@ window.onload = function() {
   const lang = instrumentEl.dataset.lang;
   const context = JSON.parse(instrumentEl.dataset.context);
   const isFrozen = instrumentEl.dataset.complete;
+  const examiners = instrumentEl.dataset.examiners;
   const dataEntryMode = true;
 
   ReactDOM.render(
@@ -27,6 +28,7 @@ window.onload = function() {
       onSave={onSave}
       options={{}}
       isFrozen={isFrozen}
+      examiners={examiners}
       dataEntryMode={dataEntryMode}
     />,
     document.getElementById("container")

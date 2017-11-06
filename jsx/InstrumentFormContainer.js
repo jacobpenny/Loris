@@ -56,6 +56,12 @@ class InstrumentFormContainer extends React.Component {
    * @param value - The new value of the data point
    */
   updateInstrumentData(name, value) {
+    console.log(this.state.data.Candidate_Age);
+    console.log(this.props.context.age_mths);
+    if (!this.state.data.Candidate_Age) {
+      this.state.data.Candidate_Age = this.props.context.age_mths;
+    }
+    
     const instrumentData = Object.assign({}, this.state.data, {[name]: value});
 
     const calcElements = this.props.instrument.Elements.filter(
@@ -215,6 +221,12 @@ class InstrumentFormContainer extends React.Component {
   }
 
   render() {
+    console.log(this.state.data.Candidate_Age);
+    console.log(this.props.context.age_mths);
+    if (!this.state.data.Candidate_Age) {
+      this.state.data.Candidate_Age = this.props.context.age_mths;
+    }
+
     const { data, localizedInstrument } = this.state;
     const { context, options, lang } = this.props;
     return (
