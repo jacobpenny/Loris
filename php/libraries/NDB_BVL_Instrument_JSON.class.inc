@@ -168,21 +168,33 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
 
     function display() {
         $db     =& \Database::singleton();
+
         $smarty = new \Smarty_NeuroDB();
         $smarty->assign('instrumentJSON', htmlspecialchars($this->toJSON()));
-        $smarty->assign('initialData', htmlspecialchars(json_encode($this->_getInstrumentData($db))));
-        $smarty->assign('context', htmlspecialchars(json_encode($this->_getContext())));
+        
+        $initialData = $this->_getInstrumentData($db);
+        $smarty->assign('initialData', htmlspecialchars(json_encode($initialData)));
+        
+        $context = $this->_getContext();
+        if ($initialData['Candidate_Age']) {
+            $context['age_mths'] = $initialData['Candidate_Age'];
+        }
+        $smarty->assign('context', htmlspecialchars(json_encode($context)));
+        
         $smarty->assign('lang', htmlspecialchars($this->_getLang()));
         $smarty->assign('complete', htmlspecialchars($this->_isComplete()));
+        
         $examiners = $this->_getExaminerNames();
         reset($examiners);
         unset($examiners[key($examiners)]);
         $smarty->assign('examiners', htmlspecialchars(json_encode($examiners)));
+        
         $html = $smarty->fetch("instrument_react.tpl");
         return $html;
     }
 
     function save() {
+        echo "SAVE";
         $db     =& \Database::singleton();
         $isDataSubmission = isset($_POST['instrumentData']);
 
@@ -203,6 +215,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
                 array('CID' => $this->getCommentID())
             )
         );
+        echo $recordExists;
         if (!$recordExists) {
             $db->insert(
                 $this->table,
@@ -216,6 +229,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
                 array('CommentID' => $this->getCommentID())
             );
         }
+
         return true;
     }
 
