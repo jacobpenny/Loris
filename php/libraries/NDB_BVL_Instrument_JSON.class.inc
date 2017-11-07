@@ -89,6 +89,28 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return $result ? $result[0] : array();
     }
 
+    
+    function _getAgeWindows($db) {
+        $query_params= array(
+                        'TN' => $this->testName,
+                        'CID' => $this->getCommentID()
+                       );
+
+        $Windows = $db ->pselect(
+            "SELECT AgeMinDays, AgeMaxDays
+                FROM test_battery tb
+                    JOIN flag f USING(Test_name)
+                    JOIN session s ON (s.ID=f.SessionID)
+                WHERE tb.Active='Y' AND tb.Test_name=:TN
+                    AND tb.SubprojectID=s.SubprojectID
+                    AND f.CommentID=:CID",
+            $query_params
+        );
+        
+        return $Windows;
+    } 
+    
+    
     /**
      * @param string  $filename The filename to be loaded, or a base64 encoded
      *                          string of a .json file to be interpreted.
@@ -189,15 +211,15 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         unset($examiners[key($examiners)]);
         $smarty->assign('examiners', htmlspecialchars(json_encode($examiners)));
         
+        $smarty->assign('agewindows', htmlspecialchars(json_encode($this->_getAgeWindows($db))));
+
         $html = $smarty->fetch("instrument_react.tpl");
         return $html;
     }
 
     function save() {
-        echo "SAVE";
         $db     =& \Database::singleton();
         $isDataSubmission = isset($_POST['instrumentData']);
-
         if ($isDataSubmission) {
             $frontEndValues = json_decode($_POST['instrumentData'], true);
             $calculatedValues = $this->calculateFields($frontEndValues);
@@ -215,14 +237,15 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
                 array('CID' => $this->getCommentID())
             )
         );
-        echo $recordExists;
         if (!$recordExists) {
+            $this->_saveCandidateAge($values);
             $db->insert(
                 $this->table,
                 array_merge($values, array('CommentID' => $this->getCommentID())),
                 array('CommentID' => $this->getCommentID())
             );
         } else if ($recordExists && !empty($values)) {
+            $this->_saveCandidateAge($values);
             $db->update(
                 $this->table,
                 $values,

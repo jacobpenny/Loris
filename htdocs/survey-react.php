@@ -264,12 +264,15 @@ class DirectDataEntryMainPage
         $instrument->loadInstrumentFile($file);
 
         if ($isDataSubmission) {
+            error_log("TOO MANY BALLS");
+            
+            $curDate = date('Y-m-d');
+            $values = array('Date_taken' => $curDate, 'Candidate_Age' => NULL, 'Window_Difference' => NULL);
+            $instrument->_saveCandidateAge($values);
             $this->updateStatus('Complete');
             $db->update(
                 $this->TestName,
-                array(
-                    'Date_taken' => date('Y-m-d'),
-                ),
+                $values,
                 array(
                     'CommentID' => $this->CommentID,
                 )

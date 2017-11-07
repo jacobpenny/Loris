@@ -44,8 +44,7 @@ function renderTitle(meta) {
 function renderMeta(dataEntryMode, metaData, isDisabled, onUpdate, examiners) {
   if (dataEntryMode) {
     const key = -1;
-    examiners = JSON.parse(examiners);
-
+    console.log("WD: " + metaData[2]);
     return (
       <div className="meta" key={key}>
         <div className="col-xs-12">
@@ -61,17 +60,17 @@ function renderMeta(dataEntryMode, metaData, isDisabled, onUpdate, examiners) {
           <TextboxElement
             name={"Candidate_Age"}
             label={"<b>Candidate Age (Months)</b>"}
-            value={metaData[1]}
-            disabled={false}
+            value={metaData[1] ? metaData[1].toString() : ""}
             onUserInput={onUpdate}
+            disabled={true}
           />
         </div>
         <div className="col-xs-12">
           <TextboxElement
             name={"Window_Difference"}
             label={"<b>Window Difference (+/- Days)</b>"}
-            value={metaData[2] ? metaData[2].toString() : ""}
-            disabled={false}
+            value={metaData[2]===0 ? metaData[2].toString(): metaData[2] ? metaData[2].toString() : ""}
+            disabled={true}
             onUserInput={onUpdate}
           />
         </div>
