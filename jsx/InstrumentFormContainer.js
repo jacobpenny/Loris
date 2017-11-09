@@ -19,6 +19,9 @@ class InstrumentFormContainer extends React.Component {
       showRequired: false,
       errorMessage: null,
       isFrozen: this.props.isFrozen ? this.props.isFrozen : false,
+      dataEntryMode: this.props.dataEntryMode ? this.props.dataEntryMode : false,
+      examiners: this.props.examiners,
+      windows: this.props.windows
     };
     
     this.updateInstrumentData = this.updateInstrumentData.bind(this);
@@ -44,6 +47,51 @@ class InstrumentFormContainer extends React.Component {
     }
   }
   
+  recalculateMeta(dob, testdate) {
+    const dobMatches = dob.split("-");
+    dob = {year: parseInt(dobMatches[0]), mon: parseInt(dobMatches[1]), day: parseInt(dobMatches[2])};
+
+    const tdMatches = testdate.split("-");
+    testdate = {year: parseInt(tdMatches[0]), mon: parseInt(tdMatches[1]), day: parseInt(tdMatches[2])};
+
+    if (testdate.day < dob.day) {
+      testdate.day += 30;
+      testdate.mon --;
+    }
+    if (testdate.mon < dob.mon) {
+      testdate.mon += 12;
+      testdate.year --;
+    }
+    
+    const age = {year: testdate.year - dob.year, mon: testdate.mon - dob.mon, day: testdate.day - dob.day};
+
+    const ageDays = Math.round((age.year * 365 + age.mon * 30 + age.day) * 10) / 10;
+    const ageMonths = Math.round((age.year * 12 + age.mon + age.day / 30) * 10) / 10;
+    var delta = 0;
+    var windowDifference = 0;
+
+    this.state.windows.forEach(function(ageWindow) {
+      if (ageDays >= ageWindow.AgeMinDays && ageDays <= ageWindow.AgeMaxDays) {
+          windowDifference = 0;
+      } else {
+          if (ageDays < ageWindow.AgeMinDays) {
+              delta = ageWindow.AgeMinDays - ageDays;
+              if (Math.abs(delta) < Math.abs(windowDifference) || windowDifference == 0) {
+                  windowDifference = 0 - Math.abs(delta);
+              }
+          }
+          if (ageDays > ageWindow.AgeMaxDays) {
+              delta = ageDays - ageWindow.AgeMaxDays;
+              if (Math.abs(delta) < Math.abs(windowDifference) || windowDifference == 0) {
+                  windowDifference = Math.abs(delta);
+              }
+          }
+      }
+    });
+    console.log(windowDifference);
+    return {Candidate_Age: ageMonths, Window_Difference: windowDifference};
+  }
+  
   /**
    * This function is called when the user inputs or updates an instrument
    * field. It is responsible for updating `state.data`, which involves not
@@ -55,6 +103,8 @@ class InstrumentFormContainer extends React.Component {
    */
   updateInstrumentData(name, value) {
     const instrumentData = Object.assign({}, this.state.data, {[name]: value});
+
+    const metaVals = this.recalculateMeta(this.props.context.dob, instrumentData.Date_taken);
 
     const calcElements = this.props.instrument.Elements.filter(
       (element) => (element.Type === 'calc')
@@ -71,11 +121,11 @@ class InstrumentFormContainer extends React.Component {
       }
       return result;
     }, {});
-
+    
     const newData = Object.assign(
-      {}, instrumentData, calculatedValues
+      {}, instrumentData, calculatedValues, metaVals
     );
-
+    console.log(newData);
     this.setState({
       data: newData
     });
@@ -232,6 +282,9 @@ class InstrumentFormContainer extends React.Component {
         saveText={this.getSaveText(lang)}
         saveWarning={this.getSaveWarning(lang)}
         isFrozen={this.state.isFrozen}
+        dataEntryMode={this.state.dataEntryMode}
+        metaData={[data.Date_taken, data.Candidate_Age, data.Window_Difference, data.Examiner]}
+        examiners={this.state.examiners}
       />
     );
   }
