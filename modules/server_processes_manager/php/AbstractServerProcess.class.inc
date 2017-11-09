@@ -518,7 +518,7 @@ abstract class AbstractServerProcess
      */
     public function deleteProcessFiles()
     {
-        return true;
+        return false; // 171102 CR edit ## return true;
     }
 
     /**

@@ -110,7 +110,10 @@ function populateVisitLabel($result, $visit_label)
         $result['subprojectID'],
         $visit_label
     );
-
+    //echo "ACTUAL BATTERY for ${result['CandID']}\n";
+    //print_r($actual_battery);
+    //echo "DEFINED BATTERY for ${result['CandID']}\n";
+    //print_r($defined_battery);
     $diff =array_diff($defined_battery, $actual_battery);
     if (!empty($diff)) {
         echo "\n CandID: ".$timePoint->getCandID()."  Visit Label:  ".
