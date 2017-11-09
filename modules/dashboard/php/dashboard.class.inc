@@ -82,7 +82,7 @@ class Dashboard extends \NDB_Form
 
         $recruitmentTarget = $config->getSetting('recruitmentTarget');
 
-        $overallRecruitment = Project::getRecruitment($projectIDs);
+        $overallRecruitment = \Project::getRecruitment($projectIDs);
 
         $this->createProjectProgressBar(
             'overall',
@@ -101,7 +101,7 @@ class Dashboard extends \NDB_Form
                     $projectID,
                     $projectInfo['Name'],
                     $projectInfo['recruitmentTarget'],
-                    Project::getRecruitment(array($projectID)),
+                    \Project::getRecruitment(array($projectID)),
                     $projectIDs
                 );
             }
@@ -434,18 +434,18 @@ class Dashboard extends \NDB_Form
                 = $recruitmentTarget;
 
             if ($ID == 'overall') {
-                $totalFemales = Project::getTotalFemales();
+                $totalFemales = \Project::getTotalFemales();
             } else {
-                $totalFemales = Project::getTotalFemales(array($ID));
+                $totalFemales = \Project::getTotalFemales(array($ID));
             }
             $this->tpl_data['recruitment'][$ID]['female_total']   = $totalFemales;
             $this->tpl_data['recruitment'][$ID]['female_percent']
                 = round($totalFemales / $recruitmentTarget * 100);
 
             if ($ID == 'overall') {
-                $totalMales = Project::getTotalMales();
+                $totalMales = \Project::getTotalMales();
             } else {
-                $totalMales = Project::getTotalMales(array($ID));
+                $totalMales = \Project::getTotalMales(array($ID));
             }
             $this->tpl_data['recruitment'][$ID]['male_total']   = $totalMales;
             $this->tpl_data['recruitment'][$ID]['male_percent']
