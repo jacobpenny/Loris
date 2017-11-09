@@ -34,54 +34,62 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
      *
      * @return none
      */
-    function setup($commentID = NULL, $page = NULL)
+    function setup($commentID = null, $page = null)
     {
-        $this->commentID     = $commentID;
-        $this->page          = $page;
+        $this->commentID = $commentID;
+        $this->page      = $page;
         parent::setup($commentID, $page);
     }
 
     /**
      * Returns candidate-related context variables to be accessed during runtime
      * Allows access to: date of birth, age in months (calculated)
-     * 
+     *
      * @return array containing context variables
      */
-    function _getContext() {
+    function _getContext()
+    {
         $timepoint = \TimePoint::singleton($this->getSessionID());
-        $candID = $timepoint->getCandID();
+        $candID    = $timepoint->getCandID();
         $candidate = \Candidate::singleton($candID);
-        $dob = $candidate->getCandidateDoB();
-        $dobDT = new \DateTime($dob);
-        $curDate = new \DateTime("now");
-        $interval = date_diff($curDate, $dobDT, true);
-        $ageM = $this->calculateAgeMonths(array('year' => $interval->format("%y"),
-                                         'mon'  => $interval->format("%m"),
-                                         'day'  => $interval->format("%d")));
+        $dob       = $candidate->getCandidateDoB();
+        $dobDT     = new \DateTime($dob);
+        $curDate   = new \DateTime("now");
+        $interval  = date_diff($curDate, $dobDT, true);
+        $ageM      = $this->calculateAgeMonths(
+            array(
+             'year' => $interval->format("%y"),
+             'mon'  => $interval->format("%m"),
+             'day'  => $interval->format("%d"),
+            )
+        );
         //$ageTEST = $this->getCandidateAge($curDate); //TODO replace the hacky age function with this
         $gender = $candidate->getCandidateGender();
         return array(
-            "age_mths" => $ageM,
-            "dob" => $dob,
-            "gender" => $gender
-        );
+                "age_mths" => $ageM,
+                "dob"      => $dob,
+                "gender"   => $gender,
+               );
     }
 
-    function _getLang() {
+    function _getLang()
+    {
         $timepoint = \TimePoint::singleton($this->getSessionID());
-        $candID = $timepoint->getCandID();
+        $candID    = $timepoint->getCandID();
         $candidate = \Candidate::singleton($candID);
-        $lang = $candidate->getData("DisplayParameters")['Preferred survey language'];
+        $lang      = $candidate->getData("DisplayParameters")['Preferred survey language'];
         return $lang ? $lang : "en-ca";
     }
 
-    function _isComplete() {
+    function _isComplete()
+    {
         $status  = new \NDB_BVL_InstrumentStatus;
         $success = $status->select($this->commentID);
         return $status->getDataEntryStatus()==='Complete' ? true : false;
     }
 
-    function _getInstrumentData($db) {
+    function _getInstrumentData($db)
+    {
         $result = $db->pselect(
             "SELECT * FROM $this->table WHERE CommentID=:CID",
             array('CID' => $this->getCommentID())
@@ -89,6 +97,28 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return $result ? $result[0] : array();
     }
 
+    
+    function _getAgeWindows($db) {
+        $query_params= array(
+                        'TN' => $this->testName,
+                        'CID' => $this->getCommentID()
+                       );
+
+        $Windows = $db ->pselect(
+            "SELECT AgeMinDays, AgeMaxDays
+                FROM test_battery tb
+                    JOIN flag f USING(Test_name)
+                    JOIN session s ON (s.ID=f.SessionID)
+                WHERE tb.Active='Y' AND tb.Test_name=:TN
+                    AND tb.SubprojectID=s.SubprojectID
+                    AND f.CommentID=:CID",
+            $query_params
+        );
+        
+        return $Windows;
+    } 
+    
+    
     /**
      * @param string  $filename The filename to be loaded, or a base64 encoded
      *                          string of a .json file to be interpreted.
@@ -105,42 +135,56 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
             $this->InstrumentType = 'JSON';
             $json = file_get_contents($filename);
             $this->instrumentJSON = $json;
-            $this->instrument = json_decode($json, true);
+            $this->instrument     = json_decode($json, true);
             $this->instrument["Elements"] = self::inlineCalcFormulas($this->instrument["Elements"]);
-            $this->table = $this->instrument['Meta']['ShortName'];
+            $this->table    = $this->instrument['Meta']['ShortName'];
             $this->testName = $this->table;
             return $json;
         }
     }
 
-    static function isRequired($element, $values, $context) {
-        $inputTypes = ['select', 'date', 'radio', 'text', 'calc', 'checkbox'];
+    static function isRequired($element, $values, $context)
+    {
+        $inputTypes = [
+                       'select',
+                       'date',
+                       'radio',
+                       'text',
+                       'calc',
+                       'checkbox',
+                      ];
 
-        if (!in_array($element["Type"], $inputTypes)) return false;
+        if (!in_array($element["Type"], $inputTypes)) { return false;
+        }
 
         $requireResponse = $element["Options"]["RequireResponse"];
-        if (!isset($requireResponse)) return false;
+        if (!isset($requireResponse)) { return false;
+        }
 
-        if (is_bool($requireResponse)) return $requireResponse;
+        if (is_bool($requireResponse)) { return $requireResponse;
+        }
 
         return \LorisScript\Evaluator::evaluate($requireResponse, array_merge($values, $context));
     }
 
-    function incompleteExists($values) {
+    function incompleteExists($values)
+    {
         $incompleteExists = false;
         foreach ($this->instrument["Elements"] as &$element) {
             if (isset($values[$element["Name"]])) {
                 continue;
             } else {
                 $isRequired = self::isRequired($element, $values, $this->_getContext());
-                if ($isRequired) { $incompleteExists = true; }
+                if ($isRequired) { $incompleteExists = true;
+                }
             }
         }
 
         return $incompleteExists;
     }
 
-    function calculateFields($values) {
+    function calculateFields($values)
+    {
         $calculatedValues = array();
 
         foreach ($this->instrument["Elements"] as &$element) {
@@ -166,26 +210,44 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return json_encode($this->instrument);
     }
 
-    function display() {
+    function display()
+    {
         $db     =& \Database::singleton();
+
         $smarty = new \Smarty_NeuroDB();
         $smarty->assign('instrumentJSON', htmlspecialchars($this->toJSON()));
-        $smarty->assign('initialData', htmlspecialchars(json_encode($this->_getInstrumentData($db))));
-        $smarty->assign('context', htmlspecialchars(json_encode($this->_getContext())));
+        
+        $initialData = $this->_getInstrumentData($db);
+        $smarty->assign('initialData', htmlspecialchars(json_encode($initialData)));
+        
+        $context = $this->_getContext();
+        if ($initialData['Candidate_Age']) {
+            $context['age_mths'] = $initialData['Candidate_Age'];
+        }
+        $smarty->assign('context', htmlspecialchars(json_encode($context)));
+        
         $smarty->assign('lang', htmlspecialchars($this->_getLang()));
         $smarty->assign('complete', htmlspecialchars($this->_isComplete()));
+        
+        $examiners = $this->_getExaminerNames();
+        reset($examiners);
+        unset($examiners[key($examiners)]);
+        $smarty->assign('examiners', htmlspecialchars(json_encode($examiners)));
+        
+        $smarty->assign('agewindows', htmlspecialchars(json_encode($this->_getAgeWindows($db))));
+
         $html = $smarty->fetch("instrument_react.tpl");
         return $html;
     }
 
-    function save() {
-        $db     =& \Database::singleton();
+    function save()
+    {
+        $db =& \Database::singleton();
         $isDataSubmission = isset($_POST['instrumentData']);
-
         if ($isDataSubmission) {
-            $frontEndValues = json_decode($_POST['instrumentData'], true);
+            $frontEndValues   = json_decode($_POST['instrumentData'], true);
             $calculatedValues = $this->calculateFields($frontEndValues);
-            $values = array_merge(array(), $frontEndValues, $calculatedValues);
+            $values           = array_merge(array(), $frontEndValues, $calculatedValues);
             if ($this->incompleteExists($values)) {
                 throw new \Exception("A required field was left incomplete", 400);
             }
@@ -200,92 +262,124 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
             )
         );
         if (!$recordExists) {
+            $this->_saveCandidateAge($values);
             $db->insert(
                 $this->table,
                 array_merge($values, array('CommentID' => $this->getCommentID())),
                 array('CommentID' => $this->getCommentID())
             );
         } else if ($recordExists && !empty($values)) {
+            $this->_saveCandidateAge($values);
             $db->update(
                 $this->table,
                 $values,
                 array('CommentID' => $this->getCommentID())
             );
         }
+
         return true;
     }
 
-    static private function checkForCircularRefs($formulaMap) {
-      foreach ($formulaMap as $key => $formula) {
-        $encounteredVars = [];
-        array_push($encounteredVars, $key);
-        $res = self::referenceTree($formula, $formulaMap, $encounteredVars);
-        if($res !== false)
-          throw new Exception ("Circular reference at $res");
-      }
-    }
-
-    static private function referenceTree($formula, $formulaMap, $encounteredVars) {
-      preg_match_all("/\[\w+\]*/", $formula, $matches);
-      
-      $variables = array_unique(array_map(function($match) {
-        return substr($match, 1, -1);
-      }, $matches[0]));
-         
-      foreach ($variables as $variable) {
-        if (array_key_exists($variable, $formulaMap)) {
-          if (in_array($variable, $encounteredVars))
-            return "$variable";
- 
-          array_push($encounteredVars, $variable);
-          
-          return self::referenceTree($formulaMap[$variable], $formulaMap, $encounteredVars);
+    static private function checkForCircularRefs($formulaMap)
+    {
+        foreach ($formulaMap as $key => $formula) {
+            $encounteredVars = [];
+            array_push($encounteredVars, $key);
+            $res = self::referenceTree($formula, $formulaMap, $encounteredVars);
+            if($res !== false) {
+                throw new Exception("Circular reference at $res");
+            }
         }
-      }
-      
-      return false;
     }
 
-    static function inlineCalcFormulas($elements) {
-      $calcElements = array_filter($elements, function ($element) {
-          return $element["Type"] === 'calc';
-      });
-
-      $formulaMap = array_reduce($calcElements, function ($result, $element) {
-          $result[$element["Name"]] = $element["Formula"];
-          return $result;
-      }, array());
-      
-      self::checkForCircularRefs($formulaMap);
-
-      return array_map(function ($element) use ($formulaMap) {
-          if ($element["Type"] !== 'calc') { return $element; }
-          $recusivelyInlinedFormula = $element["Formula"];
-          $resultIsSame = false;
-          while (!$resultIsSame) {
-              $result = self::inlineSubFormulas($recusivelyInlinedFormula, $formulaMap);
-              $resultIsSame = $result === $recusivelyInlinedFormula;
-              $recusivelyInlinedFormula = $result;
-          }
-          $element["Formula"] = $recusivelyInlinedFormula;
-          return $element;
-      }, $elements);
-    }
-
-    static private function inlineSubFormulas($formula, $formulaMap) {
+    static private function referenceTree($formula, $formulaMap, $encounteredVars)
+    {
         preg_match_all("/\[\w+\]*/", $formula, $matches);
 
-        $variables = array_map(function($match) {
-            return substr($match, 1, -1);
-        }, $matches[0]);
+        $variables = array_unique(
+            array_map(
+                function ($match) {
+                    return substr($match, 1, -1);
+                },
+                $matches[0]
+            )
+        );
 
-        $inlinedFormula = array_reduce($variables, function($result, $variable) use ($formulaMap) {
+        foreach ($variables as $variable) {
             if (array_key_exists($variable, $formulaMap)) {
-                return preg_replace("/\[{$variable}\]/", "({$formulaMap[$variable]})", $result);
-            } else {
-                return $result;
+                if (in_array($variable, $encounteredVars)) {
+                    return "$variable";
+                }
+
+                array_push($encounteredVars, $variable);
+
+                return self::referenceTree($formulaMap[$variable], $formulaMap, $encounteredVars);
             }
-        }, $formula);
+        }
+
+        return false;
+    }
+
+    static function inlineCalcFormulas($elements)
+    {
+        $calcElements = array_filter(
+            $elements,
+            function ($element) {
+                return $element["Type"] === 'calc';
+            }
+        );
+
+        $formulaMap = array_reduce(
+            $calcElements,
+            function ($result, $element) {
+                $result[$element["Name"]] = $element["Formula"];
+                return $result;
+            },
+            array()
+        );
+
+        self::checkForCircularRefs($formulaMap);
+
+        return array_map(
+            function ($element) use ($formulaMap) {
+                if ($element["Type"] !== 'calc') { return $element;
+                }
+                $recusivelyInlinedFormula = $element["Formula"];
+                $resultIsSame = false;
+                while (!$resultIsSame) {
+                    $result       = self::inlineSubFormulas($recusivelyInlinedFormula, $formulaMap);
+                    $resultIsSame = $result === $recusivelyInlinedFormula;
+                    $recusivelyInlinedFormula = $result;
+                }
+                $element["Formula"] = $recusivelyInlinedFormula;
+                return $element;
+            },
+            $elements
+        );
+    }
+
+    static private function inlineSubFormulas($formula, $formulaMap)
+    {
+        preg_match_all("/\[\w+\]*/", $formula, $matches);
+
+        $variables = array_map(
+            function ($match) {
+                return substr($match, 1, -1);
+            },
+            $matches[0]
+        );
+
+        $inlinedFormula = array_reduce(
+            $variables,
+            function ($result, $variable) use ($formulaMap) {
+                if (array_key_exists($variable, $formulaMap)) {
+                    return preg_replace("/\[{$variable}\]/", "({$formulaMap[$variable]})", $result);
+                } else {
+                    return $result;
+                }
+            },
+            $formula
+        );
 
         return $inlinedFormula;
     }
