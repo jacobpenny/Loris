@@ -38,8 +38,8 @@ class Instrument_List extends \NDB_Menu_Filter
     function _hasAccess()
     {
         // create user object
-        $user =& User::singleton();
-        $config =& NDB_Config::singleton();
+        $user =& \User::singleton();
+        $config =& \NDB_Config::singleton();
         $timePoint =& \TimePoint::singleton($_REQUEST['sessionID']);
         $candID    = $timePoint->getCandID();
 
