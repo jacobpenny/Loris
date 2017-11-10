@@ -104,7 +104,9 @@ class InstrumentFormContainer extends React.Component {
   updateInstrumentData(name, value) {
     const instrumentData = Object.assign({}, this.state.data, {[name]: value});
 
-    const metaVals = this.recalculateMeta(this.props.context.dob, instrumentData.Date_taken);
+    var metaVals;
+    if (name === 'Date_taken') metaVals = this.recalculateMeta(this.props.context.dob, instrumentData.Date_taken);
+    else metaVals = {};
 
     const calcElements = this.props.instrument.Elements.filter(
       (element) => (element.Type === 'calc')
