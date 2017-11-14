@@ -17,7 +17,7 @@ const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, o
       {renderMeta(dataEntryMode, metaData, isFrozen ? true : false, onUpdate, examiners)}
       {
         elements.map((element, index) => (
-          renderElement(element, index, onUpdate, showRequired && element.Options.RequireResponse, isFrozen ? true : false )
+          renderElement(element, index, onUpdate, showRequired, element.Options.RequireResponse, isFrozen ? true : false )
         ))
       }
       {renderSave(isFrozen ? true : false, onSave, saveText, saveWarning)}
@@ -90,27 +90,27 @@ function renderMeta(dataEntryMode, metaData, isDisabled, onUpdate, examiners) {
   }
 }
 
-function renderElement(element, key, onUpdate, required = false, disabled = false) {
+function renderElement(element, key, onUpdate, showRequired = false,required = false, disabled = false) {
   if (element.Type === 'label') {
     return renderLabel(element, key)
   } else if (element.Type === 'radio-labels') {
     return renderRadioLabels(element, key)
   } else if (element.Type === 'radio') {
-    return renderRadio(element, key, onUpdate, required, disabled)
+    return renderRadio(element, key, onUpdate, showRequired, required, disabled)
   } else if (element.Type === 'select') {
-    return renderSelect(element, key, onUpdate, required, disabled)
+    return renderSelect(element, key, onUpdate, showRequired, required, disabled)
   } else if (element.Type === 'checkbox') {
-    return renderCheckbox(element, key, onUpdate, required, disabled)
+    return renderCheckbox(element, key, onUpdate, showRequired, required, disabled)
   } else if (element.Type === 'text') {
     if (element.Options['Type'] === 'large') {
-        return renderTextArea(element, key, onUpdate, required, disabled)
+        return renderTextArea(element, key, onUpdate, showRequired, required, disabled)
     } else {
-        return renderText(element, key, onUpdate, required, disabled)
+        return renderText(element, key, onUpdate, showRequired, required, disabled)
     }
   } else if (element.Type === 'calc') {
     return renderCalc(element, key, onUpdate)
   } else if (element.Type === 'date') {
-    return renderDate(element, key, onUpdate, required, disabled)
+    return renderDate(element, key, onUpdate, showRequired, required, disabled)
   }
 }
 
@@ -125,7 +125,7 @@ function renderRadioLabels(element, key) {
   );
 }
 
-function renderRadio(element, key, onUpdate, isRequired, isDisabled) {
+function renderRadio(element, key, onUpdate, showRequired, isRequired, isDisabled) {
   return (
       <div className="row form-group" key={key}>
         <RadioGroupElement
@@ -135,9 +135,11 @@ function renderRadio(element, key, onUpdate, isRequired, isDisabled) {
           orientation={element.Options.Orientation}
           onUserInput={onUpdate}
           value={element.Value}
-          hasError={isRequired && (!element.Value)}
+          hasError={showRequired && isRequired && (!element.Value)}
           disabled={isDisabled}
           elementClassOverride={true}
+          showRequired={showRequired}
+          required={isRequired}
         />
         {renderReset(isDisabled, onUpdate, element)}
       </div>
@@ -155,7 +157,7 @@ function renderReset(disabled = false, onUpdate, element) {
   }
 }
 
-function renderSelect(element, key, onUpdate, isRequired, isDisabled) {
+function renderSelect(element, key, onUpdate, showRequired, isRequired, isDisabled) {
   if (element.Options.AllowMultiple) {
     <p>MultiSelects not implemented yet</p>
   } else {
@@ -168,12 +170,14 @@ function renderSelect(element, key, onUpdate, isRequired, isDisabled) {
         onUserInput={onUpdate}
         value={element.Value}
         disabled={isDisabled}
+        showRequired={showRequired}
+        required={isRequired}
       />
     );
   }
 }
 
-function renderCheckbox(element, key, onUpdate, isRequiredi, isDisabled) {
+function renderCheckbox(element, key, onUpdate, showRequired, isRequired, isDisabled) {
   return (
     <CheckboxGroupElement
       key={key}
@@ -183,11 +187,13 @@ function renderCheckbox(element, key, onUpdate, isRequiredi, isDisabled) {
       onUserInput={onUpdate}
       value={element.Value}
       disabled={isDisabled}
+      showRequired={showRequired}
+      required={isRequired}
     />
   );
 }
 
-function renderText(element, key, onUpdate, isRequired, isDisabled) {
+function renderText(element, key, onUpdate, showRequired, isRequired, isDisabled) {
   return (
     <TextboxElement
       key={key}
@@ -196,11 +202,13 @@ function renderText(element, key, onUpdate, isRequired, isDisabled) {
       onUserInput={onUpdate}
       value={element.Value}
       disabled={isDisabled}
+      showRequired={showRequired}
+      required={isRequired}
     />
   );
 }
 
-function renderTextArea(element, key, onUpdate, isRequired, isDisabled) {
+function renderTextArea(element, key, onUpdate, showRequired, isRequired, isDisabled) {
   return (
     <TextareaElement
       key={key}
@@ -209,6 +217,8 @@ function renderTextArea(element, key, onUpdate, isRequired, isDisabled) {
       onUserInput={onUpdate}
       value={element.Value}
       disabled={isDisabled}
+      showRequired={showRequired}
+      required={isRequired}
     />
   );
 }
@@ -225,7 +235,7 @@ function renderCalc(element, key, onUpdate) {
   );
 }
 
-function renderDate(element, key, onUpdate, isRequired, isDisabled) {
+function renderDate(element, key, onUpdate, showRequired, isRequired, isDisabled) {
   return (
     <DateElement
       key={key}
@@ -234,6 +244,8 @@ function renderDate(element, key, onUpdate, isRequired, isDisabled) {
       onUserInput={onUpdate}
       value={element.Value}
       disabled={isDisabled}
+      showRequired={showRequired}
+      required={isRequired}
     />
   )
 }

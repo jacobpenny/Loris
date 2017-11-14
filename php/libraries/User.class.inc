@@ -56,7 +56,7 @@ class User extends UserPermissions
 
         // get user data from database
         $query = "SELECT users.*,
-            GROUP_CONCAT(psc.Name SEPARATOR ';') AS Sites
+            GROUP_CONCAT(psc.Name ORDER BY psc.Name SEPARATOR ';') AS Sites
             FROM users
             LEFT JOIN user_psc_rel ON (user_psc_rel.UserID=users.ID)
             LEFT JOIN psc ON (user_psc_rel.CenterID=psc.CenterID)
@@ -314,6 +314,7 @@ class User extends UserPermissions
     {
         $site_list = $this->userInfo['examiner'];
         unset($site_list['pending']);
+        natcasesort($site_list);
         return $site_list;
     }
 
@@ -351,6 +352,7 @@ class User extends UserPermissions
                 $user_study_sites[$val] = $site[$key]->getCenterName();
             }
         }
+        natcasesort($user_study_sites);
         return $user_study_sites;
     }
 
@@ -541,7 +543,8 @@ class User extends UserPermissions
     {
         return in_array(
             $center_id,
-            $this->getCenterIDs()
+            $this->getCenterIDs(),
+            true
         );
     }
     /**

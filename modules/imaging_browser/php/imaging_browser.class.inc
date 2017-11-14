@@ -13,8 +13,8 @@
  *  @license    Loris License
  *  @link       https://www.github.com/aces/Loris-Trunk/
  */
+namespace LORIS\imaging_browser;
 
-require_once __DIR__ . '/Imaging_Session_ControlPanel.class.inc';
 /**
  * Provides the PHP code for the menu filter for the imaging browser
  *
@@ -25,7 +25,7 @@ require_once __DIR__ . '/Imaging_Session_ControlPanel.class.inc';
  *  @license    Loris License
  *  @link       https://www.github.com/aces/Loris-Trunk/
  */
-class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
+class Imaging_Browser extends \NDB_Menu_Filter
 {
     var $AjaxModule = true;
     /**
@@ -35,12 +35,12 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
      */
     function _hasAccess()
     {
-        $user =& User::singleton();
+        $user =& \User::singleton();
 
         // allow only to view own site data
         $site_arr = $user->getData('CenterIDs');
         foreach ($site_arr as $key=>$val) {
-            $site[$key]        = & Site::singleton($val);
+            $site[$key]        =& \Site::singleton($val);
             $isStudySite[$key] = $site[$key]->isStudySite();
         }
         $oneIsStudySite = in_array("1", $isStudySite);
@@ -62,8 +62,8 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
      */
     function _setupVariables()
     {
-        $config = NDB_Config::singleton();
-        $DB     = Database::singleton();
+        $config = \NDB_Config::singleton();
+        $DB     = \Database::singleton();
         $toTable_scan_types = $config->getSetting('tblScanTypes');
 
         $all_scan_types_2d = $DB->pselect(
@@ -166,9 +166,9 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
         $this->query .= $left_joins;
         $this->query .= $where;
 
-        $config =& NDB_Config::singleton();
-        $user   =& User::singleton();
-        $DB     = Database::singleton();
+        $config =& \NDB_Config::singleton();
+        $user   =& \User::singleton();
+        $DB     = \Database::singleton();
 
         if ($config->getSetting("useProjectPermissions")) {
             $this->query .= " AND c.ProjectID IN (" . implode(",", $user->getProjectIds()) . ")";
@@ -303,12 +303,19 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
     /**
      * Setup $this->tpl_data for use by Smarty
      *
+     * @param string $name       The test name being accessed
+     * @param string $page       The subtest being accessed (may be null)
+     * @param string $identifier The identifier for the data to load on this page
+     * @param string $commentID  The CommentID to load the data for
+     * @param string $formname   The name to give this form
+     *
      * @return null
      */
-    function _setFilterForm()
+    function _setupPage($name, $page, $identifier, $commentID, $formname)
     {
+        parent::_setupPage($name, $page, $identifier, $commentID, $formname);
         // create user object
-        $user          =& User::singleton();
+        $user          =& \User::singleton();
         $list_of_sites = array();
 
         // PSC
@@ -316,7 +323,7 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
             || $user->hasPermission('imaging_browser_phantom_allsites')
         ) {
             // get the list of study sites - to be replaced by the Site object
-            $list_of_sites = Utility::getSiteList();
+            $list_of_sites = \Utility::getSiteList();
             if (is_array($list_of_sites)) {
                 $list_of_sites = array('' => 'All') + $list_of_sites;
             }
@@ -326,7 +333,7 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
             $list_of_sites = array('' => 'All User Sites') + $list_of_sites;
         }
 
-        $DB    = Database::singleton();
+        $DB    = \Database::singleton();
         $allAr = array('' => 'All');
 
         $this->addBasicText(
@@ -354,15 +361,19 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
             )
         );
 
-        $config =& NDB_Config::singleton();
+        $config =& \NDB_Config::singleton();
         if ($config->getSetting('useProjects') === "true") {
             $list_of_projects = $allAr;
+<<<<<<< HEAD:modules/imaging_browser/php/NDB_Menu_Filter_imaging_browser.class.inc
             if ($config->getSetting("useProjectPermissions")) {
                 $projectList = $user->getProjects();
             } else {
                 $projectList = Utility::getProjectList();
             }
 
+=======
+            $projectList      = \Utility::getProjectList();
+>>>>>>> aces/minor:modules/imaging_browser/php/imaging_browser.class.inc
             foreach ($projectList as $key => $value) {
                 $list_of_projects[$key] =$value;
             }
@@ -513,7 +524,7 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
      */
     function getCSSDependencies()
     {
-        $factory = NDB_Factory::singleton();
+        $factory = \NDB_Factory::singleton();
         $baseURL = $factory->settings()->getBaseURL();
         $deps    = parent::getCSSDependencies();
         return array_merge(
@@ -530,7 +541,7 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
      */
     function getJSDependencies()
     {
-        $factory = NDB_Factory::singleton();
+        $factory = \NDB_Factory::singleton();
         $baseurl = $factory->settings()->getBaseURL();
         return array_merge(
             parent::getJSDependencies(),
