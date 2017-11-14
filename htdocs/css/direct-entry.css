@@ -28,6 +28,10 @@ label {
     text-align: justify;
 }
 
+.radio-label em {
+    color: red;
+}
+
 #banner {
     background-color: #08245b;
     padding: 10px;
@@ -82,7 +86,7 @@ label {
     background-color: #08245b;
 }
 
-#warning {
+.warning {
     color: red;
 }
 

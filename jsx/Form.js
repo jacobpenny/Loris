@@ -171,6 +171,7 @@ const RadioGroupElement = React.createClass({
     id: React.PropTypes.string,
     class: React.PropTypes.string,
     disabled: React.PropTypes.bool,
+    showRequired: React.PropTypes.bool,
     required: React.PropTypes.bool,
     hasError: React.PropTypes.bool,
     orientation: React.PropTypes.string,
@@ -189,6 +190,7 @@ const RadioGroupElement = React.createClass({
       class: '',
       disabled: false,
       required: false,
+      showRequired: false,
       hasError: false,
       orientation: 'vertical',
       errorMessage: 'The field is required!',
@@ -209,25 +211,23 @@ const RadioGroupElement = React.createClass({
     var isHorizontal = this.props.orientation === 'horizontal';
     var options = this.props.options;
     var errorMessage = null;
-    var requiredHTML = null;
+    var requiredHTML = '';
     var elementClass = 'row form-group';
 
     // Add required asterix
     if (required) {
-      requiredHTML = <span className="text-danger">*</span>;
+      requiredHTML = '<em>*</em>';
     }
 
     // Add error message
-    if (this.props.hasError || (this.props.required && this.props.value === "")) {
-      errorMessage = <span>{this.props.errorMessage}</span>;
+    if (this.props.hasError || (this.props.showRequired && this.props.required && this.props.value === "")) {
+      errorMessage = <span className="warning">{this.props.errorMessage}</span>;
       elementClass = 'row form-group has-error';
     }
 
     return (
       <div className={this.props.elementClassOverride ? "" : elementClass}>
-        <label className="col-sm-3 control-label" dangerouslySetInnerHTML={{__html: this.props.label}}>
-          {requiredHTML}
-        </label>
+        <label className="col-sm-3 control-label radio-label" dangerouslySetInnerHTML={{__html: this.props.label + requiredHTML}}/>
         <div className="col-sm-9">
           <RadioGroup
             name={this.props.name}
@@ -308,7 +308,7 @@ const CheckboxGroupElement = React.createClass({
 
     // Add required asterix
     if (required) {
-      requiredHTML = <span className="text-danger">*</span>;
+      //requiredHTML = <span className="text-danger">*</span>;
     }
 
     // Add error message
@@ -422,7 +422,7 @@ var SelectElement = React.createClass({
 
     // Add required asterix
     if (required) {
-      requiredHTML = <span className="text-danger">*</span>;
+      //requiredHTML = <span className="text-danger">*</span>;
     }
 
     // Add empty option
@@ -512,7 +512,7 @@ var TextareaElement = React.createClass({
 
     // Add required asterix
     if (required) {
-      requiredHTML = <span className="text-danger">*</span>;
+      //requiredHTML = <span className="text-danger">*</span>;
     }
 
     return (
@@ -576,7 +576,7 @@ var TextboxElement = React.createClass({
 
     // Add required asterix
     if (required) {
-      requiredHTML = <span className="text-danger">*</span>;
+      //requiredHTML = <span className="text-danger">*</span>;
     }
 
     return (
@@ -640,7 +640,7 @@ var DateElement = React.createClass({
 
     // Add required asterix
     if (required) {
-      requiredHTML = <span className="text-danger">*</span>;
+      //requiredHTML = <span className="text-danger">*</span>;
     }
 
     return (
@@ -780,7 +780,7 @@ var FileElement = React.createClass({
 
     // Add required asterix
     if (required) {
-      requiredHTML = <span className="text-danger">*</span>;
+      //requiredHTML = <span className="text-danger">*</span>;
     }
 
     const truncateEllipsis = {
