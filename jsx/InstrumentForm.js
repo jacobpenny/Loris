@@ -14,7 +14,7 @@ const InstrumentForm = ({meta, elements, showRequired, errorMessage, onUpdate, o
         { errorMessage ? <div className="alert alert-danger">{errorMessage}</div> : null }
       </div>
       {renderTitle(meta)}
-      {renderMeta(dataEntryMode, metaData, isFrozen ? true : false, onUpdate, examiners)}
+      <div>{renderMeta(dataEntryMode, metaData, isFrozen ? true : false, onUpdate, examiners)}</div>
       {
         elements.map((element, index) => (
           renderElement(element, index, onUpdate, showRequired, element.Options.RequireResponse, isFrozen ? true : false )
@@ -44,7 +44,6 @@ function renderTitle(meta) {
 function renderMeta(dataEntryMode, metaData, isDisabled, onUpdate, examiners) {
   if (dataEntryMode) {
     const key = -1;
-    console.log("WD: " + metaData[2]);
     return (
       <div className="meta" key={key}>
         <div className="col-xs-12">
