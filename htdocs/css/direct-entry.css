@@ -18,9 +18,11 @@ h1 {
 }
 
 .blue {
+    display: inline-block;
     border: 0px solid blue;
     background-color: lightblue;
     padding: 5px;
+    width: 100%;
 }
 
 label {

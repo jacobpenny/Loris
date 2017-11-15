@@ -330,7 +330,7 @@ class New_Profile extends \NDB_Form
 
         $useProjectsPermissions = $config->getSetting('useProjectPermissions');
         if ($useProjectsPermissions === "true" && !empty($values['ProjectID'])) {
-            $user =& User::singleton();
+            $user =& \User::singleton();
 
             if (!$user->hasAccessToProject($values['ProjectID'])) {
                 $errors['ProjectID'] = "User does not belong to this project";
