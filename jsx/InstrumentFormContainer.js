@@ -88,7 +88,6 @@ class InstrumentFormContainer extends React.Component {
           }
       }
     });
-    console.log(windowDifference);
     return {Candidate_Age: ageMonths, Window_Difference: windowDifference};
   }
   
@@ -127,7 +126,6 @@ class InstrumentFormContainer extends React.Component {
     const newData = Object.assign(
       {}, instrumentData, calculatedValues, metaVals
     );
-    console.log(newData);
     this.setState({
       data: newData
     });
