@@ -274,6 +274,10 @@ const CheckboxGroupElement = React.createClass({
     ]),
     label: React.PropTypes.string,
     value: React.PropTypes.string,
+    order: React.PropTypes.oneOfType([
+        React.PropTypes.object,
+        React.PropTypes.array
+    ]), 
     id: React.PropTypes.string,
     class: React.PropTypes.string,
     disabled: React.PropTypes.bool,
@@ -287,6 +291,7 @@ const CheckboxGroupElement = React.createClass({
     return {
       name: '',
       options: {},
+      order: {},
       label: '',
       value: undefined,
       id: '',
@@ -309,6 +314,7 @@ const CheckboxGroupElement = React.createClass({
     var required = this.props.required ? 'required' : null;
     var disabled = this.props.disabled ? 'disabled' : null;
     var options = this.props.options;
+    var order = this.props.order;
     var errorMessage = null;
     var requiredHTML = null;
     var elementClass = 'row form-group';
@@ -337,6 +343,7 @@ const CheckboxGroupElement = React.createClass({
 
             <div style={{}}>
               {Object.keys(options).map(function(optionValue, index) {
+                optionValue = order[optionValue] ? order[optionValue] : optionValue;
                 return (
                   <div key={`${optionValue}-${index}`} >
                     <Checkbox value={optionValue}/> {options[optionValue]}
@@ -370,6 +377,10 @@ var SelectElement = React.createClass({
       React.PropTypes.string,
       React.PropTypes.array
     ]),
+    order: React.PropTypes.oneOfType([
+        React.PropTypes.object,
+        React.PropTypes.array
+    ]), 
     id: React.PropTypes.string,
     class: React.PropTypes.string,
     multiple: React.PropTypes.bool,
@@ -385,6 +396,7 @@ var SelectElement = React.createClass({
     return {
       name: '',
       options: {},
+      order: {},
       label: '',
       value: undefined,
       id: '',
@@ -422,6 +434,7 @@ var SelectElement = React.createClass({
     var required = this.props.required ? 'required' : null;
     var disabled = this.props.disabled ? 'disabled' : null;
     var options = this.props.options;
+    var order = this.props.order;
     var errorMessage = null;
     var emptyOptionHTML = null;
     var requiredHTML = null;
@@ -464,6 +477,7 @@ var SelectElement = React.createClass({
           >
             {emptyOptionHTML}
             {Object.keys(options).map(function(option) {
+              optionValue = order[optionValue] ? order[optionValue] : optionValue;
               return (
                 <option value={option} key={option}>{options[option]}</option>
               );
