@@ -125,6 +125,7 @@ function renderRadioLabels(element, key) {
 }
 
 function renderRadio(element, key, onUpdate, showRequired, isRequired, isDisabled) {
+  console.log(element.Options.Order);
   return (
       <div className="row form-group" key={key}>
         <RadioGroupElement
@@ -134,6 +135,7 @@ function renderRadio(element, key, onUpdate, showRequired, isRequired, isDisable
           orientation={element.Options.Orientation}
           onUserInput={onUpdate}
           value={element.Value}
+          order={element.Options.Order}
           hasError={showRequired && isRequired && (!element.Value)}
           disabled={isDisabled}
           elementClassOverride={true}

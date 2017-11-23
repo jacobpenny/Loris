@@ -168,6 +168,10 @@ const RadioGroupElement = React.createClass({
     ]),
     label: React.PropTypes.string,
     value: React.PropTypes.string,
+    order: React.PropTypes.oneOfType([
+        React.PropTypes.object,
+        React.PropTypes.array
+    ]),
     id: React.PropTypes.string,
     class: React.PropTypes.string,
     disabled: React.PropTypes.bool,
@@ -184,6 +188,7 @@ const RadioGroupElement = React.createClass({
     return {
       name: '',
       options: {},
+      order: {},
       label: '',
       value: undefined,
       id: '',
@@ -210,6 +215,7 @@ const RadioGroupElement = React.createClass({
     var disabled = this.props.disabled ? 'disabled' : null;
     var isHorizontal = this.props.orientation === 'horizontal';
     var options = this.props.options;
+    var order = this.props.order;
     var errorMessage = null;
     var requiredHTML = '';
     var elementClass = 'row form-group';
@@ -239,6 +245,7 @@ const RadioGroupElement = React.createClass({
           >
             <div style={{display: isHorizontal ? 'flex' : '', justifyContent: 'space-around'}}>
               {Object.keys(options).map(function(optionValue, index) {
+                optionValue = order[optionValue] ? order[optionValue] : optionValue;
                 return (
                   <div key={index}>
                     <Radio value={optionValue} key={optionValue} disabled={disabled}/> {options[optionValue]}
