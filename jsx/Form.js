@@ -477,7 +477,7 @@ var SelectElement = React.createClass({
           >
             {emptyOptionHTML}
             {Object.keys(options).map(function(option) {
-              optionValue = order[optionValue] ? order[optionValue] : optionValue;
+              option = order[option] ? order[option] : option;
               return (
                 <option value={option} key={option}>{options[option]}</option>
               );
