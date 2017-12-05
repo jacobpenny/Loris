@@ -1,4 +1,4 @@
-# ZAIN Rules
+# Logic Parser
 
 [JS Use](#js)<br>
 [PHP Use](#php)<br>
