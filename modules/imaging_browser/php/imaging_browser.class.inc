@@ -364,16 +364,12 @@ class Imaging_Browser extends \NDB_Menu_Filter
         $config =& \NDB_Config::singleton();
         if ($config->getSetting('useProjects') === "true") {
             $list_of_projects = $allAr;
-<<<<<<< HEAD:modules/imaging_browser/php/NDB_Menu_Filter_imaging_browser.class.inc
             if ($config->getSetting("useProjectPermissions")) {
                 $projectList = $user->getProjects();
             } else {
-                $projectList = Utility::getProjectList();
+                $projectList = \Utility::getProjectList();
             }
 
-=======
-            $projectList      = \Utility::getProjectList();
->>>>>>> aces/minor:modules/imaging_browser/php/imaging_browser.class.inc
             foreach ($projectList as $key => $value) {
                 $list_of_projects[$key] =$value;
             }
