@@ -47,14 +47,15 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
      *
      * @return array containing context variables
      */
-    function _getContext()
+    function _getContext($testdate = null)
     {
         $timepoint = \TimePoint::singleton($this->getSessionID());
         $candID    = $timepoint->getCandID();
         $candidate = \Candidate::singleton($candID);
         $dob       = $candidate->getCandidateDoB();
         $dobDT     = new \DateTime($dob);
-        $curDate   = new \DateTime("now");
+        if (empty($testdate)) $testdate = "now";
+        $curDate   = new \DateTime($testdate);
         $interval  = date_diff($curDate, $dobDT, true);
         $ageM      = $this->calculateAgeMonths(
             array(

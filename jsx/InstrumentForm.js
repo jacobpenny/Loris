@@ -95,21 +95,33 @@ function renderElement(element, key, onUpdate, showRequired = false,required = f
   } else if (element.Type === 'radio-labels') {
     return renderRadioLabels(element, key)
   } else if (element.Type === 'radio') {
-    return renderRadio(element, key, onUpdate, showRequired, required, disabled)
+    return <div className="hoverRow">
+             {renderRadio(element, key, onUpdate, showRequired, required, disabled)}
+           </div>
   } else if (element.Type === 'select') {
-    return renderSelect(element, key, onUpdate, showRequired, required, disabled)
+    return <div className="hoverRow">
+             {renderSelect(element, key, onUpdate, showRequired, required, disabled)}
+           </div>
   } else if (element.Type === 'checkbox') {
-    return renderCheckbox(element, key, onUpdate, showRequired, required, disabled)
+    return <div className="hoverRow">
+             {renderCheckbox(element, key, onUpdate, showRequired, required, disabled)}
+           </div>
   } else if (element.Type === 'text') {
     if (element.Options['Type'] === 'large') {
-        return renderTextArea(element, key, onUpdate, showRequired, required, disabled)
+        return <div className="hoverRow">
+                 {renderTextArea(element, key, onUpdate, showRequired, required, disabled)}
+               </div>
     } else {
-        return renderText(element, key, onUpdate, showRequired, required, disabled)
+        return <div className="hoverRow">
+                 {renderText(element, key, onUpdate, showRequired, required, disabled)}
+               </div>
     }
   } else if (element.Type === 'calc') {
     return renderCalc(element, key, onUpdate)
   } else if (element.Type === 'date') {
-    return renderDate(element, key, onUpdate, showRequired, required, disabled)
+    return <div className="hoverRow">
+             {renderDate(element, key, onUpdate, showRequired, required, disabled)}
+           </div>
   }
 }
 
@@ -134,6 +146,7 @@ function renderRadio(element, key, onUpdate, showRequired, isRequired, isDisable
           orientation={element.Options.Orientation}
           onUserInput={onUpdate}
           value={element.Value}
+          order={element.Options.Order}
           hasError={showRequired && isRequired && (!element.Value)}
           disabled={isDisabled}
           elementClassOverride={true}
