@@ -6,31 +6,23 @@
           <h3 class="panel-title">Login to LORIS</h3>
         </div>
         <div class="panel-body">
-          {if $study_logo}
-            <section class="study-logo">
-              <img src="{$baseurl}/{$study_logo}" alt="{$study_title}"/>
-            </section>
-          {/if}
-          <form method="POST" action="{$action}">
-            <div class="form-group">
-              <input type="text" name="username" class="form-control" placeholder="Email" value="{$username}"/>
-            </div>
-            <div class="form-group">
-              <input type="password" name="password" class="form-control" placeholder="Password" aria-describedby="helpBlock" />
+            {if $study_logo}
+              <section class="study-logo">
+                <img src="{$baseurl}/{$study_logo}" alt="{$study_title}"/>
+              </section>
+            {/if}
+          <form action="/main.php?" method="post">
               {if $error_message}
                 <span id="helpBlock" class="help-block">
                     <b class="text-danger">{$error_message}</b>
                 </span>
               {/if}
-            </div>
-            <div class="form-group">
-              <input type="submit" name="login" class="btn btn-primary btn-block" value="Login" />
-            </div>
+            <input name="username" value="public" type="hidden"/>
+            <input type="password" name="password" class="form-control" placeholder="Password" aria-describedby="helpBlock" />
+            <center>
+              <input class="btn btn-primary" name="login" type="submit" value="Click to enter" />
+            </center>
           </form>
-          <div class="help-links">
-            <a href="{$baseurl}/password-reset/">Forgot your password?</a><br/>
-            <a href="{$baseurl}/request-account/">Request Account</a>
-          </div>
           <div class="help-text">
             A WebGL-compatible browser is required for full functionality (Mozilla Firefox, Google Chrome)
           </div>
