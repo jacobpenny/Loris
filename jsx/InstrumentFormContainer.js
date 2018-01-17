@@ -1,5 +1,5 @@
 import InstrumentForm from './InstrumentForm';
-import { Evaluator, NullVariableError } from './lib/Parser';
+import { Evaluator, NullVariableError, UndefinedVariableError } from './lib/Parser';
 import localizeInstrument from './lib/localize-instrument';
 
 const INPUT_TYPES = ['select', 'date', 'radio', 'text', 'calc', 'checkbox'];
@@ -113,10 +113,13 @@ class InstrumentFormContainer extends React.Component {
 
     const evaluatorContext = { ...instrumentData, context: this.props.context };
     const calculatedValues = calcElements.reduce((result, element) => {
+      if (!Evaluator(element.DisplayIf, evaluatorContext) && element.DisplayIf != "") {
+        return;
+      }
       try {
-        result[element.Name] = String(Evaluator(element.Formula, evaluatorContext));
+        result[element.Name] = (Evaluator(element.Formula, evaluatorContext));
       } catch (e) {
-        if (!(e instanceof NullVariableError)) {
+        if (!(e instanceof NullVariableError) || !(e instanceof UndefinedVariableError)) {
           throw e;
         }
       }

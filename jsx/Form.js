@@ -245,7 +245,7 @@ const RadioGroupElement = React.createClass({
           >
             <div style={{display: isHorizontal ? 'flex' : '', justifyContent: 'space-around'}}>
               {Object.keys(options).map(function(optionValue, index) {
-                optionValue = order[optionValue] ? order[optionValue] : optionValue;
+                optionValue = order[index] ? order[index] : optionValue;
                 return (
                   <div key={index}>
                     <Radio value={optionValue} key={optionValue} disabled={disabled}/> {options[optionValue]}
