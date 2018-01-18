@@ -100,7 +100,7 @@
                <div class="collapse navbar-collapse" id="example-navbar-collapse">
                     <ul class="nav navbar-nav">
                         {foreach from=$tabs item=tab}
-                            {if $tab.Visible == 1 && $tab.subtabs && $tab.Label != 'Clinical'}
+                            {if $tab.Visible == 1 && $tab.subtabs && ($tab.Label == 'Admin' || $tab.Label == 'Tools' || $tab.Label == 'Clinical')}
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle">
                                         {$tab.Label} <b class="caret"></b>

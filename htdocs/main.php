@@ -34,7 +34,7 @@ if ($client->initialize() == false) {
 
 // require additional libraries
 
-$TestName = isset($_REQUEST['test_name']) ? $_REQUEST['test_name'] : 'dashboard';
+$TestName = isset($_REQUEST['test_name']) ? $_REQUEST['test_name'] : 'testotheque';
 $subtest  = isset($_REQUEST['subtest']) ? $_REQUEST['subtest'] : '';
 // make local instances of objects
 $config =& NDB_Config::singleton();
