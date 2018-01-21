@@ -1,4 +1,4 @@
-window.location.replace("http://testotheque.loris.ca/testotheque/");
+//window.location.replace("http://testotheque.loris.ca/testotheque/");
 /*global document: false, $: false*/
 $(document).ready(function() {
 

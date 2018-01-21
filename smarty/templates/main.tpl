@@ -95,7 +95,7 @@
                    <!-- toggle feedback in mobile view -->
 
 
-                    <a class="navbar-brand" href="{$baseurl}/">LORIS{if $sandbox}: DEV{/if}</a>
+                    <a class="navbar-brand" href="{$baseurl}/">TESTOTHEQUE</a>
                </div>
                <div class="collapse navbar-collapse" id="example-navbar-collapse">
                     <ul class="nav navbar-nav">
@@ -142,22 +142,11 @@
                                 <img width=17 src="{$baseurl}/images/help.gif">
                             </a>
                         </li>
-                        <li>
-                            <p class="navbar-text">
-                                &nbsp;{if count($user.Projects) === 1}Project{else} Projects{/if}: {join(', ', array_values($user.Projects))}
-                            </p>
-                        </li>
-
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding-right:25px;">
                                 {$user.Real_name|escape} <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li>
-                                    <a href="{$baseurl}/preferences/">
-                                        My Preferences
-                                    </a>
-                                </li>
                                 <li>
                                     <a href="{$baseurl}/main.php?logout=true">
                                         Log Out
