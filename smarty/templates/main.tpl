@@ -95,7 +95,7 @@
                    <!-- toggle feedback in mobile view -->
 
 
-                    <a class="navbar-brand" href="{$baseurl}/">TESTOTHEQUE</a>
+                    <a class="navbar-brand" href="{$baseurl}/">Testotheque</a>
                </div>
                <div class="collapse navbar-collapse" id="example-navbar-collapse">
                     <ul class="nav navbar-nav">
