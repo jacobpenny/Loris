@@ -101,10 +101,19 @@ class InstrumentFormContainer extends React.Component {
    * @param value - The new value of the data point
    */
   updateInstrumentData(name, value) {
-    const instrumentData = Object.assign({}, this.state.data, {[name]: value});
-
+    var savingState = false;
+    var instrumentData;
+    if (name == null && value == null) {
+        instrumentData = Object.assign({}, this.state.data);
+        savingState = true;
+    } else {
+        instrumentData = Object.assign({}, this.state.data, {[name]: value});
+    }
+   
     var metaVals;
-    if (name === 'Date_taken') metaVals = this.recalculateMeta(this.props.context.dob, instrumentData.Date_taken);
+    if (name === 'Date_taken' || savingState) {
+        metaVals = this.recalculateMeta(this.props.context.dob, instrumentData.Date_taken);
+    }
     else metaVals = {};
 
     const calcElements = this.props.instrument.Elements.filter(
@@ -114,12 +123,13 @@ class InstrumentFormContainer extends React.Component {
     const evaluatorContext = { ...instrumentData, context: this.props.context };
     const calculatedValues = calcElements.reduce((result, element) => {
       if (!Evaluator(element.DisplayIf, evaluatorContext) && element.DisplayIf != "") {
-        return;
+        return result;
       }
       try {
-        result[element.Name] = (Evaluator(element.Formula, evaluatorContext));
+        result[element.Name] = String((Evaluator(element.Formula, evaluatorContext))) || '0';
       } catch (e) {
-        if (!(e instanceof NullVariableError) || !(e instanceof UndefinedVariableError)) {
+        if (!(e instanceof NullVariableError) && !(e instanceof UndefinedVariableError)) {
+          console.log(result === undefined);
           throw e;
         }
       }
@@ -217,6 +227,7 @@ class InstrumentFormContainer extends React.Component {
   }
 
   onSaveButtonClick() {
+    this.updateInstrumentData(null, null);
     if (this.incompleteRequiredFieldExists()) {
       this.setState({
         errorMessage: 'Please fill in the required fields indicated below.',

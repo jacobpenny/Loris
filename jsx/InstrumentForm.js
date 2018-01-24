@@ -64,7 +64,7 @@ function renderMeta(dataEntryMode, metaData, isDisabled, onUpdate, examiners) {
             disabled={true}
           />
         </div>
-        <div className="col-xs-12">
+        <div className="col-xs-12" hidden={true}>
           <TextboxElement
             name={"Window_Difference"}
             label={"<b>Window Difference (+/- Days)</b>"}
