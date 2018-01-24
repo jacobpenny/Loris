@@ -20,7 +20,7 @@ export default {
     return a <= b;
   },
   add(a, b) {
-    return a + b;
+    return Number(a) + Number(b);
   },
   sub(a, b) {
     return a - b;
@@ -103,7 +103,7 @@ export default {
     if (ns.length === 0) {
       throw 'Cannot find mean of 0 arguments'
     }
-    return ns.reduce((a,b) => a+b, 0) / ns.length;
+    return ns.reduce((a,b) => Number(a) + Number(b), 0) / ns.length;
   },
   median(...ns) {
     if (ns.length === 0) {
@@ -119,17 +119,17 @@ export default {
     }
   },
   sum(...ns) {
-    return ns.reduce((a,b) => a + b, 0);
+    return ns.reduce((a,b) => Number(a) + Number(b), 0);
   },
   product(...ns) {
 	return ns.reduce((a,b) => a * b, 1);
   },
   variance(...ns) {
-    const mean = ns.reduce((a,x) => a + x, 0) / ns.length;
+    const mean = ns.reduce((a,x) => Number(a) + Number(x), 0) / ns.length;
     const sqDiffs = ns.map(function(value) {
       return Math.pow(value-mean, 2);
     });
-    const variance = sqDiffs.reduce((a,x) => a + x, 0) / sqDiffs.length;
+    const variance = sqDiffs.reduce((a,x) => Number(a) + Number(x), 0) / sqDiffs.length;
     return variance;
   },
   stdev(...ns) {
@@ -137,7 +137,7 @@ export default {
     const sqDiffs = ns.map(function(value) {
       return Math.pow(value-mean, 2);
     });
-    const variance = sqDiffs.reduce((a,x) => a + x, 0) / sqDiffs.length;
+    const variance = sqDiffs.reduce((a,x) => Number(a) + Number(x), 0) / sqDiffs.length;
     return Math.sqrt(variance);
   },
   // Assuming 24-hour clock
