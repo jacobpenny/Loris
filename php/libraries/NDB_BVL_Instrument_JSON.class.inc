@@ -190,7 +190,9 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
 
         foreach ($this->instrument["Elements"] as &$element) {
             if ($element["Type"] == 'calc') {
-                $calculatedValues[$element["Name"]] = \LorisScript\Evaluator::evaluate($element["Formula"], array_merge($values, $this->_getContext()));
+                //if ($element["DisplayIf"] == "" || \LorisScript\Evaluator::evaluate($element["DisplayIf"], array_merge($values, $this->_getContext()))) {
+                    $calculatedValues[$element["Name"]] = \LorisScript\Evaluator::evaluate($element["Formula"], array_merge($values, $this->_getContext()));
+                //}
             }
         }
 
@@ -247,11 +249,12 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $isDataSubmission = isset($_POST['instrumentData']);
         if ($isDataSubmission) {
             $frontEndValues   = json_decode($_POST['instrumentData'], true);
-            $calculatedValues = $this->calculateFields($frontEndValues);
-            $values           = array_merge(array(), $frontEndValues, $calculatedValues);
-            if ($this->incompleteExists($values)) {
-                throw new \Exception("A required field was left incomplete", 400);
-            }
+            //$calculatedValues = $this->calculateFields($frontEndValues);
+            //$values           = array_merge(array(), $frontEndValues, $calculatedValues);
+            $values = $frontEndValues;
+            //if ($this->incompleteExists($values)) {
+            //    throw new \Exception("A required field was left incomplete", 400);
+            //}
         } else {
             $values = array();
         }
