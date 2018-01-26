@@ -216,6 +216,17 @@ class NDB_BVL_Instrument extends NDB_Page
             // Now go ahead and instantiate it
             $obj = new $class;
             // Now go ahead and instantiate it
+            // if a script is loading this form without a commentID, display all fields
+            if (!isset($commentID)) {
+                $obj->displayAllFields = true;
+            }
+
+            // Sets up page variables such as $this->commentID and $this->form
+            $success = $obj->setup($commentID, $page);
+
+            $obj->loadInstrumentFile(
+                $base . "project/instruments/$instrument.linst"
+            );
         }
 
         // Adds all of the form element and form rules to the page after
