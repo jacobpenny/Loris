@@ -91,6 +91,11 @@ if (strpos($File, "..") !== false) {
     header("HTTP/1.1 400 Bad Request");
     exit(4);
 }
+// If $File contains "DCM_", prefix automatically inserted by the
+// LORIS-MRI pipeline, identify it as $FileExt: "DICOMTAR"
+if (strpos($File, "DCM_") ) {
+    $FileExt = "DICOMTAR";
+}
 
 switch($FileExt) {
 case 'mnc':
@@ -133,12 +138,21 @@ case 'nrrd':
     $MimeType         = 'image/vnd.nrrd';
     $DownloadFilename = basename($File);
     break;
+case 'DICOMTAR':
+    // ADD case for DICOMTAR
+    $FullPath         = $imagePath . '/' . $File;
+    $MimeType         = 'application/x-tar';
+    $DownloadFilename = basename($File);
+    break;
 default:
     $FullPath         = $DownloadPath . '/' . $File;
     $MimeType         = 'application/octet-stream';
     $DownloadFilename = basename($File);
     break;
 }
+
+ print "$FullPath";
+ print "$File";
 
 if (!file_exists($FullPath)) {
     error_log("ERROR: File $File does not exist");
