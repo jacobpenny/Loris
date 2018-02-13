@@ -602,9 +602,9 @@ var TextboxElement = React.createClass({
 
     return (
       <div className="row form-group">
-        <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
+        {this.props.label != '' && <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
-        </label>
+        </label>}
         <div className="col-sm-9">
           <input
             type="text"
@@ -938,13 +938,17 @@ var ButtonElement = React.createClass({
   propTypes: {
     label: React.PropTypes.string,
     type: React.PropTypes.string,
-    onUserInput: React.PropTypes.func
+    onUserInput: React.PropTypes.func,
+    columnSize: React.PropTypes.string,
+    buttonClass: React.PropTypes.string,
+    divClass: React.PropTypes.string,
   },
   getDefaultProps: function() {
     return {
       label: 'Submit',
       type: 'submit',
       buttonClass: 'btn btn-primary',
+      divClass: 'row form-group',
       columnSize: 'col-sm-9 col-sm-offset-3',
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
@@ -956,7 +960,7 @@ var ButtonElement = React.createClass({
   },
   render: function() {
     return (
-      <div className="row form-group">
+      <div className={this.props.divClass}>
         <div className={this.props.columnSize}>
           <button
             type={this.props.type}
