@@ -389,7 +389,8 @@ var SelectElement = React.createClass({
     emptyOption: React.PropTypes.bool,
     hasError: React.PropTypes.bool,
     errorMessage: React.PropTypes.string,
-    onUserInput: React.PropTypes.func
+    onUserInput: React.PropTypes.func,
+    divClass: React.PropTypes.string,
   },
 
   getDefaultProps: function() {
@@ -409,7 +410,8 @@ var SelectElement = React.createClass({
       errorMessage: 'The field is required!',
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
-      }
+      },
+      divClass: 'row form-group'
     };
   },
 
@@ -438,7 +440,7 @@ var SelectElement = React.createClass({
     var errorMessage = null;
     var emptyOptionHTML = null;
     var requiredHTML = null;
-    var elementClass = 'row form-group';
+    var elementClass = this.props.divClass;
 
     // Add required asterix
     if (required) {
@@ -453,7 +455,7 @@ var SelectElement = React.createClass({
     // Add error message
     if (this.props.hasError || (this.props.required && this.props.value === "")) {
       errorMessage = <span>{this.props.errorMessage}</span>;
-      elementClass = 'row form-group has-error';
+      elementClass = this.props.divClass + ' has-error';
     }
 
     // Default to empty string for regular select and to empty array for 'multiple' select
@@ -461,15 +463,15 @@ var SelectElement = React.createClass({
 
     return (
       <div className={elementClass}>
-        <label className="col-sm-3 control-label" dangerouslySetInnerHTML={{__html: this.props.label}}>
+        {this.props.label != '' && <label className="col-sm-3 control-label" dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
-        </label>
+        </label>}
         <div className="col-sm-9">
           <select
             name={this.props.name}
             multiple={multiple}
             className="form-control"
-            id={this.props.label}
+            id={this.props.id}
             value={value}
             onChange={this.handleChange}
             required={required}
@@ -479,7 +481,7 @@ var SelectElement = React.createClass({
             {Object.keys(options).map(function(option) {
               option = order[option] ? order[option] : option;
               return (
-                <option value={option} key={option}>{options[option]}</option>
+                <option value={options[option]} key={option}>{options[option]}</option>
               );
             })}
           </select>
@@ -505,7 +507,8 @@ var TextareaElement = React.createClass({
     required: React.PropTypes.bool,
     rows: React.PropTypes.number,
     cols: React.PropTypes.number,
-    onUserInput: React.PropTypes.func
+    onUserInput: React.PropTypes.func,
+    divClass: React.PropTypes.string,
   },
 
   getDefaultProps: function() {
@@ -520,7 +523,8 @@ var TextareaElement = React.createClass({
       cols: 25,
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
-      }
+      },
+      divClass: 'row form-group'
     };
   },
   handleChange: function(e) {
@@ -537,10 +541,10 @@ var TextareaElement = React.createClass({
     }
 
     return (
-      <div className="row form-group">
-        <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
+      <div className={this.props.divClass}>
+        {this.props.label != '' && <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
-        </label>
+        </label>}
         <div className="col-sm-9">
           <textarea
             cols={this.props.cols}
@@ -572,7 +576,8 @@ var TextboxElement = React.createClass({
     id: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
-    onUserInput: React.PropTypes.func
+    onUserInput: React.PropTypes.func,
+    divClass: React.PropTypes.string,
   },
   getDefaultProps: function() {
     return {
@@ -584,7 +589,8 @@ var TextboxElement = React.createClass({
       required: false,
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
-      }
+      },
+      divClass: 'row form-group'
     };
   },
   handleChange: function(e) {
@@ -601,7 +607,7 @@ var TextboxElement = React.createClass({
     }
 
     return (
-      <div className="row form-group">
+      <div className={this.props.divClass}>
         {this.props.label != '' && <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
         </label>}
@@ -702,7 +708,8 @@ var NumericElement = React.createClass({
     id: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
-    onUserInput: React.PropTypes.func
+    onUserInput: React.PropTypes.func,
+    divClass: React.PropTypes.string,
   },
   getDefaultProps: function() {
     return {
@@ -716,7 +723,8 @@ var NumericElement = React.createClass({
       disabled: false,
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
-      }
+      },
+      divClass: 'row form-group'
     };
   },
   handleChange: function(e) {
@@ -728,11 +736,11 @@ var NumericElement = React.createClass({
     var requiredHTML = null;
 
     return (
-      <div className="row form-group">
-        <label className="col-sm-3 control-label" htmlFor={this.props.id}>
+      <div className={this.props.divClass}>
+        {this.props.label != '' && <label className="col-sm-3 control-label" htmlFor={this.props.id}>
           {this.props.label}
           {requiredHTML}
-        </label>
+        </label>}
         <div className="col-sm-9">
           <input
             type="number"
@@ -942,6 +950,7 @@ var ButtonElement = React.createClass({
     columnSize: React.PropTypes.string,
     buttonClass: React.PropTypes.string,
     divClass: React.PropTypes.string,
+    id: React.PropTypes.string,
   },
   getDefaultProps: function() {
     return {
@@ -952,7 +961,8 @@ var ButtonElement = React.createClass({
       columnSize: 'col-sm-9 col-sm-offset-3',
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
-      }
+      },
+      id: 'Submit',
     };
   },
   handleClick: function(e) {
@@ -966,6 +976,7 @@ var ButtonElement = React.createClass({
             type={this.props.type}
             className={this.props.buttonClass}
             onClick={this.handleClick}
+            id={this.props.id}
           >
             {this.props.label}
           </button>
