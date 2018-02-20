@@ -3,7 +3,7 @@
     <section class="col-md-4 col-md-push-8">
       <div class="panel panel-default login-panel">
         <div class="panel-heading">
-          <h3 class="panel-title">Login to LORIS</h3>
+          <h3 class="panel-title">Login to Testotheque</h3>
         </div>
         <div class="panel-body">
           {if $study_logo}
@@ -13,7 +13,7 @@
           {/if}
           <form method="POST" action="{$action}">
             <div class="form-group">
-              <input type="text" name="username" class="form-control" placeholder="Email" value="{$username}"/>
+              <input type="text" name="username" class="form-control" placeholder="Username" value="{$username}"/>
             </div>
             <div class="form-group">
               <input type="password" name="password" class="form-control" placeholder="Password" aria-describedby="helpBlock" />
@@ -28,11 +28,14 @@
             </div>
           </form>
           <div class="help-links">
+          <!--
             <a href="{$baseurl}/password-reset/">Forgot your password?</a><br/>
             <a href="{$baseurl}/request-account/">Request Account</a>
+          -->
           </div>
           <div class="help-text">
-            A WebGL-compatible browser is required for full functionality (Mozilla Firefox, Google Chrome)
+            Please use Chrome or Firefox for full functionality.
+          <!--  A WebGL-compatible browser is required for full functionality (Mozilla Firefox, Google Chrome) -->
           </div>
         </div>
       </div>

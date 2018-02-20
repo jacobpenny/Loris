@@ -391,6 +391,7 @@ var SelectElement = React.createClass({
     errorMessage: React.PropTypes.string,
     onUserInput: React.PropTypes.func,
     divClass: React.PropTypes.string,
+    optionArrayOverride: React.PropTypes.bool,
   },
 
   getDefaultProps: function() {
@@ -411,7 +412,8 @@ var SelectElement = React.createClass({
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
       },
-      divClass: 'row form-group'
+      divClass: 'row form-group',
+      optionArrayOverride: false,
     };
   },
 
@@ -480,10 +482,14 @@ var SelectElement = React.createClass({
             {emptyOptionHTML}
             {Object.keys(options).map(function(option) {
               option = order[option] ? order[option] : option;
+              var value = option;
+              if (this.props.optionArrayOverride) {
+                value = options[option];
+              }
               return (
-                <option value={options[option]} key={option}>{options[option]}</option>
+                <option value={value} key={value}>{options[option]}</option>
               );
-            })}
+            }, this)}
           </select>
           {errorMessage}
         </div>
