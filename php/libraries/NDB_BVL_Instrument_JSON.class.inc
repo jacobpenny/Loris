@@ -168,15 +168,32 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return \LorisScript\Evaluator::evaluate($requireResponse, array_merge($values, $context));
     }
 
+    static function isDisplayedOnForm($element, $values, $context)
+    {
+       $displayIf = \LorisScript\Evaluator::evaluate($element["DisplayIf"], array_merge($values, $context));
+       if (isset($_REQUEST['key'])) {
+           $hiddenSurvey = \LorisScript\Evaluator::evaluate($element["HiddenSurvey"], array_merge($values, $context));
+       } else {
+           $hiddenSurvey = true;
+       }
+       $hidden      = \LorisScript\Evaluator::evaluate($element["Hidden"], array_merge($values, $context));
+       $isDisplayed = $displayIf && !$hidden && $hiddenSurvey;
+       return $isDisplayed;
+    }
+
     function incompleteExists($values)
     {
         $incompleteExists = false;
         foreach ($this->instrument["Elements"] as &$element) {
-            if (isset($values[$element["Name"]])) {
+            if (!isset($element["Name"])) {
+                continue;
+            } elseif (isset($values[$element["Name"]])) {
                 continue;
             } else {
                 $isRequired = self::isRequired($element, $values, $this->_getContext());
-                if ($isRequired) { $incompleteExists = true;
+                $isDisplayed = self::isDisplayedOnForm($element, $values, $this->_getContext());
+                if ($isRequired && $isDisplayed) { 
+                    $incompleteExists = true;
                 }
             }
         }
