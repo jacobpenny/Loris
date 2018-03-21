@@ -73,7 +73,7 @@
             if(!isset($expression)) {
                 return null;
             }
-            if($expression === '') {
+            if($expression === '' || preg_match('/\A\s*\z/', $expression)) {
                 return '';
             }
             try {

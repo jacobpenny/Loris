@@ -13,7 +13,7 @@
         function parse() {
             $ast = $this->parseBoolTerm();
             if ($ast === false) {
-                throw new \Exception("Cannot parse expression.");
+                throw new \Exception("Cannot parse expression: $this->expression");
             }
             if ($this->offset < count($this->tokens)) {
                 throw new \Exception("Unexpected token(s) after: " . substr($this->expression, $this->offset));
