@@ -301,6 +301,7 @@
     <div class="row form-group form-inline has-error">
     {else}
     <div class="row form-group form-inline">
+    {/if}
         <label class="col-sm-2">
             {$form.CenterIDs.label}
         </label>
