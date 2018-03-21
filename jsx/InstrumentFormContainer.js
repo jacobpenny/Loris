@@ -48,6 +48,7 @@ class InstrumentFormContainer extends React.Component {
   }
   
   recalculateMeta(dob, testdate) {
+    if (dob == null || testdate == null || dob == '' || testdate == '') return null;
     const dobMatches = dob.split("-");
     dob = {year: parseInt(dobMatches[0]), mon: parseInt(dobMatches[1]), day: parseInt(dobMatches[2])};
 

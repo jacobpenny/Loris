@@ -89,7 +89,11 @@ class schema_generator
                     $type = "TEXT";
                     break;
                 case "checkbox":
-                    $type = "TEXT";
+                    $opts = $element['Options']['Values']['en-ca'];
+                    foreach($opts as $index => $opt) { 
+                        $output .= "`${elName}__$index` BIT DEFAULT NULL\n";
+                    }
+                    continue 2;
                     break;
                 case "calc":
                     $type = "TEXT";

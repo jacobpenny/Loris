@@ -2,6 +2,7 @@ import InstrumentFormContainer from '../../../jsx/InstrumentFormContainer';
 
 function onSave(data) {
   const saveURL = window.location.href;
+  //TODO FIX THIS CHECK ARMINS SLACK
   $.post(saveURL, {instrumentData: JSON.stringify(data)}, function( responseData, textStatus, jqXHR ) {
     console.log('saved!');
   }).fail(() => {

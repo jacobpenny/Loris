@@ -181,6 +181,7 @@ function renderSelect(element, key, onUpdate, showRequired, isRequired, isDisabl
         options={element.Options.Values}
         onUserInput={onUpdate}
         value={element.Value}
+        order={element.Options.Order}
         disabled={isDisabled}
         showRequired={showRequired}
         required={isRequired}
@@ -198,6 +199,8 @@ function renderCheckbox(element, key, onUpdate, showRequired, isRequired, isDisa
       options={element.Options.Values}
       onUserInput={onUpdate}
       value={element.Value}
+      order={element.Options.Order}
+      constantVal={true}
       disabled={isDisabled}
       showRequired={showRequired}
       required={isRequired}

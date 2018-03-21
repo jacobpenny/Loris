@@ -13,17 +13,17 @@
         function parse() {
             $ast = $this->parseBoolTerm();
             if ($ast === false) {
-                throw new Exception("Cannot parse expression.");
+                throw new \Exception("Cannot parse expression.");
             }
             if ($this->offset < count($this->tokens)) {
-                throw new Exception("Unexpected token(s) after: " . substr($this->expression, $this->offset));
+                throw new \Exception("Unexpected token(s) after: " . substr($this->expression, $this->offset));
             }
             return $ast;
         }
         function next() {
             $this->offset += 1;
             if ($this->offset > count($this->tokens)) {
-                throw new Exception("Invalid expression ending: " . $this->expression);
+                throw new \Exception("Invalid expression ending: " . $this->expression);
             }
         }
         function getBacktrack() {

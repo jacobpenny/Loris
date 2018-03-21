@@ -277,7 +277,8 @@ const CheckboxGroupElement = React.createClass({
     order: React.PropTypes.oneOfType([
         React.PropTypes.object,
         React.PropTypes.array
-    ]), 
+    ]),
+    constantVal: React.PropTypes.bool,
     id: React.PropTypes.string,
     class: React.PropTypes.string,
     disabled: React.PropTypes.bool,
@@ -292,6 +293,7 @@ const CheckboxGroupElement = React.createClass({
       name: '',
       options: {},
       order: {},
+      constantVal: false,
       label: '',
       value: undefined,
       id: '',
@@ -311,10 +313,12 @@ const CheckboxGroupElement = React.createClass({
   },
 
   render: function() {
+    var name = this.props.name;
     var required = this.props.required ? 'required' : null;
     var disabled = this.props.disabled ? 'disabled' : null;
     var options = this.props.options;
     var order = this.props.order;
+    var constantVal = this.props.constantVal;
     var errorMessage = null;
     var requiredHTML = null;
     var elementClass = 'row form-group';
@@ -337,16 +341,17 @@ const CheckboxGroupElement = React.createClass({
         </label>
         <div className="col-sm-9">
           <CheckboxGroup
-            name="fruits"
+            name={this.props.name}
             value={this.props.value}
             onChange={this.handleChange}>
 
             <div style={{}}>
               {Object.keys(options).map(function(optionValue, index) {
-                optionValue = order[optionValue] ? order[optionValue] : optionValue;
+                optionValue = order[index] ? order[index] : optionValue;
+                var cbValue = constantVal ? 1 : optionValue;
                 return (
                   <div key={`${optionValue}-${index}`} >
-                    <Checkbox value={optionValue}/> {options[optionValue]}
+                    <Checkbox value={cbValue}/> {options[optionValue]}
                   </div>
                 );
               })}
