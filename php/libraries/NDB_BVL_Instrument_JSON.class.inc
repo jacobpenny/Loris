@@ -209,7 +209,6 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
 
     function incompleteExists($values)
     {
-        error_log("IE CALL");
         $incompleteExists = false;
         foreach ($this->instrument["Elements"] as &$element) {
             if (!isset($element["Name"])) {
@@ -300,16 +299,12 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $db =& \Database::singleton();
         $isDataSubmission = isset($_POST['instrumentData']);
         if ($isDataSubmission) {
-            error_log("SAVING");
             $frontEndValues   = json_decode($_POST['instrumentData'], true);
             if (!$this->calcFieldsMatch($frontEndValues)) {
-                error_log("CALC DOESNT MACH");
                 return false;
             }
             $values = $frontEndValues;
             if ($this->incompleteExists($values)) {
-                //throw new \Exception("A required field was left incomplete", 400);
-                error_log("INCOMPLETE EXSISTS");
                 return false;
             }
         } else {
