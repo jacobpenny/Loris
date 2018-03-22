@@ -173,7 +173,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return \LorisScript\Evaluator::evaluate($requireResponse, array_merge($values, $context));
     }
 
-    static function isDisplayedOnForm($element, $values, $context)
+    static function isDisplayedOnForm($element, $values, $context, $isCalc = false)
     {
        $displayIf = true;
        $hiddenSurvey = false;
@@ -203,8 +203,8 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
            }
        }
 
-       $isDisplayed = $displayIf && !$hidden && !$hiddenSurvey;
-       return $isDisplayed;
+       if ($isCalc) return $displayIf;
+       else return $displayIf && !$hidden && !$hiddenSurvey;
     }
 
     function incompleteExists($values)
@@ -228,17 +228,27 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return $incompleteExists;
     }
 
-    function calculateFields($values)
+    function calcFieldsMatch($values)
     {
-        $calculatedValues = array();
-
+        $match = true;
+        $context = $this->_getContext($values['Date_taken'] ?? null);
         foreach ($this->instrument["Elements"] as &$element) {
-            if ($element["Type"] == 'calc') {
-                $calculatedValues[$element["Name"]] = \LorisScript\Evaluator::evaluate($element["Formula"], array_merge($values, $this->_getContext($values['Date_taken'] ?? null)));
+            $calculatedValue = null;
+            if ($element["Type"] == 'calc' && $this->isDisplayedOnForm($element, $values, $context, true)) {
+                $frontEndValue = $values[$element['Name']];
+                try {
+                    $calculatedValue = \LorisScript\Evaluator::evaluate($element["Formula"], array_merge($values, $context));
+                } catch (\Exception $e) {
+                    error_log($e->getMessage());
+                }
+                if ($calculatedValue != $frontEndValue) {
+                    $match = false;
+                    error_log("Backend calc does not match front end calc for element ${element['Name']}");
+                }
             }
         }
 
-        return $calculatedValues;
+        return $match;
     }
 
     /**
@@ -292,9 +302,11 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         if ($isDataSubmission) {
             error_log("SAVING");
             $frontEndValues   = json_decode($_POST['instrumentData'], true);
-            $calculatedValues = $this->calculateFields($frontEndValues);
-            $values           = array_merge(array(), $frontEndValues, $calculatedValues);
-            //$values = $frontEndValues;
+            if (!$this->calcFieldsMatch($frontEndValues)) {
+                error_log("CALC DOESNT MACH");
+                return false;
+            }
+            $values = $frontEndValues;
             if ($this->incompleteExists($values)) {
                 //throw new \Exception("A required field was left incomplete", 400);
                 error_log("INCOMPLETE EXSISTS");

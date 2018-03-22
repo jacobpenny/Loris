@@ -70,6 +70,7 @@
             }
         }
         static function evaluate($expression, $scope) {
+            //error_log("Evaluating $expression");
             if(!isset($expression)) {
                 return null;
             }
