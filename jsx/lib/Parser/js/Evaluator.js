@@ -65,7 +65,7 @@ function evalAST(tree, scope) {
 }
 
 export default function Evaluator(stringExpression, scope = {}) {
-  if (stringExpression === '') {
+  if (stringExpression === '' || RegExp('/\A\s*\z/').test(stringExpression)) {
       return '';
   }
   if (stringExpression === null) {
