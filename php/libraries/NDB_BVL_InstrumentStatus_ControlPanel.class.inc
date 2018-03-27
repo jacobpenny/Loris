@@ -60,8 +60,12 @@ class NDB_BVL_InstrumentStatus_ControlPanel extends NDB_BVL_InstrumentStatus
         $LinstPath      = $base."project/instruments/"
             .$_REQUEST['test_name']
             .".linst";
+        $JsonPath       = $base."project/instruments/"
+            .$_REQUEST['test_name']
+            .".json";
         if (file_exists($InstrumentPath)
             || file_exists($LinstPath)
+            || file_exists($JsonPath)
         ) {
             // include the instrument's class, if it's an old school instrument.
             if (file_exists($InstrumentPath)) {
