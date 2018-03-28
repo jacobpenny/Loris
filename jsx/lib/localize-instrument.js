@@ -1,3 +1,9 @@
+function fixhtml(html) {
+  var div = document.createElement('div');
+  div.innerHTML=html;
+  return (div.innerHTML);
+}
+
 function localizeInstrument(rawInstrument, lang = 'en-ca') {
   const instrument = JSON.parse(JSON.stringify(rawInstrument));
 
@@ -9,7 +15,7 @@ function localizeInstrument(rawInstrument, lang = 'en-ca') {
     instrument['Elements'].forEach((element) => {
       if (['label', 'text', 'calc', 'date', 'select', 'radio', 'checkbox'].includes(element.Type)) {
         if (element['Description'][lang] && element['Description'][lang] !== " " && element['Comment']) {
-          element['Description'] = element['Description'][lang] + "<br>" + element['Comment'];
+          element['Description'] = fixhtml(element['Description'][lang]) + element['Comment'];
         } else if (element['Description'][lang] && element['Description'][lang] !== " " && !element['Comment']) {
           element['Description'] = element['Description'][lang];
         } else {
