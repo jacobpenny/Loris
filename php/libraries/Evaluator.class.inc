@@ -70,10 +70,11 @@
             }
         }
         static function evaluate($expression, $scope) {
+            //error_log("Evaluating $expression");
             if(!isset($expression)) {
                 return null;
             }
-            if($expression === '') {
+            if($expression === '' || preg_match('/\A\s*\z/', $expression)) {
                 return '';
             }
             try {

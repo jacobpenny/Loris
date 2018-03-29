@@ -11,7 +11,7 @@
  * @link     https://www.github.com/aces/Loris-Trunk/
  */
 namespace Loris\Behavioural;
-use \Exception;
+//use \Exception;
 /**
  * JSON Instrument class
  *
@@ -47,15 +47,15 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
      *
      * @return array containing context variables
      */
-    function _getContext($testdate = null)
+    function _getContext($datetaken = null)
     {
         $timepoint = \TimePoint::singleton($this->getSessionID());
         $candID    = $timepoint->getCandID();
         $candidate = \Candidate::singleton($candID);
         $dob       = $candidate->getCandidateDoB();
         $dobDT     = new \DateTime($dob);
-        if (empty($testdate)) $testdate = "now";
-        $curDate   = new \DateTime($testdate);
+        if (empty($datetaken)) $datetaken = "now";
+        $curDate   = new \DateTime($datetaken);
         $interval  = date_diff($curDate, $dobDT, true);
         $ageM      = $this->calculateAgeMonths(
             array(
@@ -70,6 +70,11 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
                 "age_mths" => $ageM,
                 "dob"      => $dob,
                 "gender"   => $gender,
+                "context"  => array(
+                               "age_mths" => $ageM,
+                               "dob"      => $dob,
+                               "gender"   => $gender
+                              )
                );
     }
 
@@ -158,7 +163,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         if (!in_array($element["Type"], $inputTypes)) { return false;
         }
 
-        $requireResponse = $element["Options"]["RequireResponse"];
+        $requireResponse = $element["Options"]["RequireResponse"] ?? null;
         if (!isset($requireResponse)) { return false;
         }
 
@@ -168,35 +173,81 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return \LorisScript\Evaluator::evaluate($requireResponse, array_merge($values, $context));
     }
 
+    static function isDisplayedOnForm($element, $values, $context, $isCalc = false)
+    {
+       $displayIf = true;
+       $hiddenSurvey = false;
+       $hidden = false;
+       
+       if ($element["DisplayIf"] != '' && !preg_match('/\A\s*\z/', $element["DisplayIf"])) {
+           try {
+               $displayIf = \LorisScript\Evaluator::evaluate($element["DisplayIf"], array_merge($values, $context));
+           } catch (\Exception $e) {
+               error_log($e->getMessage());
+           }
+       }
+       
+       if (isset($_REQUEST['key']) && ($element["HiddenSurvey"] != '' && !preg_match('/\A\s*\z/', $element["HiddenSurvey"]))) { //is survey and not blank
+           try {
+               $hiddenSurvey = \LorisScript\Evaluator::evaluate($element["HiddenSurvey"], array_merge($values, $context));
+           } catch (\Exception $e) {
+               error_log($e->getMessage());
+           }
+       }
+       
+       if ($element["Hidden"] != '' && !preg_match('/\A\s*\z/', $element["Hidden"])) {
+           try {
+               $hidden      = \LorisScript\Evaluator::evaluate($element["Hidden"], array_merge($values, $context));
+           } catch (\Exception $e) {
+               error_log($e->getMessage());
+           }
+       }
+
+       if ($isCalc) return $displayIf;
+       else return $displayIf && !$hidden && !$hiddenSurvey;
+    }
+
     function incompleteExists($values)
     {
         $incompleteExists = false;
         foreach ($this->instrument["Elements"] as &$element) {
-            if (isset($values[$element["Name"]])) {
+            if (!isset($element["Name"])) {
+                continue;
+            } elseif (isset($values[$element["Name"]])) {
                 continue;
             } else {
-                $isRequired = self::isRequired($element, $values, $this->_getContext());
-                if ($isRequired) { $incompleteExists = true;
+                $isRequired = self::isRequired($element, $values, $this->_getContext($values['Date_taken'] ?? null));
+                $isDisplayed = self::isDisplayedOnForm($element, $values, $this->_getContext($values['Date_taken'] ?? null));
+                if ($isRequired && $isDisplayed) { 
+                    $incompleteExists = true;
+                    return $incompleteExists;
+                }
+            }
+        }
+        return $incompleteExists;
+    }
+
+    function calcFieldsMatch($values)
+    {
+        $match = true;
+        $context = $this->_getContext($values['Date_taken'] ?? null);
+        foreach ($this->instrument["Elements"] as &$element) {
+            $calculatedValue = null;
+            if ($element["Type"] == 'calc' && $this->isDisplayedOnForm($element, $values, $context, true)) {
+                $frontEndValue = $values[$element['Name']];
+                try {
+                    $calculatedValue = \LorisScript\Evaluator::evaluate($element["Formula"], array_merge($values, $context));
+                } catch (\Exception $e) {
+                    error_log($e->getMessage());
+                }
+                if ($calculatedValue != $frontEndValue) {
+                    $match = false;
+                    error_log("Backend calc does not match front end calc for element ${element['Name']}");
                 }
             }
         }
 
-        return $incompleteExists;
-    }
-
-    function calculateFields($values)
-    {
-        $calculatedValues = array();
-
-        foreach ($this->instrument["Elements"] as &$element) {
-            if ($element["Type"] == 'calc') {
-                //if ($element["DisplayIf"] == "" || \LorisScript\Evaluator::evaluate($element["DisplayIf"], array_merge($values, $this->_getContext()))) {
-                    $calculatedValues[$element["Name"]] = \LorisScript\Evaluator::evaluate($element["Formula"], array_merge($values, $this->_getContext()));
-                //}
-            }
-        }
-
-        return $calculatedValues;
+        return $match;
     }
 
     /**
@@ -249,16 +300,16 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $isDataSubmission = isset($_POST['instrumentData']);
         if ($isDataSubmission) {
             $frontEndValues   = json_decode($_POST['instrumentData'], true);
-            //$calculatedValues = $this->calculateFields($frontEndValues);
-            //$values           = array_merge(array(), $frontEndValues, $calculatedValues);
+            if (!$this->calcFieldsMatch($frontEndValues)) {
+                return false;
+            }
             $values = $frontEndValues;
-            //if ($this->incompleteExists($values)) {
-            //    throw new \Exception("A required field was left incomplete", 400);
-            //}
+            if ($this->incompleteExists($values)) {
+                return false;
+            }
         } else {
             $values = array();
         }
-
         $recordExists = !empty(
             $db->pselect(
                 "SELECT * FROM $this->table WHERE CommentID=:CID",
