@@ -21,7 +21,7 @@ class DirectEntryReact extends React.Component {
   }
 
   render() {
-    const { instrument, initialData, lang, context, options, logo, study } = this.props;
+    const { instrument, initialData, lang, context, options, logo, study, windows} = this.props;
     const { complete, error } = this.state;
 
     if (error) {
@@ -46,6 +46,7 @@ class DirectEntryReact extends React.Component {
             context={context}
             options={options}
             onSave={this.onSave}
+            windows={windows}
           />
         </div>
       </div>
@@ -62,6 +63,7 @@ window.onload = function() {
   const lang = instrumentEl.dataset.lang;
   const logo = instrumentEl.dataset.logo ? instrumentEl.dataset.logo : "";
   const study = instrumentEl.dataset.study ? instrumentEl.dataset.study : "";
+  const agewindows = JSON.parse(instrumentEl.dataset.agewindows);
   const options = { surveyMode: true };
   ReactDOM.render(
     <DirectEntryReact
@@ -72,6 +74,7 @@ window.onload = function() {
       options={options}
       logo={logo}
       study={study}
+      windows={agewindows}
     />,
     document.getElementById("container")
   );

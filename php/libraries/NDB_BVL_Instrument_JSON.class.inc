@@ -94,12 +94,20 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return $status->getDataEntryStatus()==='Complete' ? true : false;
     }
 
-    function _getInstrumentData($db)
+    function _getInstrumentData($db, $excludeMetaData = false)
     {
         $result = $db->pselect(
             "SELECT * FROM $this->table WHERE CommentID=:CID",
             array('CID' => $this->getCommentID())
         );
+        
+        if ($excludeMetaData && $result) {
+            unset($result[0]['CommentID']);
+            unset($result[0]['UserID']);
+            unset($result[0]['Testdate']);
+            unset($result[0]['Data_entry_completion_status']);
+        }
+
         return $result ? $result[0] : array();
     }
 
@@ -271,7 +279,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $smarty = new \Smarty_NeuroDB();
         $smarty->assign('instrumentJSON', htmlspecialchars($this->toJSON()));
         
-        $initialData = $this->_getInstrumentData($db);
+        $initialData = $this->_getInstrumentData($db, true);
         $smarty->assign('initialData', htmlspecialchars(json_encode($initialData)));
         
         $context = $this->_getContext();
@@ -298,13 +306,18 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
     {
         $db =& \Database::singleton();
         $isDataSubmission = isset($_POST['instrumentData']);
+        $calcFieldsMatch  = true;
+        $incompleteExists = false;
         if ($isDataSubmission) {
             $frontEndValues   = json_decode($_POST['instrumentData'], true);
             if (!$this->calcFieldsMatch($frontEndValues)) {
+                $calcFieldsMatch = false;
                 return false;
             }
             $values = $frontEndValues;
             if ($this->incompleteExists($values)) {
+                $incompleteExists = true;
+                $this->_setDataEntryCompletionStatus('Incomplete');
                 return false;
             }
         } else {
@@ -332,6 +345,9 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
             );
         }
 
+        if (!$incompleteExists && $calcFieldsMatch) {
+            $this->_setDataEntryCompletionStatus('Complete');
+        }
         return true;
     }
 
