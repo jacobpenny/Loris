@@ -264,7 +264,6 @@ class DirectDataEntryMainPage
         $instrument->loadInstrumentFile($file);
 
         if ($isDataSubmission) {
-            error_log("TOO MANY BALLS");
             
             $curDate = date('Y-m-d');
             $values = array('Date_taken' => $curDate, 'Candidate_Age' => NULL, 'Window_Difference' => NULL);
@@ -299,6 +298,7 @@ class DirectDataEntryMainPage
         $smarty->assign('lang', htmlspecialchars($instrument->_getLang()));
         $smarty->assign('logo', htmlspecialchars($logo));
         $smarty->assign('study', htmlspecialchars($study));
+        $smarty->assign('agewindows', htmlspecialchars(json_encode($instrument->_getAgeWindows($db))));
         $smarty->display('directentry-react.tpl');
     }
 }
