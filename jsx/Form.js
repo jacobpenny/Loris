@@ -461,8 +461,8 @@ var SelectElement = React.createClass({
     }
 
     // Default to empty string for regular select and to empty array for 'multiple' select
-    const value = this.props.value || (multiple ? [] : "");
-
+    const value = this.props.value ? this.props.value : (multiple ? [] : "");
+    
     return (
       <div className={elementClass}>
         {this.props.label != '' && <label className="col-sm-3 control-label" dangerouslySetInnerHTML={{__html: this.props.label}}>
