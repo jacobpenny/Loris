@@ -323,7 +323,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xs-12 form-group">
+                        <!--div class="col-xs-12 form-group">
                             <label class="col-xs-4" for="instrument">Instrument</label>
                             <div class="col-xs-8">
                                 <select name="instrument" id = "instrument" class = "form-fields form-control input-sm">
@@ -351,19 +351,19 @@
                             <div class="col-xs-8">
                                 <textarea cols = "20" rows = "3" name="comments" id="comments" style = "border: 2px inset;" class="ui-corner-all form-fields form-control input-sm"> </textarea><p></p>
                             </div>
-                        </div>
+                        </div-->
                         <div class="col-xs-12 form-group">
                             <label class="col-xs-4" for="file">File<font color="red"><sup> *</sup></font></label>
                             <div class="col-xs-8">
                                 <input type="file" name="file" class="fileUpload" id="file" style = "margin-left: 1em;"/>
                             </div>
                         </div>
-                        <div class="col-xs-12 form-group">
+                        <!--div class="col-xs-12 form-group">
                             <label class="col-xs-4" for="version">Version</label>
                             <div class="col-xs-8">
                                 <input type="text" size = "27" name="version" id="version" class="ui-corner-all form-fields form-control input-sm" />
                             </div>
-                        </div>
+                        </div-->
                         <input type="hidden" name = "user" id = "user" value = "{$User}">
                         <input type="hidden" name = "action" id = "action" value = "upload">
                         <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="100000000" />
