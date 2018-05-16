@@ -116,6 +116,7 @@ class New_Profile extends \NDB_Form
     {
         parent::setup();
 
+        $config    =& \NDB_Config::singleton();
         $startYear = $config->getSetting('startYear');
         $endYear   = $config->getSetting('endYear');
         $ageMax    = $config->getSetting('ageMax');
