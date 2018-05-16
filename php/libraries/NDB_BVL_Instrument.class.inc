@@ -186,9 +186,14 @@ class NDB_BVL_Instrument extends NDB_Page
             return;
         }
         if (file_exists($base."project/instruments/$instrument.json")) {
-            $obj = new \Loris\Behavioural\NDB_BVL_Instrument_JSON();
+            $obj = new \Loris\Behavioural\NDB_BVL_Instrument_JSON(
+                new Module($instrument),
+                $page,
+                $commentID,
+                $commentID,
+                'test_form'
+            );
 
-            $obj->setup($commentID, $page);
             $lang        = $_REQUEST["lang"] ? $_REQUEST["lang"] : "en-ca";
             $filename = $base."project/instruments/$instrument.json";
 
