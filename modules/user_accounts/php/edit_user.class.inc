@@ -704,7 +704,7 @@ class Edit_User extends \NDB_Form
             $siteOptions,
             array('multiple' => 'multiple')
         );
-        $projectOptions = Utility::getProjectList();
+        $projectOptions = \Utility::getProjectList();
         $this->addSelect(
             'ProjectIDs',
             'Projects',
