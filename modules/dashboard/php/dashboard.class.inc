@@ -221,7 +221,7 @@ class Dashboard extends \NDB_Form
             && $user->hasPermission('user_accounts')
         ) {
             $this->tpl_data['pending_users']      = $DB->pselectOne(
-                "SELECT COUNT(*) FROM users 
+                "SELECT COUNT(DISTINCT users.UserID) FROM users 
                 LEFT JOIN user_psc_rel as upr ON (upr.UserID=users.ID)
 		        WHERE users.Pending_approval='Y' 
                 AND (upr.CenterID <> 1 OR upr.CenterID IS NULL)",
@@ -231,7 +231,7 @@ class Dashboard extends \NDB_Form
         } elseif ($user->hasPermission('user_accounts')) {
             $site_arr = $user->getCenterIDs();
             $this->tpl_data['pending_users'] = $DB->pselectOne(
-                "SELECT COUNT(*) FROM users 
+                "SELECT COUNT(DISTINCT users.UserID) FROM users 
                 LEFT JOIN user_psc_rel as upr ON (upr.UserID=users.ID)
 		        WHERE users.Pending_approval='Y' AND upr.CenterID IN (:CID)",
                 array('CID' => implode(",", $site_arr))
