@@ -8,4 +8,5 @@
     {elseif $candidate_parameters_view}
         <button class="btn btn-primary" onclick="location.href='{$baseurl}/candidate_parameters/?candID={$candID}&identifier={$candID}'">View Candidate Info</button>
     {/if}
+    <button class="btn btn-primary" onclick="location.href='{$baseurl}/family_information/?candID={$candID}&identifier={$candID}'">Family Information</button>
 {/if}
