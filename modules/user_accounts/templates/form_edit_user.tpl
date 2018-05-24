@@ -314,6 +314,7 @@
         </div>
         {/if}
     </div>
+    {if $form.examiner_sites}
     {if $form.errors.examiner_sites}
     <div class="row form-group form-inline form-inline has-error">
         {else}
@@ -331,7 +332,8 @@
             </div>
             {/if}
         </div>
-    </div>
+    {/if}
+      {if $form.examiner_group}
     {if $form.errors.examiner_group}
     <div class="row form-group form-inline form-inline has-error">
         {else}
@@ -341,7 +343,7 @@
                 {$form.examiner_group.label}
             </label>
             <div class="col-sm-10">
-                <b>{$form.examiner_group.html}<b>
+                <b>{$form.examiner_group.html}</b>
                 </div>
                 {if $form.errors.examiner_group}
                 <div class="col-sm-offset-2 col-xs-12">
@@ -349,8 +351,8 @@
                 </div>
                 {/if}
             </div>
-        </div>
-        <div class="row form-group form-inline">
+      {/if}
+      <div class="row form-group form-inline">
            <label class="col-sm-2">
               {$form.Active.label}
           </label>

@@ -52,6 +52,7 @@ class JSONInstrumentToLINSTConverter
      * @param string $table table name
      * @param string $title title
      * @param string $year  year
+     * @param string $lang  language
      *
      * @return array Array of standard LINST lines
      */
@@ -104,7 +105,9 @@ class JSONInstrumentToLINSTConverter
      */
     static function convertLabelElement($element, $lang)
     {
-        if (!array_key_exists($lang, $element['Description'])) return "";
+        if (!array_key_exists($lang, $element['Description'])) {
+            return "";
+        }
         return "static{@}{@}{$element['Description'][$lang]}";
     }
 

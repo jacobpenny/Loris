@@ -145,6 +145,7 @@ class NDB_BVL_Instrument extends NDB_Page
     var $WrapperTextElements           = array();
     var $WrapperNumericElements        = array();
     var $WrapperDateWithStatusElements = array();
+
     /**
      * Factory generates a new instrument instance of type
      * $instrument, and runs the setup() method on that new
@@ -166,6 +167,9 @@ class NDB_BVL_Instrument extends NDB_Page
     {
         $class = "NDB_BVL_Instrument_$instrument";
 
+        // Ensure 'page' is a string.
+        $page = $page ?? '';
+
         // Make sure the instrument class has been included/required!
         $factory = NDB_Factory::singleton();
         $config  = $factory->config();
@@ -182,26 +186,26 @@ class NDB_BVL_Instrument extends NDB_Page
             return;
         }
         if (file_exists($base."project/instruments/$instrument.json")) {
-            $obj = new \Loris\Behavioural\NDB_BVL_Instrument_JSON();
+            $obj = new \Loris\Behavioural\NDB_BVL_Instrument_JSON(
+                new Module($instrument),
+                $page,
+                $commentID,
+                $commentID,
+                'test_form'
+            );
 
-            $obj->setup($commentID, $page);
-            $lang        = $_REQUEST["lang"] ? $_REQUEST["lang"] : "en-ca";
+            $lang     = $_REQUEST["lang"] ? $_REQUEST["lang"] : "en-ca";
             $filename = $base."project/instruments/$instrument.json";
 
             $obj->loadInstrumentFile($filename);
         } else if (file_exists($base."project/instruments/$instrument.linst")) {
             include_once 'NDB_BVL_Instrument_LINST.class.inc';
-            $obj = new \Loris\Behavioural\NDB_BVL_Instrument_LINST();
-            // if a script is loading this form without a commentID, display all fields
-            if (!isset($commentID)) {
-                $obj->displayAllFields = true;
-            }
-
-            // Sets up page variables such as $this->commentID and $this->form
-            $success = $obj->setup($commentID, $page);
-
-            $obj->loadInstrumentFile(
-                $base . "project/instruments/$instrument.linst"
+            $obj = new \Loris\Behavioural\NDB_BVL_Instrument_LINST(
+                new Module($instrument),
+                $page,
+                $commentID,
+                $commentID,
+                'test_form'
             );
         } else {
             if (!class_exists($class)
@@ -214,23 +218,28 @@ class NDB_BVL_Instrument extends NDB_Page
                 include_once $base."project/instruments/$class.class.inc";
             }
             // Now go ahead and instantiate it
-            $obj = new $class;
-            // Now go ahead and instantiate it
-            // if a script is loading this form without a commentID, display all fields
-            if (!isset($commentID)) {
-                $obj->displayAllFields = true;
-            }
-
-            // Sets up page variables such as $this->commentID and $this->form
-            $success = $obj->setup($commentID, $page);
-
-            $obj->loadInstrumentFile(
-                $base . "project/instruments/$instrument.linst"
+            $obj = new $class(
+                new Module($instrument),
+                $page,
+                $commentID,
+                $commentID,
+                'test_form'
             );
         }
 
+        // if a script is loading this form without a commentID, display all fields
+        if (!isset($commentID)) {
+            $obj->displayAllFields = true;
+        }
+
+        // Sets up page variables such as $this->commentID and $this->form
+        $success = $obj->setup($commentID, $page);
+
         // Adds all of the form element and form rules to the page after
         // having instantiated the form above
+        $obj->loadInstrumentFile(
+            $base . "project/instruments/$instrument.linst"
+        );
 
         // Add rules only if they exist.
         if (file_exists($base."project/instruments/$instrument.rules")) {
@@ -330,7 +339,8 @@ class NDB_BVL_Instrument extends NDB_Page
      */
     function setup($commentID = null, $page = null)
     {
-        $this->_setupPage(null, $page, null, $commentID, 'test_form');
+        $this->commentID = $commentID;
+        $this->page      = $page;
     }
 
     /**
@@ -349,6 +359,7 @@ class NDB_BVL_Instrument extends NDB_Page
         $scorer = $base . "project/instruments/" . $this->testName . ".score";
 
         if (file_exists($scorer)) {
+            $output = array();
             exec(
                 $scorer . " " . escapeshellarg($this->getCommentID()),
                 $output,
@@ -510,7 +521,7 @@ class NDB_BVL_Instrument extends NDB_Page
             // the database
             $dataEntryCompletionStatus
                 = $this->_determineDataEntryCompletionStatus();
-            $success = $this->_setDataEntryCompletionStatus(
+            $this->_setDataEntryCompletionStatus(
                 $dataEntryCompletionStatus
             );
         } else {
@@ -854,18 +865,18 @@ class NDB_BVL_Instrument extends NDB_Page
         if ($CertificationEnabled) {
             foreach (
                 Utility::toArray($CertificationConfig['CertificationProjects'])
-                AS $key => $value
+                as $value
             ) {
                 if (is_array($value['CertificationProject'])) {
                     $value = $value['CertificationProject'];
                 }
-                foreach ($value as $k=>$projID) {
+                foreach ($value as $projID) {
                     $CertificationProjects[$projID] = $projID;
                 }
             }
             foreach (
                 Utility::toArray($CertificationConfig['CertificationInstruments'])
-                AS $instrument
+                as $instrument
             ) {
                 foreach (Utility::toArray($instrument['test']) as $test) {
                     $CertificationInstruments[] = $test['@']['value'];
@@ -1338,7 +1349,7 @@ class NDB_BVL_Instrument extends NDB_Page
         //to pop a required rule)
         $valFlag = array();
         foreach ($values AS $value) {
-            $compareFunction = create_function(
+            $compareFunction = create_function( //@codingStandardsIgnoreLine
                 '$a, $b',
                 "return (\$a $operator \$b);"
             );
@@ -1469,7 +1480,7 @@ class NDB_BVL_Instrument extends NDB_Page
 
         $db =& Database::singleton();
 
-        $success = $db->update(
+        $db->update(
             $this->table,
             array('Data_entry_completion_status' => $status),
             array('CommentID' => $this->getCommentID())
@@ -1935,7 +1946,7 @@ class NDB_BVL_Instrument extends NDB_Page
         }
 
         // update the scores
-        $success = $db->update(
+        $db->update(
             $this->table,
             $scores,
             array('CommentID' => $this->getCommentID())

@@ -36,10 +36,12 @@ class Site
     static function &singleton($centerID)
     {
         static $siteList = array();
-        if (!isset($siteList[$centerID])) {
+        if (!isset($siteList[$centerID])
+            || gettype($siteList[$centerID] != 'object')
+        ) {
             try {
                 $siteList[$centerID] = new Site();
-                $error = $siteList[$centerID]->select($centerID);
+                $siteList[$centerID]->select($centerID);
             } catch(Exception $e) {
                 $message = $e->getMessage();
                 unset($siteList[$centerID]);
