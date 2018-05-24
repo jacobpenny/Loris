@@ -1395,7 +1395,7 @@ class LorisForm
         }
 
         // create the comparison function, based on the defined operator
-        $compareFunction = create_function(
+        $compareFunction = create_function( // @codingStandardsIgnoreLine
             '$a,$b',
             "return (\$a $format[operator] \$b);"
         );
