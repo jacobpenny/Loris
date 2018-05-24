@@ -340,7 +340,7 @@ class NDB_BVL_Instrument_LINST extends \NDB_BVL_Instrument
             if ($comparevalue == 'NEVER_REQUIRED' && $operator == '==') {
                 return true;
             }
-            $compareFunction = create_function(
+            $compareFunction = create_function( // @codingStandardsIgnoreLine
                 '$a, $b',
                 "return \$a $operator \$b;"
             );

@@ -194,7 +194,7 @@ class NDB_BVL_Instrument extends NDB_Page
                 'test_form'
             );
 
-            $lang        = $_REQUEST["lang"] ? $_REQUEST["lang"] : "en-ca";
+            $lang     = $_REQUEST["lang"] ? $_REQUEST["lang"] : "en-ca";
             $filename = $base."project/instruments/$instrument.json";
 
             $obj->loadInstrumentFile($filename);
@@ -1349,7 +1349,7 @@ class NDB_BVL_Instrument extends NDB_Page
         //to pop a required rule)
         $valFlag = array();
         foreach ($values AS $value) {
-            $compareFunction = create_function(
+            $compareFunction = create_function( //@codingStandardsIgnoreLine
                 '$a, $b',
                 "return (\$a $operator \$b);"
             );

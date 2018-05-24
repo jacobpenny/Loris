@@ -54,10 +54,11 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $candidate = \Candidate::singleton($candID);
         $dob       = $candidate->getCandidateDoB();
         $dobDT     = new \DateTime($dob);
-        if (empty($datetaken)) $datetaken = "now";
-        $curDate   = new \DateTime($datetaken);
-        $interval  = date_diff($curDate, $dobDT, true);
-        $ageM      = $this->calculateAgeMonths(
+        if (empty($datetaken)) { $datetaken = "now";
+        }
+        $curDate  = new \DateTime($datetaken);
+        $interval = date_diff($curDate, $dobDT, true);
+        $ageM     = $this->calculateAgeMonths(
             array(
              'year' => $interval->format("%y"),
              'mon'  => $interval->format("%m"),
@@ -73,8 +74,8 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
                 "context"  => array(
                                "age_mths" => $ageM,
                                "dob"      => $dob,
-                               "gender"   => $gender
-                              )
+                               "gender"   => $gender,
+                              ),
                );
     }
 
@@ -100,7 +101,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
             "SELECT * FROM $this->table WHERE CommentID=:CID",
             array('CID' => $this->getCommentID())
         );
-        
+
         if ($excludeMetaData && $result) {
             unset($result[0]['CommentID']);
             unset($result[0]['UserID']);
@@ -111,12 +112,13 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return $result ? $result[0] : array();
     }
 
-    
-    function _getAgeWindows($db) {
-        $query_params= array(
-                        'TN' => $this->testName,
-                        'CID' => $this->getCommentID()
-                       );
+
+    function _getAgeWindows($db)
+    {
+        $query_params = array(
+                         'TN'  => $this->testName,
+                         'CID' => $this->getCommentID(),
+                        );
 
         $Windows = $db ->pselect(
             "SELECT AgeMinDays, AgeMaxDays
@@ -128,11 +130,11 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
                     AND f.CommentID=:CID",
             $query_params
         );
-        
+
         return $Windows;
-    } 
-    
-    
+    }
+
+
     /**
      * @param string  $filename The filename to be loaded, or a base64 encoded
      *                          string of a .json file to be interpreted.
@@ -183,36 +185,38 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
 
     static function isDisplayedOnForm($element, $values, $context, $isCalc = false)
     {
-       $displayIf = true;
-       $hiddenSurvey = false;
-       $hidden = false;
-       
-       if ($element["DisplayIf"] != '' && !preg_match('/\A\s*\z/', $element["DisplayIf"])) {
-           try {
-               $displayIf = \LorisScript\Evaluator::evaluate($element["DisplayIf"], array_merge($values, $context));
-           } catch (\Exception $e) {
-               error_log($e->getMessage());
-           }
-       }
-       
-       if (isset($_REQUEST['key']) && ($element["HiddenSurvey"] != '' && !preg_match('/\A\s*\z/', $element["HiddenSurvey"]))) { //is survey and not blank
-           try {
-               $hiddenSurvey = \LorisScript\Evaluator::evaluate($element["HiddenSurvey"], array_merge($values, $context));
-           } catch (\Exception $e) {
-               error_log($e->getMessage());
-           }
-       }
-       
-       if ($element["Hidden"] != '' && !preg_match('/\A\s*\z/', $element["Hidden"])) {
-           try {
-               $hidden      = \LorisScript\Evaluator::evaluate($element["Hidden"], array_merge($values, $context));
-           } catch (\Exception $e) {
-               error_log($e->getMessage());
-           }
-       }
+        $displayIf    = true;
+        $hiddenSurvey = false;
+        $hidden       = false;
 
-       if ($isCalc) return $displayIf;
-       else return $displayIf && !$hidden && !$hiddenSurvey;
+        if ($element["DisplayIf"] != '' && !preg_match('/\A\s*\z/', $element["DisplayIf"])) {
+            try {
+                $displayIf = \LorisScript\Evaluator::evaluate($element["DisplayIf"], array_merge($values, $context));
+            } catch (\Exception $e) {
+                error_log($e->getMessage());
+            }
+        }
+
+        if (isset($_REQUEST['key']) && ($element["HiddenSurvey"] != '' && !preg_match('/\A\s*\z/', $element["HiddenSurvey"]))) { //is survey and not blank
+            try {
+                $hiddenSurvey = \LorisScript\Evaluator::evaluate($element["HiddenSurvey"], array_merge($values, $context));
+            } catch (\Exception $e) {
+                error_log($e->getMessage());
+            }
+        }
+
+        if ($element["Hidden"] != '' && !preg_match('/\A\s*\z/', $element["Hidden"])) {
+            try {
+                $hidden = \LorisScript\Evaluator::evaluate($element["Hidden"], array_merge($values, $context));
+            } catch (\Exception $e) {
+                error_log($e->getMessage());
+            }
+        }
+
+        if ($isCalc) { return $displayIf;
+        }
+        else { return $displayIf && !$hidden && !$hiddenSurvey;
+        }
     }
 
     function incompleteExists($values)
@@ -224,9 +228,9 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
             } elseif (isset($values[$element["Name"]])) {
                 continue;
             } else {
-                $isRequired = self::isRequired($element, $values, $this->_getContext($values['Date_taken'] ?? null));
+                $isRequired  = self::isRequired($element, $values, $this->_getContext($values['Date_taken'] ?? null));
                 $isDisplayed = self::isDisplayedOnForm($element, $values, $this->_getContext($values['Date_taken'] ?? null));
-                if ($isRequired && $isDisplayed) { 
+                if ($isRequired && $isDisplayed) {
                     $incompleteExists = true;
                     return $incompleteExists;
                 }
@@ -237,7 +241,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
 
     function calcFieldsMatch($values)
     {
-        $match = true;
+        $match   = true;
         $context = $this->_getContext($values['Date_taken'] ?? null);
         foreach ($this->instrument["Elements"] as &$element) {
             $calculatedValue = null;
@@ -274,28 +278,28 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
 
     function display()
     {
-        $db     =& \Database::singleton();
+        $db =& \Database::singleton();
 
         $smarty = new \Smarty_NeuroDB();
         $smarty->assign('instrumentJSON', htmlspecialchars($this->toJSON()));
-        
+
         $initialData = $this->_getInstrumentData($db, true);
         $smarty->assign('initialData', htmlspecialchars(json_encode($initialData)));
-        
+
         $context = $this->_getContext();
         if ($initialData['Candidate_Age']) {
             $context['age_mths'] = $initialData['Candidate_Age'];
         }
         $smarty->assign('context', htmlspecialchars(json_encode($context)));
-        
+
         $smarty->assign('lang', htmlspecialchars($this->_getLang()));
         $smarty->assign('complete', htmlspecialchars($this->_isComplete()));
-        
+
         $examiners = $this->_getExaminerNames();
         reset($examiners);
         unset($examiners[key($examiners)]);
         $smarty->assign('examiners', htmlspecialchars(json_encode($examiners)));
-        
+
         $smarty->assign('agewindows', htmlspecialchars(json_encode($this->_getAgeWindows($db))));
 
         $html = $smarty->fetch("instrument_react.tpl");
@@ -309,7 +313,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $calcFieldsMatch  = true;
         $incompleteExists = false;
         if ($isDataSubmission) {
-            $frontEndValues   = json_decode($_POST['instrumentData'], true);
+            $frontEndValues = json_decode($_POST['instrumentData'], true);
             if (!$this->calcFieldsMatch($frontEndValues)) {
                 $calcFieldsMatch = false;
                 return false;

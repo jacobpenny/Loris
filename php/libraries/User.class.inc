@@ -338,7 +338,8 @@ class User extends UserPermissions
         return array_keys($this->userInfo['Projects']);
     }
 
-    /* Returns all user's sites that are StudySites
+    /**
+     * Returns all user's sites that are StudySites
      *
      * @return array
      */
@@ -485,7 +486,7 @@ class User extends UserPermissions
 
         // compare password to values
         foreach ($values as $key => $value) {
-            $function = create_function(
+            $function = create_function( // @codingStandardsIgnoreLine
                 '$a, $b',
                 'return $a ' . $operators[$key] . ' $b;'
             );
@@ -550,7 +551,8 @@ class User extends UserPermissions
         return (in_array($projectID, $userProjectIds));
     }
 
-    /* Determines if the user has a center
+    /**
+     * Determines if the user has a center
      *
      * @param int $center_id The center id
      *
