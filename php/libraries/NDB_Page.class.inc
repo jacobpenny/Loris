@@ -599,9 +599,9 @@ class NDB_Page
     {
         if (isset($_REQUEST['format'])) {
             switch($_REQUEST['format']) {
-                case 'json':
-                    header('Content-Type: application/json');
-                    return $this->toJSON();
+            case 'json':
+                header('Content-Type: application/json');
+                return $this->toJSON();
             }
         }
 
