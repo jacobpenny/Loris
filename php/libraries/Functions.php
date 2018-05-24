@@ -17,7 +17,7 @@
  *
  * @category Main
  * @package  Loris
- * @author   Alex Zijdenbos <zijdenbos@example.com>
+ * @author   Zain Virani <zvirani.mcin@gmail.com>
  * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPLv3
  * @link     https://www.github.com/aces/Loris-Trunk/
  */
