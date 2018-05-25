@@ -147,6 +147,9 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
      */
     function loadInstrumentFile($filename, $base64 = false)
     {
+        if (!preg_match('/.json$/', $filename)) {
+            return;
+        }
         if (file_exists($filename) || $base64 === true) {
             $this->InstrumentType = 'JSON';
             $json = file_get_contents($filename);
