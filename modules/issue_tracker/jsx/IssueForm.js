@@ -37,6 +37,10 @@ class IssueForm extends React.Component {
   }
 
   render() {
+
+    if (this.state.Data.isTestothequeUser) {
+        this.state.formData.assignee = 'Lina';
+    }
     // Data loading error
     if (this.state.error) {
       return (
@@ -166,7 +170,7 @@ class IssueForm extends React.Component {
           <SelectElement
             name="assignee"
             label="Assignee"
-            emptyOption={true}
+            emptyOption={!this.state.Data.isTestothequeUser}
             options={this.state.Data.assignees}
             onUserInput={this.setFormData}
             ref="assignee"
@@ -177,7 +181,7 @@ class IssueForm extends React.Component {
           <SelectElement
             name="centerID"
             label="Site"
-            emptyOption={true}
+            emptyOption={!this.state.Data.isTestothequeUser}
             options={this.state.Data.sites}
             onUserInput={this.setFormData}
             ref="centerID"
@@ -220,13 +224,15 @@ class IssueForm extends React.Component {
           <SelectElement
             name="module"
             label="Module"
-            emptyOption={true}
+            emptyOption={!this.state.Data.isTestothequeUser}
             options={this.state.Data.modules}
             onUserInput={this.setFormData}
             ref="module"
             disabled={!hasEditPermission}
             value={this.state.formData.module}
           />
+          {
+          !this.state.Data.isTestothequeUser &&
           <TextboxElement
             name="PSCID"
             label="PSCID"
@@ -234,7 +240,9 @@ class IssueForm extends React.Component {
             ref="PSCID"
             disabled={!hasEditPermission}
             value={this.state.formData.PSCID}
-          />
+          />}
+          {
+          !this.state.Data.isTestothequeUser &&
           <TextboxElement
             name="visitLabel"
             label="Visit Label"
@@ -243,6 +251,7 @@ class IssueForm extends React.Component {
             disabled={!hasEditPermission}
             value={this.state.formData.visitLabel}
           />
+          }
           <SelectElement
             name="watching"
             label="Watching?"
@@ -252,6 +261,8 @@ class IssueForm extends React.Component {
             ref="watching"
             value={isWatching}
           />
+          {
+          !this.state.Data.isTestothequeUser &&
           <SelectElement
             name="othersWatching"
             label="Add others to watching?"
@@ -262,6 +273,7 @@ class IssueForm extends React.Component {
             multiple={true}
             value={this.state.formData.othersWatching}
           />
+          }
           <TextareaElement
             name="comment"
             label={commentLabel}
@@ -318,6 +330,8 @@ class IssueForm extends React.Component {
 
     // Validate the form
     if (!this.isValidForm(formRefs, myFormData)) {
+      console.log(formRefs);
+      console.log(myFormData);
       return;
     }
 
@@ -389,6 +403,9 @@ class IssueForm extends React.Component {
       if (formDataToCheck[field]) {
         requiredFields[field] = formDataToCheck[field];
       } else if (formRefs[field]) {
+        console.log(field);
+        console.log(formRefs[field]);
+        console.log(formDataToCheck[field]);
         formRefs[field].props.hasError = true;
         isValidForm = false;
       }

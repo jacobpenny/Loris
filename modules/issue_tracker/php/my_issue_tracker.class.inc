@@ -165,12 +165,31 @@ class My_Issue_Tracker extends \NDB_Menu_Filter_Form
         $db            = \Database::singleton();
         $list_of_sites = array();
 
+                $userSites = $user->getSiteNames();
+        $isTestothequeUser = false;
+        if (strpos($userSites, 'Testotheque') !== false
+            && strpos($userSites, ';') == false
+        ) {
+            $isTestothequeUser = true;
+        }
         //sites
         if ($user->hasPermission('access_all_profiles')) {
             $list_of_sites = \Utility::getSiteList();
+            $val           = $db->pselectOne(
+                "SELECT CenterID FROM psc WHERE Name='Testotheque'",
+                []
+            );
+                    $list_of_sites = array($val => 'Testotheque') + $list_of_sites;
             if (is_array($list_of_sites)) {
                 $list_of_sites = array('' => 'All') + $list_of_sites;
             }
+        } else if ($isTestothequeUser) {
+            $val           = $db->pselectOne(
+                "SELECT CenterID FROM psc WHERE Name='Testotheque'",
+                []
+            );
+            $list_of_sites = array($val => 'Testotheque');
+
         } else {// allow only to view own site data
             $list_of_sites = $user->getStudySites();
             $list_of_sites = array('' => 'All User Sites') + $list_of_sites;
@@ -217,14 +236,23 @@ WHERE Parent IS NOT NULL ORDER BY Label",
                      'closed'       => 'Closed',
                     );
 
-        $unorgCategories = $db -> pselect(
-            "SELECT categoryName
-        FROM issues_categories",
+        $unorgCategories = $db->pselect(
+            "SELECT categoryName FROM issues_categories",
+            []
+        );
+        $unorgShortNames = $db -> pselect(
+            "SELECT ShortName FROM testotheque",
             []
         );
         $categories      = array('' => "All");
         foreach ($unorgCategories as $r_row) {
             $categoryName = $r_row['categoryName'];
+            if ($categoryName && !$isTestothequeUser) {
+                $categories[$categoryName] = $categoryName;
+            }
+        }
+        foreach ($unorgShortNames as $r_row) {
+            $categoryName = $r_row['ShortName'];
             if ($categoryName) {
                 $categories[$categoryName] = $categoryName;
             }
