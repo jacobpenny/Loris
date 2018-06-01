@@ -515,6 +515,7 @@ var TextareaElement = React.createClass({
     cols: React.PropTypes.number,
     onUserInput: React.PropTypes.func,
     divClass: React.PropTypes.string,
+    placeholder: React.PropTypes.string,
   },
 
   getDefaultProps: function() {
@@ -530,7 +531,8 @@ var TextareaElement = React.createClass({
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
       },
-      divClass: 'row form-group'
+      divClass: 'row form-group',
+      placeholder: '',
     };
   },
   handleChange: function(e) {
@@ -562,6 +564,7 @@ var TextareaElement = React.createClass({
             required={required}
             disabled={disabled}
             onChange={this.handleChange}
+            placeholder={this.props.placeholder}
           >
           </textarea>
         </div>
