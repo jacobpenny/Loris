@@ -557,44 +557,20 @@ function getIssueFields()
     $user  =& User::singleton();
     $sites = array();
 
-    $userSites = $user->getSiteNames();
-    $isTestothequeUser = false;
-    if (strpos($userSites, 'Testotheque') !== false &&
-        strpos($userSites, ';') == false)
-        $isTestothequeUser = true;
-
     //get field options
-        if ($user->hasPermission('access_all_profiles')) {
-            $sites = \Utility::getSiteList();
-            $val   = $db->pselectOne(
-                               "SELECT CenterID FROM psc WHERE Name='Testotheque'",
-                                                  []
-                                                                   );
-                    $sites = array($val=>'Testotheque') + $sites;
-            if (is_array($sites)) {
-                $sites = array('' => 'All') + $sites;
-            }
-        } else if ($isTestothequeUser) {
-        $val   = $db->pselectOne(
-                   "SELECT CenterID FROM psc WHERE Name='Testotheque'",
-                   []
-                 );
-        $sites = array($val=>'Testotheque');
+    if ($user->hasPermission('access_all_profiles')) {
+        // get the list of study sites - to be replaced by the Site object
+        $sites = Utility::getAssociativeSiteList();
+    } else {
+        // allow only to view own site data
+        $sites = $user->getStudySites();
+    }
 
-        } else {// allow only to view own site data
-            $sites = $user->getStudySites();
-            $sites = array('' => 'All User Sites') + $sites;
-        }
     //not yet ideal permissions
     $assignees = array();
     if ($user->hasPermission('access_all_profiles')) {
         $assignee_expanded = $db->pselect(
             "SELECT Real_name, UserID FROM users",
-            array()
-        );
-    } else if ($isTestothequeUser) {
-        $assignee_expanded = $db->pselect(
-            "SELECT Real_name, UserID FROM users WHERE UserID='Lina'",
             array()
         );
     } else {
@@ -661,18 +637,9 @@ WHERE FIND_IN_SET(upr.CenterID,:CenterID) OR (upr.CenterID=:DCC)",
         "SELECT categoryName FROM issues_categories",
         []
     );
-    $unorgShortNames = $db -> pselect(
-        "SELECT ShortName FROM testotheque",
-        []
-    );
+    $categories      = [];
     foreach ($unorgCategories as $r_row) {
         $categoryName = $r_row['categoryName'];
-        if ($categoryName && !$isTestothequeUser) {
-            $categories[$categoryName] = $categoryName;
-        }
-    }
-    foreach ($unorgShortNames as $r_row) {
-        $categoryName = $r_row['ShortName'];
         if ($categoryName) {
             $categories[$categoryName] = $categoryName;
         }
@@ -719,12 +686,6 @@ ORDER BY dateAdded",
         $isOwnIssue = false;
     }
 
-    if ($isTestothequeUser) {
-        //$sites = array('Testotheque'=>'Testotheque');
-        $modules = array('Testotheque'=>'Testotheque');
-        $isTestothequeUser = true;
-    }
-    
     $result = [
                'assignees'         => $assignees,
                'sites'             => $sites,
@@ -737,7 +698,6 @@ ORDER BY dateAdded",
                'hasEditPermission' => $user->hasPermission(
                    'issue_tracker_developer'
                ),
-               'isTestothequeUser' => $isTestothequeUser,
                'isOwnIssue'        => $isOwnIssue,
               ];
 
