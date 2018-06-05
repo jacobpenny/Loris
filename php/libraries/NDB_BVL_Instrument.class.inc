@@ -194,7 +194,8 @@ class NDB_BVL_Instrument extends NDB_Page
                 'test_form'
             );
 
-            $lang     = $_REQUEST["lang"] ? $_REQUEST["lang"] : "en-ca";
+            $lang     = $_REQUEST["lang"];
+            $lang     = $lang == 'French' ? 'fr-ca' : 'en-ca';
             $filename = $base."project/instruments/$instrument.json";
 
             $obj->loadInstrumentFile($filename);
@@ -446,7 +447,8 @@ class NDB_BVL_Instrument extends NDB_Page
                 $formArray['tableID'] = "instrument";
             }
 
-            $formArray['lang'] = $_REQUEST["lang"] ? $_REQUEST["lang"] : "en-ca";
+            $lang = $_REQUEST["lang"];
+            $formArray['lang'] = $lang == 'French' ? 'fr-ca' : 'en-ca';
             $smarty->assign('form', $formArray);
             $html = $smarty->fetch("directentry_form.tpl");
         } elseif (isset($_REQUEST['json']) == 'true') {
