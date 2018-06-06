@@ -1,6 +1,6 @@
 import CandidateInfo from './CandidateInfo';
 import ProbandInfo from './ProbandInfo';
-import FamilyInfo from './FamilyInfo';
+//import FamilyInfo from './FamilyInfo';
 import ParticipantStatus from './ParticipantStatus';
 import ConsentStatus from './ConsentStatus';
 import {Tabs, TabPane} from 'Tabs';
@@ -35,9 +35,9 @@ class CandidateParameters extends React.Component {
       tabList.push({id: "probandInfo", label: "Proband Information", component: ProbandInfo});
     }
 
-    if (loris.config('useFamilyID') === "true") {
-      tabList.push({id: "familyInfo", label: "Family Information", component: FamilyInfo});
-    }
+//    if (loris.config('useFamilyID') === "true") {
+//      tabList.push({id: "familyInfo", label: "Family Information", component: FamilyInfo});
+//    }
 
     if (loris.config('useConsent') === "true") {
       tabList.push({id: "consentStatus", label: "Consent Status", component: ConsentStatus});
