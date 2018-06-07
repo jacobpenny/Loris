@@ -266,6 +266,36 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         return $match;
     }
 
+    function _findElByName($name) {
+        foreach($this->instrument['Elements'] as $element) {
+            if ($element['Name'] == $name) return $element;
+        }
+    }
+
+    function _separateCheckboxValues($values) {
+        $res = array();
+        foreach ($values as $key=>$value) {
+            $element = $this->_findElByName($key);
+            if ($element['Type'] == 'checkbox') {
+                $opts = $element['Options']['Values']['en-ca'];
+                foreach($opts as $index => $opt) {
+                    $res["${key}__$index"] = $value[$index-1];
+                    $shit = $res["${key}__$index"];
+                    error_log(print_r("nice things $shit",1));
+                }
+            } else {
+                $res[$key] = $value;
+            }
+        }
+        return $values;
+        //return $res;
+    }
+
+    function _funnelCheckboxValues($values) {
+        $res = array();
+
+    }
+
     /**
      * Returns a JSON representation of the currently instantiated
      * instrument.
@@ -318,6 +348,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $incompleteExists = false;
         if ($isDataSubmission) {
             $frontEndValues = json_decode($_POST['instrumentData'], true);
+            $this->_separateCheckboxValues($frontEndValues);
             if (!$this->calcFieldsMatch($frontEndValues)) {
                 $calcFieldsMatch = false;
                 return false;
@@ -328,6 +359,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
                 $this->_setDataEntryCompletionStatus('Incomplete');
                 return false;
             }
+            $values = $this->_separateCheckboxValues($values);
         } else {
             $values = array();
         }

@@ -200,7 +200,7 @@ function renderCheckbox(element, key, onUpdate, showRequired, isRequired, isDisa
       onUserInput={onUpdate}
       value={element.Value}
       order={element.Options.Order}
-      constantVal={true}
+      constantVal={false}
       disabled={isDisabled}
       showRequired={showRequired}
       required={isRequired}
