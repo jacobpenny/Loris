@@ -194,7 +194,7 @@ class NDB_BVL_Instrument extends NDB_Page
                 'test_form'
             );
 
-            $lang     = $_REQUEST["lang"];
+            $lang     = isset($_REQUEST['lang']) ? $_REQUEST["lang"] : 'en-ca';
             $lang     = $lang == 'French' ? 'fr-ca' : 'en-ca';
             $filename = $base."project/instruments/$instrument.json";
 
