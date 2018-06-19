@@ -102,13 +102,13 @@ class InstrumentFormContainer extends React.Component {
    * @param value - The new value of the data point
    */
   updateInstrumentData(name, value) {
-    var savingState = false;
-    var instrumentData;
+    let savingState = false;
+    let instrumentData;
     if (name == null && value == null) {
-        instrumentData = Object.assign({}, this.state.data);
+        instrumentData     = Object.assign({}, this.state.data);
         savingState = true;
     } else {
-        instrumentData = Object.assign({}, this.state.data, {[name]: value});
+        instrumentData     = Object.assign({}, this.state.data, {[name]: value});
     }
    
     var metaVals;
@@ -117,11 +117,26 @@ class InstrumentFormContainer extends React.Component {
     }
     else metaVals = {};
 
+    const multiElements = this.props.instrument.Elements.filter(
+      (element) => (element.Type === 'checkbox') //if other multi-select elements are added they should be listed here
+    );
+
+    let multiElementVals = Object.assign({}, {});
+    multiElements.forEach((element) => {
+      let opts   = Object.keys(element.Options.Values['en-ca']);
+      let values = instrumentData[element.Name] ? instrumentData[element.Name] : [];
+      multiElementVals[element.Name] = [];
+      opts.forEach((opt) => {
+        multiElementVals[element.Name][opt] = values.includes(opt) ? '1' : '0';
+      });
+    });
+    
     const calcElements = this.props.instrument.Elements.filter(
       (element) => (element.Type === 'calc')
     );
 
-    const evaluatorContext = { ...instrumentData, context: this.props.context };
+    let instrumentDataCopy = Object.assign({}, instrumentData, multiElementVals);
+    const evaluatorContext = { ...instrumentDataCopy, context: this.props.context};
     const calculatedValues = calcElements.reduce((result, element) => {
       if (!Evaluator(element.DisplayIf, evaluatorContext) && element.DisplayIf != "") {
         return result;
@@ -192,9 +207,25 @@ class InstrumentFormContainer extends React.Component {
 
     if (element.DisplayIf === '') return true;
 
+    const multiElements = this.props.instrument.Elements.filter(
+      (element) => (element.Type === 'checkbox') //if other multi-select elements are added they should be listed here
+    );
+
+    let multiElementVals = Object.assign({}, {});
+    multiElements.forEach((element) => {
+      let opts   = Object.keys(element.Options.Values['en-ca']);
+      let values = this.state.data[element.Name] ? this.state.data[element.Name] : [];
+      multiElementVals[element.Name] = [];
+      opts.forEach((opt) => {
+        multiElementVals[element.Name][opt] = values.includes(opt) ? '1' : '0';
+      });
+    });
+
+    let instrumentDataCopy = Object.assign({}, ...data, multiElementVals);
     try {
-      return Evaluator(element.DisplayIf, { ...data, context});
+      return Evaluator(element.DisplayIf, { ...instrumentDataCopy, context});
     } catch(e) {
+      console.log(element.DisplayIf);
       if (!(e instanceof NullVariableError)) {
         console.log(`Error evaluating DisplayIf property of element ${index}.\n${e}`);
       }

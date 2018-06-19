@@ -2,7 +2,7 @@
 /**
  * This file contains the JSON Instrument class
  *
- * PHP Version 5
+ * PHP Version 7
  *
  * @category Main
  * @package  Behavioural
@@ -110,7 +110,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
             unset($result[0]['Data_entry_completion_status']);
         }
 
-        return $result ? $result[0] : array();
+        return $result ? $this->_separateMultipleValues($result[0]) : array();
     }
 
 
@@ -209,11 +209,13 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
             }
         }
 
-        if ($element["Hidden"] != '' && !preg_match('/\A\s*\z/', $element["Hidden"])) {
-            try {
-                $hidden = \LorisScript\Evaluator::evaluate($element["Hidden"], array_merge($values, $context));
-            } catch (\Exception $e) {
-                error_log($e->getMessage());
+        if (array_key_exists('Hidden', $element)) {
+            if ($element["Hidden"] != '' && !preg_match('/\A\s*\z/', $element["Hidden"])) {
+                try {
+                    $hidden = \LorisScript\Evaluator::evaluate($element["Hidden"], array_merge($values, $context));
+                } catch (\Exception $e) {
+                    error_log($e->getMessage());
+                }
             }
         }
 
@@ -245,25 +247,75 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
 
     function calcFieldsMatch($values)
     {
-        $match   = true;
-        $context = $this->_getContext($values['Date_taken'] ?? null);
+        $match        = true;
+        $context      = $this->_getContext($values['Date_taken'] ?? null);
+        //$splitValues = $values;
+        $splitValues  = $this->_splitMultipleValues($values);
         foreach ($this->instrument["Elements"] as &$element) {
             $calculatedValue = null;
-            if ($element["Type"] == 'calc' && $this->isDisplayedOnForm($element, $values, $context, true)) {
-                $frontEndValue = $values[$element['Name']];
+            if ($element["Type"] == 'calc' && $this->isDisplayedOnForm($element, $splitValues, $context, true)) {
+                $frontEndValue = $splitValues[$element['Name']];
                 try {
-                    $calculatedValue = \LorisScript\Evaluator::evaluate($element["Formula"], array_merge($values, $context));
+                    $calculatedValue = \LorisScript\Evaluator::evaluate($element["Formula"], array_merge($splitValues, $context));
                 } catch (\Exception $e) {
                     error_log($e->getMessage());
                 }
                 if ($calculatedValue != $frontEndValue) {
                     $match = false;
-                    error_log("Backend calc does not match front end calc for element ${element['Name']}");
+                    error_log("Backend calc does not match front end calc for element ${element['Name']}. Backend $calculatedValue || Frontend $frontEndValue.");
                 }
             }
         }
 
         return $match;
+    }
+
+    function _findElByName($name) {
+        foreach($this->instrument['Elements'] as $element) {
+            if ($element['Name'] == $name) return $element;
+        }
+    }
+
+    function _splitMultipleValues($values) {
+        $res = array();
+        foreach($values as $key=>$value) {
+            $element = $this->_findElByName($key);
+            if ($element['Type'] == 'checkbox') {
+                $opts = $element['Options']['Values']['en-ca'];
+                foreach($opts as $index=>$opt) {
+                    $res[$key][$index] = in_array($index, $value) ? 1 : 0;
+                }
+            }
+            else {
+                $res[$key] = $value;
+            }
+        }
+        return $res;
+    }
+    function _separateMultipleValues($values) {
+        $res = array();
+        foreach ($values as $key=>$value) {
+            $element = $this->_findElByName($key);
+            if ($element['Type'] == 'checkbox') {
+                $res[$key] = array_filter(explode('{@}', $value));
+            } else {
+                $res[$key] = $value;
+            }
+        }
+        return $res;
+    }
+
+    function _funnelMultipleValues($values) {
+        $res = array();
+        foreach ($values as $key=>$value) {
+            $element = $this->_findElByName($key);
+            if ($element['Type'] == 'checkbox') {
+                $res[$key] = implode('{@}', $value) ?? null;
+            } else {
+                $res[$key] = $value;
+            }
+        }
+        return $res;
     }
 
     /**
@@ -322,7 +374,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
                 $calcFieldsMatch = false;
                 return false;
             }
-            $values = $frontEndValues;
+            $values = $this->_funnelMultipleValues($frontEndValues);
             if ($this->incompleteExists($values)) {
                 $incompleteExists = true;
                 $this->_setDataEntryCompletionStatus('Incomplete');

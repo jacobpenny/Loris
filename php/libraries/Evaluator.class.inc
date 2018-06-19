@@ -66,7 +66,7 @@ class Evaluator
                 if (isset($scope[$tree['args'][0]])) {
                     return $scope[$tree['args'][0]];
                 }
-                throw new \Exception("Unbound variable: " . $tree['args'][0]);
+                throw new \Exception("Unbound 1 variable: " . $tree['args'][0]);
             case 'NestedVariable':
                 if (isset($scope[$tree['args'][0]])) {
                     $res = $scope[$tree['args'][0]];
@@ -82,7 +82,7 @@ class Evaluator
                     }
                     return $res;
                 }
-                throw new \Exception("Unbound variable: " . $tree['args'][0]);
+                throw new \Exception("Unbound 2 variable: " . $tree['args'][0]);
             case 'FuncApplication':
                 if ($tree['args'][0] == 'if') {
                     if (static::evalAST($tree['args'][1][0], $scope)) {
