@@ -278,7 +278,6 @@ const CheckboxGroupElement = React.createClass({
         React.PropTypes.object,
         React.PropTypes.array
     ]),
-    constantVal: React.PropTypes.bool,
     id: React.PropTypes.string,
     class: React.PropTypes.string,
     disabled: React.PropTypes.bool,
@@ -293,7 +292,6 @@ const CheckboxGroupElement = React.createClass({
       name: '',
       options: {},
       order: {},
-      constantVal: false,
       label: '',
       value: undefined,
       id: '',
@@ -318,7 +316,6 @@ const CheckboxGroupElement = React.createClass({
     var disabled = this.props.disabled ? 'disabled' : null;
     var options = this.props.options;
     var order = this.props.order;
-    var constantVal = this.props.constantVal;
     var errorMessage = null;
     var requiredHTML = null;
     var elementClass = 'row form-group';
@@ -348,7 +345,7 @@ const CheckboxGroupElement = React.createClass({
             <div style={{}}>
               {Object.keys(options).map(function(optionValue, index) {
                 optionValue = order[index] ? order[index] : optionValue;
-                var cbValue = constantVal ? 1 : optionValue;
+                var cbValue = optionValue;
                 return (
                   <div key={`${optionValue}-${index}`} >
                     <Checkbox value={cbValue}/> {options[optionValue]}
