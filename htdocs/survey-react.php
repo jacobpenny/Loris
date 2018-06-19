@@ -25,6 +25,7 @@ require_once 'NDB_Caller.class.inc';
 require_once 'NDB_Client.class.inc';
 require_once 'NDB_BVL_Instrument_JSON.class.inc';
 require_once 'Log.class.inc';
+require_once 'Module.class.inc';
 
 /**
  * Implements the survey page
@@ -250,7 +251,13 @@ class DirectDataEntryMainPage
         $study   = $config->getSetting('title');
         $db     =& \Database::singleton();
         $isDataSubmission = isset($_POST['instrumentData']);
-        $instrument = new NDB_BVL_Instrument_JSON();
+        $instrument = new \Loris\Behavioural\NDB_BVL_Instrument_JSON(
+          new \Module($study),
+          'survey',
+          $this->CommentID,
+          $this->CommentID,
+          'test_form'
+        );
         $instrument->setup($this->CommentID);
 
         $workspace = $this->caller->load(

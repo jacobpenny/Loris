@@ -85,7 +85,8 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $candID    = $timepoint->getCandID();
         $candidate = \Candidate::singleton($candID);
         $lang      = $candidate->getData("DisplayParameters")['Language'];
-        return $lang ? $lang : "en-ca";
+        $lang      = $lang == 'French' ? 'fr-ca' : 'en-ca';
+        return $lang;
     }
 
     function _isComplete()
