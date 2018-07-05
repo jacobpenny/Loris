@@ -221,7 +221,7 @@ class InstrumentFormContainer extends React.Component {
       });
     });
 
-    let instrumentDataCopy = Object.assign({}, ...data, multiElementVals);
+    let instrumentDataCopy = Object.assign({}, data, multiElementVals);
     try {
       return Evaluator(element.DisplayIf, { ...instrumentDataCopy, context});
     } catch(e) {
@@ -229,6 +229,7 @@ class InstrumentFormContainer extends React.Component {
       if (!(e instanceof NullVariableError)) {
         console.log(`Error evaluating DisplayIf property of element ${index}.\n${e}`);
       }
+      else console.log(`${e}`);
 
       return false;
     }
