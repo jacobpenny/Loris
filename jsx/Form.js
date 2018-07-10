@@ -341,14 +341,13 @@ const CheckboxGroupElement = React.createClass({
             name={this.props.name}
             value={this.props.value}
             onChange={this.handleChange}>
-
             <div style={{}}>
               {Object.keys(options).map(function(optionValue, index) {
                 optionValue = order[index] ? order[index] : optionValue;
                 var cbValue = optionValue;
                 return (
                   <div key={`${optionValue}-${index}`} >
-                    <Checkbox value={cbValue}/> {options[optionValue]}
+                    <Checkbox value={cbValue} disabled={disabled}/> {options[optionValue]}
                   </div>
                 );
               })}
