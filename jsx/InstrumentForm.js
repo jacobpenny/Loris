@@ -197,6 +197,7 @@ function renderCheckbox(element, key, onUpdate, showRequired, isRequired, isDisa
       name={element.Name}
       label={element.Description}
       options={element.Options.Values}
+      orientation={element.Options.Orientation}
       onUserInput={onUpdate}
       value={element.Value}
       order={element.Options.Order}
