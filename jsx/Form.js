@@ -197,7 +197,7 @@ const RadioGroupElement = React.createClass({
       required: false,
       showRequired: false,
       hasError: false,
-      orientation: 'vertical',
+      orientation: 'horizontal',
       errorMessage: 'The field is required!',
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
@@ -283,6 +283,7 @@ const CheckboxGroupElement = React.createClass({
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
     hasError: React.PropTypes.bool,
+    orientation: React.PropTypes.string,
     errorMessage: React.PropTypes.string,
     onUserInput: React.PropTypes.func
   },
@@ -299,6 +300,7 @@ const CheckboxGroupElement = React.createClass({
       disabled: false,
       required: false,
       hasError: false,
+      orientation: 'vertical',
       errorMessage: 'The field is required!',
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
@@ -314,6 +316,7 @@ const CheckboxGroupElement = React.createClass({
     var name = this.props.name;
     var required = this.props.required ? 'required' : null;
     var disabled = this.props.disabled ? 'disabled' : null;
+    var isHorizontal = this.props.orientation === 'horizontal';
     var options = this.props.options;
     var order = this.props.order;
     var errorMessage = null;
@@ -341,14 +344,13 @@ const CheckboxGroupElement = React.createClass({
             name={this.props.name}
             value={this.props.value}
             onChange={this.handleChange}>
-
-            <div style={{}}>
+            <div style={{display: isHorizontal ? 'flex' : '', justifyContent: 'space-around'}}>
               {Object.keys(options).map(function(optionValue, index) {
                 optionValue = order[index] ? order[index] : optionValue;
                 var cbValue = optionValue;
                 return (
                   <div key={`${optionValue}-${index}`} >
-                    <Checkbox value={cbValue}/> {options[optionValue]}
+                    <Checkbox value={cbValue} disabled={disabled}/> {options[optionValue]}
                   </div>
                 );
               })}

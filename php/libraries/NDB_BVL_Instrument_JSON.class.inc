@@ -297,7 +297,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         foreach ($values as $key=>$value) {
             $element = $this->_findElByName($key);
             if ($element['Type'] == 'checkbox') {
-                $res[$key] = array_filter(explode('{@}', $value));
+                $res[$key] = array_filter(explode('{@}', $value),'is_numeric');
             } else {
                 $res[$key] = $value;
             }
