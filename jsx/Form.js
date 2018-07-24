@@ -960,6 +960,7 @@ var ButtonElement = React.createClass({
     buttonClass: React.PropTypes.string,
     divClass: React.PropTypes.string,
     id: React.PropTypes.string,
+    disabled: React.PropTypes.string,
   },
   getDefaultProps: function() {
     return {
@@ -972,12 +973,14 @@ var ButtonElement = React.createClass({
         console.warn('onUserInput() callback is not set');
       },
       id: 'Submit',
+      disabled: '',
     };
   },
   handleClick: function(e) {
     this.props.onUserInput(e);
   },
   render: function() {
+    let disabled = this.props.disabled=='true' ? 'disabled' : '';
     return (
       <div className={this.props.divClass}>
         <div className={this.props.columnSize}>
@@ -986,6 +989,7 @@ var ButtonElement = React.createClass({
             className={this.props.buttonClass}
             onClick={this.handleClick}
             id={this.props.id}
+            disabled={disabled}
           >
             {this.props.label}
           </button>
