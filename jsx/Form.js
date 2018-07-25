@@ -330,7 +330,7 @@ const CheckboxGroupElement = React.createClass({
 
     // Add error message
     if (this.props.hasError || (this.props.required && this.props.value === "")) {
-      errorMessage = <span>{this.props.errorMessage}</span>;
+      errorMessage = <span className="warning">{this.props.errorMessage}</span>;
       elementClass = 'row form-group has-error';
     }
 
@@ -456,7 +456,7 @@ var SelectElement = React.createClass({
 
     // Add error message
     if (this.props.hasError || (this.props.required && this.props.value === "")) {
-      errorMessage = <span>{this.props.errorMessage}</span>;
+      errorMessage = <span className="warning">{this.props.errorMessage}</span>;
       elementClass = 'row form-group has-error';
     }
 
@@ -507,6 +507,9 @@ var TextareaElement = React.createClass({
     id: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
+    hasError: React.PropTypes.bool,
+    showRequired: React.PropTypes.bool,
+    errorMessage: React.PropTypes.string,
     rows: React.PropTypes.number,
     cols: React.PropTypes.number,
     onUserInput: React.PropTypes.func
@@ -520,6 +523,9 @@ var TextareaElement = React.createClass({
       id: null,
       disabled: false,
       required: false,
+      hasError: false,
+      showRequired: false,
+      errorMessage: 'This field is required!',
       rows: 4,
       cols: 25,
       onUserInput: function() {
@@ -534,14 +540,22 @@ var TextareaElement = React.createClass({
     var disabled = this.props.disabled ? 'disabled' : null;
     var required = this.props.required ? 'required' : null;
     var requiredHTML = null;
+    let errorMessage = null;
+    let elementClass = 'row form-group';
 
     // Add required asterix
     if (required) {
       //requiredHTML = <span className="text-danger">*</span>;
     }
 
+    // Add error message
+    if (this.props.hasError || (this.props.showRequired && this.props.required && !this.props.value)) {
+      errorMessage = <span className="warning">{this.props.errorMessage}</span>;
+      elementClass = 'row form-group has-error';
+    }
+
     return (
-      <div className="row form-group">
+      <div className={elementClass}>
         <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
         </label>
@@ -558,6 +572,7 @@ var TextareaElement = React.createClass({
             onChange={this.handleChange}
           >
           </textarea>
+          {errorMessage}
         </div>
       </div>
     );
@@ -576,6 +591,9 @@ var TextboxElement = React.createClass({
     id: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
+    hasError: React.PropTypes.bool,
+    showRequired: React.PropTypes.bool,
+    errorMessage: React.PropTypes.string,
     onUserInput: React.PropTypes.func
   },
   getDefaultProps: function() {
@@ -586,6 +604,9 @@ var TextboxElement = React.createClass({
       id: null,
       disabled: false,
       required: false,
+      hasError: false,
+      showRequired: false,
+      errorMessage: 'This field is required!',
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
       }
@@ -597,15 +618,23 @@ var TextboxElement = React.createClass({
   render: function() {
     var disabled = this.props.disabled ? 'disabled' : null;
     var required = this.props.required ? 'required' : null;
+    let errorMessage = null;
     var requiredHTML = null;
+    let elementClass = 'row form-group';
 
     // Add required asterix
     if (required) {
       //requiredHTML = <span className="text-danger">*</span>;
     }
 
+    // Add error message
+    if (this.props.hasError || (this.props.showRequired && this.props.required && !this.props.value)) {
+      errorMessage = <span className="warning">{this.props.errorMessage}</span>;
+      elementClass = 'row form-group has-error';
+    }
+
     return (
-      <div className="row form-group">
+      <div className={elementClass}>
         <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
         </label>
@@ -620,6 +649,7 @@ var TextboxElement = React.createClass({
             disabled={disabled}
             onChange={this.handleChange}
           />
+          {errorMessage}
         </div>
       </div>
     );

@@ -137,8 +137,11 @@ function renderRadioLabels(element, key) {
 }
 
 function renderRadio(element, key, onUpdate, showRequired, isRequired, isDisabled) {
+  let elementClass="row form-group";
+  if (showRequired && isRequired && !element.Value) 
+    elementClass="row form-group has-error";
   return (
-      <div className="row form-group" key={key}>
+      <div className={elementClass} key={key}>
         <RadioGroupElement
           name={element.Name}
           label={element.Description}
