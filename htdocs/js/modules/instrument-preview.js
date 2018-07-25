@@ -1,6 +1,6 @@
 import InstrumentFormContainer from '../../../jsx/InstrumentFormContainer';
 
-const INPUT_ELEMENT_TYPES = ['select', 'date', 'radio', 'text', 'calc', 'checkbox'];
+const INPUT_ELEMENT_TYPES = ['select', 'date', 'radio', 'text', 'calc', 'checkbox', 'numeric'];
 
 function getInitialData(instrument) {
   return instrument.Elements.filter((element) => (

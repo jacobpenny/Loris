@@ -1,6 +1,6 @@
 import Form from './Form';
 
-const { SelectElement, RadioGroupLabels, RadioGroupElement, CheckboxGroupElement, TextboxElement, DateElement } = Form;
+const { SelectElement, RadioGroupLabels, RadioGroupElement, CheckboxGroupElement, TextboxElement, DateElement, NumericElement } = Form;
 
 /* InstrumentForm and InstrumentFormContainer follow the `presentational vs container`
  * pattern (https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0). 
@@ -122,10 +122,12 @@ function renderElement(element, key, onUpdate, showRequired = false,required = f
     return <div className="hoverRow">
              {renderDate(element, key, onUpdate, showRequired, required, disabled)}
            </div>
-  } else if (elemet.Type === 'numeric') {
+  } else if (element.Type === 'numeric') {
     return <div className="hoverRow">
              {renderNumeric(element, key, onUpdate, showRequired, required, disabled)}
            </div>
+  } else {
+    return <span>Missing Field</span>;
   }
 }
 
@@ -275,9 +277,10 @@ function renderDate(element, key, onUpdate, showRequired, isRequired, isDisabled
 function renderNumeric(element, key, onUpdate, showRequired, isRequired, isDisabled) {
   return (
     <NumericElement
-      name={key}
-      min={element.Options.Min ? element.Options.Min : null}
-      max={element.Options.Max ? element.Options.Max : null}
+      key={key}
+      name={element.Name}
+      min={element.Options.Min ? element.Options.Min : ''}
+      max={element.Options.Max ? element.Options.Max : ''}
       label={element.Description}
       value={element.Value}
       disabled={isDisabled}

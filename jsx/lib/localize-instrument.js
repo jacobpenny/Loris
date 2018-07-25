@@ -13,13 +13,13 @@ function localizeInstrument(rawInstrument, lang = 'en-ca') {
     const convertedElements = [];
 
     instrument['Elements'].forEach((element) => {
-      if (['label', 'text', 'calc', 'date', 'select', 'radio', 'checkbox'].includes(element.Type)) {
+      if (['label', 'text', 'calc', 'date', 'select', 'radio', 'checkbox', 'numeric'].includes(element.Type)) {
         if (element['Description'][lang] && element['Description'][lang] !== " " && element['Comment']) {
           element['Description'] = fixhtml(element['Description'][lang]) + element['Comment'];
         } else if (element['Description'][lang] && element['Description'][lang] !== " " && !element['Comment']) {
           element['Description'] = element['Description'][lang];
         } else {
-          if (['text', 'date'].includes(element.Type)) {
+          if (['text', 'date', 'numeric'].includes(element.Type)) {
             element['Description'] = element.Comment ? element.Comment : "";
           } else if (['select', 'radio', 'checkbox'].includes(element.Type)) {
             element['Description'] = "";
@@ -36,7 +36,7 @@ function localizeInstrument(rawInstrument, lang = 'en-ca') {
       } else if (['radio-labels'].includes(element.Type) && element['Labels'][lang]) {
         element['Labels'] = element['Labels'][lang];
         convertedElements.push(element);
-      }
+      } else convertedElements.push(element);
     });
 
     instrument['Elements'] = convertedElements;
