@@ -122,6 +122,10 @@ function renderElement(element, key, onUpdate, showRequired = false,required = f
     return <div className="hoverRow">
              {renderDate(element, key, onUpdate, showRequired, required, disabled)}
            </div>
+  } else if (elemet.Type === 'numeric') {
+    return <div className="hoverRow">
+             {renderNumeric(element, key, onUpdate, showRequired, required, disabled)}
+           </div>
   }
 }
 
@@ -264,6 +268,22 @@ function renderDate(element, key, onUpdate, showRequired, isRequired, isDisabled
       disabled={isDisabled}
       showRequired={showRequired}
       required={isRequired}
+    />
+  )
+}
+
+function renderNumeric(element, key, onUpdate, showRequired, isRequired, isDisabled) {
+  return (
+    <NumericElement
+      name={key}
+      min={element.Options.Min ? element.Options.Min : null}
+      max={element.Options.Max ? element.Options.Max : null}
+      label={element.Description}
+      value={element.Value}
+      disabled={isDisabled}
+      required={isRequired}
+      showRequired={showRequired}
+      onUserInput={onUpdate}
     />
   )
 }

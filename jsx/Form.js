@@ -670,6 +670,7 @@ var DateElement = React.createClass({
     maxYear: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
+    showRequired: React.PropTypes.bool,
     onUserInput: React.PropTypes.func
   },
 
@@ -682,6 +683,7 @@ var DateElement = React.createClass({
       maxYear: '9999-12-31',
       disabled: false,
       required: false,
+      showRequired: false,
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
       }
@@ -694,14 +696,21 @@ var DateElement = React.createClass({
     var disabled = this.props.disabled ? 'disabled' : null;
     var required = this.props.required ? 'required' : null;
     var requiredHTML = null;
+    let elementClass = 'row form-group';
+    let errorMessage = 'This field is required!';
 
     // Add required asterix
     if (required) {
       //requiredHTML = <span className="text-danger">*</span>;
     }
 
+    if (this.props.hasError || (this.props.showRequired && this.props.required && !this.props.value)) {
+      errorMessage = <span className="warning">{this.props.errorMessage}</span>;
+      elementClass = 'row form-group has-error';
+    }
+
     return (
-      <div className="row form-group">
+      <div className={elementClass}>
         <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
         </label>
@@ -718,6 +727,7 @@ var DateElement = React.createClass({
             required={required}
             disabled={disabled}
           />
+          {errorMessage}
         </div>
       </div>
     );
@@ -738,6 +748,7 @@ var NumericElement = React.createClass({
     id: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
+    showRequired: React.PropTypes.bool,
     onUserInput: React.PropTypes.func
   },
   getDefaultProps: function() {
@@ -749,6 +760,7 @@ var NumericElement = React.createClass({
       value: '',
       id: null,
       required: false,
+      showRequired: false,
       disabled: false,
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
@@ -762,9 +774,16 @@ var NumericElement = React.createClass({
     var disabled = this.props.disabled ? 'disabled' : null;
     var required = this.props.required ? 'required' : null;
     var requiredHTML = null;
+    let elementClass = 'row form-group';
+    let errorMessage = 'This field is required!';
+
+    if (this.props.hasError || (this.props.showRequired && this.props.required && !this.props.value)) {
+      errorMessage = <span className="warning">{this.props.errorMessage}</span>;
+      elementClass = 'row form-group has-error';
+    }
 
     return (
-      <div className="row form-group">
+      <div className={elementClass}>
         <label className="col-sm-3 control-label" htmlFor={this.props.id}>
           {this.props.label}
           {requiredHTML}
@@ -782,6 +801,7 @@ var NumericElement = React.createClass({
             required={required}
             onChange={this.handleChange}
           />
+          {errorMessage}
         </div>
       </div>
     );
