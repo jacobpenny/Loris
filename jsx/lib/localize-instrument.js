@@ -15,7 +15,7 @@ function localizeInstrument(rawInstrument, lang = 'en-ca') {
     instrument['Elements'].forEach((element) => {
       if (['label', 'text', 'calc', 'date', 'select', 'radio', 'checkbox', 'numeric'].includes(element.Type)) {
         if (element['Description'][lang] && element['Description'][lang] !== " " && element['Comment']) {
-          element['Description'] = fixhtml(element['Description'][lang]) + element['Comment'];
+          element['Description'] = fixhtml(element['Description'][lang]) + "; " + fixhtml(element['Comment']);
         } else if (element['Description'][lang] && element['Description'][lang] !== " " && !element['Comment']) {
           element['Description'] = element['Description'][lang];
         } else {

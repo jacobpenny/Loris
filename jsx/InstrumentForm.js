@@ -275,17 +275,32 @@ function renderDate(element, key, onUpdate, showRequired, isRequired, isDisabled
 }
 
 function renderNumeric(element, key, onUpdate, showRequired, isRequired, isDisabled) {
+  let min = element.Options.Min;
+  let max = element.Options.Max;
+  let hasError = false;
+  let errorMessage = 'This value is required!';
+  if (element.Value == null) element.Value = '';
+  if (element.Value && min && Number(element.Value) < Number(min)) {
+    hasError = true;
+    errorMessage = 'The value should be greater than ' + min;
+  }
+  if (element.Value && max && Number(element.Value) > Number(max)) {
+    hasError = true;
+    errorMessage = 'The value should be less than ' + max;
+  }
   return (
     <NumericElement
       key={key}
       name={element.Name}
-      min={element.Options.Min ? element.Options.Min : ''}
-      max={element.Options.Max ? element.Options.Max : ''}
+      min={min ? min : ''}
+      max={max ? max : ''}
       label={element.Description}
       value={element.Value}
       disabled={isDisabled}
       required={isRequired}
       showRequired={showRequired}
+      hasError={hasError}
+      errorMessage={errorMessage}
       onUserInput={onUpdate}
     />
   )

@@ -763,6 +763,7 @@ var NumericElement = React.createClass({
     required: React.PropTypes.bool,
     showRequired: React.PropTypes.bool,
     errorMessage: React.PropTypes.string,
+    hasError: React.PropTypes.bool,
     onUserInput: React.PropTypes.func
   },
   getDefaultProps: function() {
@@ -777,6 +778,7 @@ var NumericElement = React.createClass({
       showRequired: false,
       disabled: false,
       errorMessage: 'This field is required!',
+      hasError: false,
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
       }
