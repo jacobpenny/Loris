@@ -6,7 +6,8 @@ function fixhtml(html) {
 
 function localizeInstrument(rawInstrument, lang = 'en-ca') {
   const instrument = JSON.parse(JSON.stringify(rawInstrument));
-
+  if (instrument['Meta']['Multilingual']=='false')
+    lang=instrument['Meta']['DefaultLanguage'];
   try {
     instrument['Meta']['LongName'] = instrument['Meta']['LongName'][lang];
 
