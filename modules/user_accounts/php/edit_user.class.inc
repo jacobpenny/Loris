@@ -704,13 +704,15 @@ class Edit_User extends \NDB_Form
             $siteOptions,
             array('multiple' => 'multiple')
         );
-        $projectOptions = \Utility::getProjectList();
+        
+        $projArr = $editor->getData('Projects');
         $this->addSelect(
             'ProjectIDs',
             'Projects',
-            $projectOptions,
+            $projArr,
             array('multiple' => 'multiple')
         );
+        
         if ($editor->hasPermission('examiner_multisite')) {
             //get site aliases
             $DB      =& \Database::singleton();

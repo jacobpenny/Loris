@@ -1,6 +1,6 @@
 import Form from './Form';
 
-const { SelectElement, RadioGroupLabels, RadioGroupElement, CheckboxGroupElement, TextboxElement, DateElement } = Form;
+const { SelectElement, RadioGroupLabels, RadioGroupElement, CheckboxGroupElement, TextboxElement, DateElement, NumericElement } = Form;
 
 /* InstrumentForm and InstrumentFormContainer follow the `presentational vs container`
  * pattern (https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0). 
@@ -122,6 +122,12 @@ function renderElement(element, key, onUpdate, showRequired = false,required = f
     return <div className="hoverRow">
              {renderDate(element, key, onUpdate, showRequired, required, disabled)}
            </div>
+  } else if (element.Type === 'numeric') {
+    return <div className="hoverRow">
+             {renderNumeric(element, key, onUpdate, showRequired, required, disabled)}
+           </div>
+  } else {
+    return <span>Missing Field</span>;
   }
 }
 
@@ -264,6 +270,38 @@ function renderDate(element, key, onUpdate, showRequired, isRequired, isDisabled
       disabled={isDisabled}
       showRequired={showRequired}
       required={isRequired}
+    />
+  )
+}
+
+function renderNumeric(element, key, onUpdate, showRequired, isRequired, isDisabled) {
+  let min = element.Options.Min;
+  let max = element.Options.Max;
+  let hasError = false;
+  let errorMessage = 'This value is required!';
+  if (element.Value == null) element.Value = '';
+  if (element.Value && min && Number(element.Value) < Number(min)) {
+    hasError = true;
+    errorMessage = 'The value should be greater than ' + min;
+  }
+  if (element.Value && max && Number(element.Value) > Number(max)) {
+    hasError = true;
+    errorMessage = 'The value should be less than ' + max;
+  }
+  return (
+    <NumericElement
+      key={key}
+      name={element.Name}
+      min={min ? min : ''}
+      max={max ? max : ''}
+      label={element.Description}
+      value={element.Value}
+      disabled={isDisabled}
+      required={isRequired}
+      showRequired={showRequired}
+      hasError={hasError}
+      errorMessage={errorMessage}
+      onUserInput={onUpdate}
     />
   )
 }

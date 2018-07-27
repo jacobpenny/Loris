@@ -273,7 +273,10 @@ const CheckboxGroupElement = React.createClass({
       React.PropTypes.object
     ]),
     label: React.PropTypes.string,
-    value: React.PropTypes.string,
+    value: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.array
+    ]),
     order: React.PropTypes.oneOfType([
         React.PropTypes.object,
         React.PropTypes.array
@@ -282,6 +285,7 @@ const CheckboxGroupElement = React.createClass({
     class: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
+    showRequired: React.PropTypes.bool,
     hasError: React.PropTypes.bool,
     orientation: React.PropTypes.string,
     errorMessage: React.PropTypes.string,
@@ -299,6 +303,7 @@ const CheckboxGroupElement = React.createClass({
       class: '',
       disabled: false,
       required: false,
+      showRequired: false,
       hasError: false,
       orientation: 'vertical',
       errorMessage: 'The field is required!',
@@ -329,7 +334,9 @@ const CheckboxGroupElement = React.createClass({
     }
 
     // Add error message
-    if (this.props.hasError || (this.props.required && this.props.value === "")) {
+    if (this.props.hasError || (this.props.showRequired
+                             && this.props.required
+                             && (!this.props.value || this.props.value.length == 0))) {
       errorMessage = <span className="warning">{this.props.errorMessage}</span>;
       elementClass = 'row form-group has-error';
     }
@@ -670,6 +677,7 @@ var DateElement = React.createClass({
     maxYear: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
+    showRequired: React.PropTypes.bool,
     onUserInput: React.PropTypes.func
   },
 
@@ -682,6 +690,7 @@ var DateElement = React.createClass({
       maxYear: '9999-12-31',
       disabled: false,
       required: false,
+      showRequired: false,
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
       }
@@ -694,14 +703,21 @@ var DateElement = React.createClass({
     var disabled = this.props.disabled ? 'disabled' : null;
     var required = this.props.required ? 'required' : null;
     var requiredHTML = null;
+    let elementClass = 'row form-group';
+    let errorMessage = null;
 
     // Add required asterix
     if (required) {
       //requiredHTML = <span className="text-danger">*</span>;
     }
 
+    if (this.props.hasError || (this.props.showRequired && this.props.required && !this.props.value)) {
+      errorMessage = <span className="warning">{this.props.errorMessage}</span>;
+      elementClass = 'row form-group has-error';
+    }
+
     return (
-      <div className="row form-group">
+      <div className={elementClass}>
         <label className="col-sm-3 control-label" htmlFor={this.props.id} dangerouslySetInnerHTML={{__html: this.props.label}}>
           {requiredHTML}
         </label>
@@ -718,6 +734,7 @@ var DateElement = React.createClass({
             required={required}
             disabled={disabled}
           />
+          {errorMessage}
         </div>
       </div>
     );
@@ -731,25 +748,37 @@ var DateElement = React.createClass({
 var NumericElement = React.createClass({
   propTypes: {
     name: React.PropTypes.string.isRequired,
-    min: React.PropTypes.number.isRequired,
-    max: React.PropTypes.number.isRequired,
+    min: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]),
+    max: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]),
     label: React.PropTypes.string,
     value: React.PropTypes.string,
     id: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     required: React.PropTypes.bool,
+    showRequired: React.PropTypes.bool,
+    errorMessage: React.PropTypes.string,
+    hasError: React.PropTypes.bool,
     onUserInput: React.PropTypes.func
   },
   getDefaultProps: function() {
     return {
       name: '',
-      min: null,
-      max: null,
+      min: '',
+      max: '',
       label: '',
       value: '',
       id: null,
       required: false,
+      showRequired: false,
       disabled: false,
+      errorMessage: 'This field is required!',
+      hasError: false,
       onUserInput: function() {
         console.warn('onUserInput() callback is not set');
       }
@@ -762,9 +791,16 @@ var NumericElement = React.createClass({
     var disabled = this.props.disabled ? 'disabled' : null;
     var required = this.props.required ? 'required' : null;
     var requiredHTML = null;
+    let elementClass = 'row form-group';
+    let errorMessage = null;
+
+    if (this.props.hasError || (this.props.showRequired && this.props.required && !this.props.value)) {
+      errorMessage = <span className="warning">{this.props.errorMessage}</span>;
+      elementClass = 'row form-group has-error';
+    }
 
     return (
-      <div className="row form-group">
+      <div className={elementClass}>
         <label className="col-sm-3 control-label" htmlFor={this.props.id}>
           {this.props.label}
           {requiredHTML}
@@ -782,6 +818,7 @@ var NumericElement = React.createClass({
             required={required}
             onChange={this.handleChange}
           />
+          {errorMessage}
         </div>
       </div>
     );
@@ -832,7 +869,7 @@ var FileElement = React.createClass({
     const required = this.props.required ? 'required' : null;
     const fileName = this.props.value ? this.props.value.name : undefined;
     let requiredHTML = null;
-    let errorMessage = '';
+    let errorMessage = null;
     let elementClass = 'row form-group';
 
     // Add required asterix
