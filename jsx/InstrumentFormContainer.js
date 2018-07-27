@@ -2,7 +2,7 @@ import InstrumentForm from './InstrumentForm';
 import { Evaluator, NullVariableError, UndefinedVariableError } from './lib/Parser';
 import localizeInstrument from './lib/localize-instrument';
 
-const INPUT_TYPES = ['select', 'date', 'radio', 'text', 'calc', 'checkbox'];
+const INPUT_TYPES = ['select', 'date', 'radio', 'text', 'calc', 'checkbox', 'numeric'];
 
 /* InstrumentForm and InstrumentFormContainer follow the `presentational vs container`
  * pattern (https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0).
