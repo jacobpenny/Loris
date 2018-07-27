@@ -88,6 +88,9 @@ class schema_generator
                 case "text":
                     $type = "TEXT";
                     break;
+                case "numeric":
+                    $type = "INTEGER";
+                    break;
                 case "checkbox":
                     //$opts = $element['Options']['Values']['en-ca'];
                     //foreach($opts as $index => $opt) { 
