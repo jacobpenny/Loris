@@ -339,8 +339,7 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         if (!$recordExists) {
             $db->insert(
                 $this->table,
-                array_merge($values, array('CommentID' => $this->getCommentID())),
-                array('CommentID' => $this->getCommentID())
+                array_merge($values, array('CommentID' => $this->getCommentID()))
             );
             $this->_saveCandidateAge($values);
         } else if ($recordExists && !empty($values)) {
