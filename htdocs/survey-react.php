@@ -274,7 +274,6 @@ class DirectDataEntryMainPage
             
             $curDate = date('Y-m-d');
             $values = array('Date_taken' => $curDate, 'Candidate_Age' => NULL, 'Window_Difference' => NULL);
-            $instrument->_saveCandidateAge($values);
             $this->updateStatus('Complete');
             $db->update(
                 $this->TestName,
@@ -283,6 +282,7 @@ class DirectDataEntryMainPage
                     'CommentID' => $this->CommentID,
                 )
             );
+            $instrument->_saveCandidateAge($values);
 
             $db->update(
                 'flag',
