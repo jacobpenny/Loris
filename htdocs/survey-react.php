@@ -252,7 +252,7 @@ class DirectDataEntryMainPage
         $db     =& \Database::singleton();
         $isDataSubmission = isset($_POST['instrumentData']);
         $instrument = new \Loris\Behavioural\NDB_BVL_Instrument_JSON(
-          new \Module($study),
+          new \Module($this->TestName),
           'survey',
           $this->CommentID,
           $this->CommentID,
