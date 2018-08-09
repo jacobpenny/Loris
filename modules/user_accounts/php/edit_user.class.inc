@@ -450,6 +450,15 @@ class Edit_User extends \NDB_Form
                     )
                 );
             }
+            foreach ($us_curr_projects as $project) {
+                $DB->insert(
+                    'user_project_rel',
+                    array(
+                     "UserID"    => $uid,
+                     "ProjectID" => $project,
+                    )
+                );
+            }
         } else {
             // update the user
             $user    = \User::factory($this->identifier);
