@@ -35,8 +35,7 @@
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu pull-right" role="menu">
-                            <li class="active"><a data-target="overall-recruitment">View overall recruitment</a></li>
-                            <li><a data-target="recruitment-site-breakdown">View site breakdown</a></li>
+                            <li class="active"><a data-target="recruitment-site-breakdown">View site breakdown</a></li>
                             {if $useProjects eq "true"}
                                 <li><a data-target="recruitment-project-breakdown">View project breakdown</a></li>
                             {/if}
@@ -45,9 +44,6 @@
                 </div>
             </div>
             <div class="panel-body">
-                <div class="recruitment-panel" id="overall-recruitment">
-                    {include file='progress_bar.tpl' project=$recruitment["overall"]}
-                </div>
                 <div class="recruitment-panel hidden" id="recruitment-site-breakdown">
                     {if $recruitment['overall']['total_recruitment'] neq 0}
                         <div class="col-lg-4 col-md-4 col-sm-4">
@@ -69,9 +65,7 @@
                 {if $useProjects eq "true"}
                     <div class="recruitment-panel hidden" id="recruitment-project-breakdown">
                         {foreach from=$recruitment key=ID item=project}
-                            {if $ID != "overall"}
-                                {include file='progress_bar.tpl' project=$project}
-                            {/if}
+                            {include file='progress_bar.tpl' project=$project}
                         {/foreach}
                     </div>
                 {/if}
