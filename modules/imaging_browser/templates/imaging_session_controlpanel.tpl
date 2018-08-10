@@ -40,7 +40,7 @@
         {/if}
         {foreach from=$subject.tarchiveIDLoc key=tarchive item=tarchiveLoc}
           <li><a href="{$baseurl}/dicom_archive/viewDetails/?tarchiveID={$tarchive}&backURL={$backURL|escape:"url"}">DICOM Archive {$tarchive}</a></li>
-          <li><a href="/mri/jiv/get_file.php?file={$tarchiveLoc['ArchiveLocation']}&saveAs={$tarchiveLoc['saveAs']}" class="btn btn-primary btn-small">
+          <li><a href="/mri/jiv/get_file.php?file=tarchive/{$tarchiveLoc['ArchiveLocation']}&saveAs={$tarchiveLoc['saveAs']}" class="btn btn-primary btn-small">
 		<span class="glyphicon glyphicon-cloud-download"></span><span class="hidden-xs"> Download DICOM {$tarchive}</span>
           </a></li>
         {/foreach}
