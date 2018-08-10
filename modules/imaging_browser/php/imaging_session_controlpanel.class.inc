@@ -141,7 +141,6 @@ class Imaging_Session_ControlPanel
                 $timestamp          = substr($matches[1], 0, 4);
                 $dicomFileName      = substr($archiveLocation, 20);
 		$saveAs = $patientNameAndDate.'_'.$timestamp.'_'.$dicomFileName;
-		print($saveAs);
             } else {
                 $saveAs = $patientName .'_'.substr($archiveLocation, 5);
 
