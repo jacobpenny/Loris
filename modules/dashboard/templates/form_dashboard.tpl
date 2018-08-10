@@ -44,7 +44,7 @@
                 </div>
             </div>
             <div class="panel-body">
-                <div class="recruitment-panel hidden" id="recruitment-site-breakdown">
+                <div class="recruitment-panel" id="recruitment-site-breakdown">
                     {if $recruitment['overall']['total_recruitment'] neq 0}
                         <div class="col-lg-4 col-md-4 col-sm-4">
                             <div>
