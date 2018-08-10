@@ -104,20 +104,52 @@ class Imaging_Session_ControlPanel
         );
         $subjectData['tarchiveids'] = $tarchiveIDs;
 
-
-// To enable DICOM download: Add pair: tarchiveID, ArchiveLocation
+        // To enable DICOM download: Add pair: tarchiveID, ArchiveLocation
         $qresult = $DB->pselect(
-            "SELECT TarchiveID, ArchiveLocation
-            FROM tarchive
-            WHERE PatientName LIKE $ID",
+            "SELECT t.TarchiveID, t.ArchiveLocation, 
+                SUBSTRING_INDEX(mu.UploadLocation, '/', -1) AS originalFileName,
+                t.PatientName
+            FROM tarchive t LEFT JOIN mri_upload mu ON t.PatientName=mu.PatientName 
+            WHERE t.PatientName LIKE $ID",
             $params
         );
-        $tarIDTotarLoc=array();
-        foreach($qresult as $k=>$v) {
-            $tarchiveID = $v['TarchiveID'];
-            $tarIDTotarLoc[$tarchiveID]=$v['ArchiveLocation'];
+
+        $tarIDToTarLoc =array();
+        foreach ($qresult as $v) {
+            $tarchiveID       = $v['TarchiveID'];
+            $originalFileName = $v['originalFileName'];
+            $archiveLocation  = $v['ArchiveLocation'];
+            $patientName      = $v['PatientName'];
+            $tarIDToTarLoc[$tarchiveID]['ArchiveLocation']  = $archiveLocation;
+            $tarIDToTarLoc[$tarchiveID]['originalFileName'] = $originalFileName;
+            $tarIDToTarLoc[$tarchiveID]['PatientName']      = $patientName;
+            $originalFileNameParts = explode('_', $originalFileName);
+            if (!empty($originalFileName) && count($originalFileNameParts) == 5
+                && preg_match(
+                    "/^([0-9]{9}).zip/i",
+                    $originalFileNameParts[4],
+                    $matches
+                )) {
+                $patientNameAndDate = implode(
+                    '_',
+                    array_slice(
+                        $originalFileNameParts,
+                        0,
+                        4
+                    )
+                );
+                $timestamp          = substr($matches[1], 0, 4);
+                $dicomFileName      = substr($archiveLocation, 20);
+                $saveAs = $patientNameAndDate.'_'.$timestamp.'_'.$dicomFileName;
+
+            } else {
+                $saveAs = $patientName .'_'.substr($archiveLocation, 5);
+
+            }
+            $tarIDToTarLoc[$tarchiveID]['saveAs'] = $saveAs;
+
         }
-        $subjectData['tarchiveIDLoc']   = $tarIDTotarLoc;
+        $subjectData['tarchiveIDLoc'] = $tarIDTotarLoc;
 
         $config =& \NDB_Config::singleton();
 
