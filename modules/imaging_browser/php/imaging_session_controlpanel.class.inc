@@ -124,9 +124,9 @@ class Imaging_Session_ControlPanel
             $tarIDToTarLoc[$tarchiveID]['originalFileName'] = $originalFileName;
             $tarIDToTarLoc[$tarchiveID]['PatientName']      = $patientName;
             $originalFileNameParts = explode('_', $originalFileName);
-            if (!empty($originalFileName) && count($originalFileNameParts) == 5
+	    if (!empty($originalFileName) && count($originalFileNameParts) >= 5
                 && preg_match(
-                    "/^([0-9]{9}).zip/i",
+                    "/^([0-9]{9})*/i",
                     $originalFileNameParts[4],
                     $matches
                 )) {
@@ -140,8 +140,8 @@ class Imaging_Session_ControlPanel
                 );
                 $timestamp          = substr($matches[1], 0, 4);
                 $dicomFileName      = substr($archiveLocation, 20);
-                $saveAs = $patientNameAndDate.'_'.$timestamp.'_'.$dicomFileName;
-
+		$saveAs = $patientNameAndDate.'_'.$timestamp.'_'.$dicomFileName;
+		print($saveAs);
             } else {
                 $saveAs = $patientName .'_'.substr($archiveLocation, 5);
 
@@ -149,7 +149,7 @@ class Imaging_Session_ControlPanel
             $tarIDToTarLoc[$tarchiveID]['saveAs'] = $saveAs;
 
         }
-        $subjectData['tarchiveIDLoc'] = $tarIDTotarLoc;
+        $subjectData['tarchiveIDLoc'] = $tarIDToTarLoc;
 
         $config =& \NDB_Config::singleton();
 

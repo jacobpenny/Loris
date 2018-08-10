@@ -140,7 +140,7 @@ case 'nrrd':
     break;
 case 'DICOMTAR':
     // ADD case for DICOMTAR
-    $FullPath         = $tarchivePath . '/' . $File;
+    $FullPath         = $imagePath . '/' . $File;
     $MimeType         = 'application/x-tar';
     $DownloadFilename = basename($File);
     $saveAs           = $_GET['saveAs'];
