@@ -17,7 +17,6 @@
                 Males
                 </p>
             </div>
-            <p class="pull-right small target">Target: {$project['recruitment_target']}</p>
         </div>
 
     {else}
@@ -36,7 +35,6 @@
                 Males
                 </p>
             </div>
-            <p class="pull-right small target">Target: {$project['recruitment_target']}</p>
         </div>
     {/if}
 {else}

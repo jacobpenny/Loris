@@ -35,44 +35,20 @@
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu pull-right" role="menu">
-                            <li class="active"><a data-target="recruitment-site-breakdown">View site breakdown</a></li>
-                            {if $useProjects eq "true"}
-                                <li><a data-target="recruitment-project-breakdown">View project breakdown</a></li>
-                            {/if}
-			
+                            <li class="active"><a data-target="recruitment-project-breakdown">View project breakdown</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="panel-body">
-                <div class="recruitment-panel" id="recruitment-site-breakdown">
-                    {if $recruitment['overall']['total_recruitment'] neq 0}
-                        <div class="col-lg-4 col-md-4 col-sm-4">
-                            <div>
-                                <h5 class="chart-title">Total population per site</h5>
-                                <div id="recruitmentPieChart"></div>
-                            </div>
-                        </div>
-                        <div class="col-lg-8 col-md-8 col-sm-8">
-                            <div>
-                                <h5 class="chart-title">Gender breakdown by site</h5>
-                                <div id="recruitmentBarChart"></div>
-                            </div>
-                        </div>
-                    {else}
-                        <p>There have been no candidates registered yet.</p>
-                    {/if}
-                </div>
-                {if $useProjects eq "true"}
-                    <div class="recruitment-panel hidden" id="recruitment-project-breakdown">
+                    <div class="recruitment-panel" id="recruitment-project-breakdown">
+                    	{include file='progress_bar.tpl' project=$recruitment["overall"]}
                         {foreach from=$recruitment key=ID item=project}
                             {if $ID != "overall"}
                                 {include file='progress_bar.tpl' project=$project}
                             {/if}
                         {/foreach}
-                    	{include file='progress_bar.tpl' project=$recruitment["overall"]}
                     </div>
-                {/if}
             </div>
         </div>
 
