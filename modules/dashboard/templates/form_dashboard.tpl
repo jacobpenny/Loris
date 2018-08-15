@@ -26,7 +26,7 @@
         <!-- Recruitment -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Recruitment</h3>
+                <h3 class="panel-title">Populations</h3>
                 <span class="pull-right clickable glyphicon glyphicon-chevron-up"></span>
                 <div class="pull-right">
                     <div class="btn-group views">
@@ -49,7 +49,7 @@
                     {if $recruitment['overall']['total_recruitment'] neq 0}
                         <div class="col-lg-4 col-md-4 col-sm-4">
                             <div>
-                                <h5 class="chart-title">Total recruitment per site</h5>
+                                <h5 class="chart-title">Total population per site</h5>
                                 <div id="recruitmentPieChart"></div>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                         </button>
                         <ul class="dropdown-menu pull-right" role="menu">
                             <li class="active"><a data-target="scans-line-chart-panel">View scans per site</a></li>
-                            <li><a data-target="recruitment-line-chart-panel">View recruitment per site</a></li>
+                            <li><a data-target="recruitment-line-chart-panel">View population per site</a></li>
                         </ul>
                     </div>
                 </div>
