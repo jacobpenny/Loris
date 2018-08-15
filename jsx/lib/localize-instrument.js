@@ -6,8 +6,11 @@ function fixhtml(html) {
 
 function localizeInstrument(rawInstrument, lang = 'en-ca') {
   const instrument = JSON.parse(JSON.stringify(rawInstrument));
-  if (instrument['Meta']['Multilingual']=='false')
+  
+  if (instrument['Meta']['Multilingual']=='false') {
     lang=instrument['Meta']['DefaultLanguage'];
+  }
+
   try {
     instrument['Meta']['LongName'] = instrument['Meta']['LongName'][lang];
 
@@ -37,7 +40,7 @@ function localizeInstrument(rawInstrument, lang = 'en-ca') {
       } else if (['radio-labels'].includes(element.Type) && element['Labels'][lang]) {
         element['Labels'] = element['Labels'][lang];
         convertedElements.push(element);
-      } else convertedElements.push(element);
+      }
     });
 
     instrument['Elements'] = convertedElements;
