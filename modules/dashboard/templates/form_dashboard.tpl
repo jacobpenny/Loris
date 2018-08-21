@@ -64,27 +64,27 @@
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu pull-right" role="menu">
-                            <li class="active"><a data-target="scans-line-chart-panel">View scans per site</a></li>
-                            <li><a data-target="recruitment-line-chart-panel">View population per site</a></li>
+                            <li class="active"><a data-target="recruitment-line-chart-panel">View population per site</a></li>
+                            <li><a data-target="scans-line-chart-panel">View scans per site</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="panel-body">
-                <div id="scans-line-chart-panel">
+                <div id="recruitment-line-chart-panel">
+                    <h5 class="chart-title">Population per site</h5>
+                    {if $recruitment['overall']['total_recruitment'] neq 0}
+                        <div id="recruitmentChart"></div>
+                    {else}
+                        <p>There have been no candidates registered yet.</p>
+                    {/if}
+                </div>
+                <div id="scans-line-chart-panel" class="hidden">
                     <h5 class="chart-title">Scan sessions per site</h5>
                     {if $total_scans neq 0}
                         <div id="scanChart"></div>
                     {else}
                         <p>There have been no scans yet.</p>
-                    {/if}
-                </div>
-                <div id="recruitment-line-chart-panel" class="hidden">
-                    <h5 class="chart-title">Recruitment per site</h5>
-                    {if $recruitment['overall']['total_recruitment'] neq 0}
-                        <div id="recruitmentChart"></div>
-                    {else}
-                        <p>There have been no candidates registered yet.</p>
                     {/if}
                 </div>
             </div>
