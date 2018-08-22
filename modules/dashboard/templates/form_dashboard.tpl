@@ -77,7 +77,7 @@
                 </div>
             </div>
         </div>
-        <small><i>Note that the Recruitment and Study Progression charts include data from ineligible, excluded, and consent withdrawn candidates.</i></small>
+        <small><i>Note that the National Autism Neuroinformatics Data Platform does not include data from any study’s ineligible, excluded, or consent withdrawn participants.</i></small>
     </div>
 
     <div class="col-lg-4">
