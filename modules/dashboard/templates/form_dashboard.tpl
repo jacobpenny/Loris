@@ -81,7 +81,7 @@
     </div>
 
     <div class="col-lg-4">
-        <!-- My Tasks -->
+        <!-- Hiding My Tasks
         {if $new_scans neq "" or $conflicts neq "" or $incomplete_forms neq "" or $radiology_review neq "" or $violated_scans neq "" or $pending_users neq "" or $issues_assigned neq ""}
             <div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
                 <div class="panel panel-default">
@@ -89,7 +89,6 @@
                         <h3 class="panel-title">My Tasks</h3>
                         <span class="pull-right clickable glyphicon glyphicon-chevron-up"></span>
                     </div>
-                    <!-- /.panel-heading -->
                     <div class="panel-body">
                         <div class="list-group tasks">
                             {if $conflicts neq "" and $conflicts neq 0}
@@ -199,11 +198,10 @@
                                 {/if}
                         </div>
                     </div>
-                    <!-- /.panel-body -->
                 </div>
             </div>
         {/if}
-
+        -->
         <!-- Document Repository -->
         {if $document_repository_notifications neq ""}
             <div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
@@ -236,7 +234,7 @@
             </div>
         {/if}
 
-       <!-- Behavioural Feedback -->
+       <!-- Hiding Behavioural Feedback
         {if $bvl_feedback_notifications neq ""}
             <div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
                 <div class="panel panel-default">
@@ -244,7 +242,6 @@
                         <h3 class="panel-title">Behavioural Feedback Notifications</h3>
                         <span class="pull-right clickable glyphicon glyphicon-chevron-up"></span>
                     </div>
-                    <!-- /.panel-heading -->
                     <div class="panel-body">
                         <div class="list-group bvl-feedback-item">
                             {foreach from=$bvl_feedback_notifications item=link}
@@ -259,10 +256,10 @@
                             {/foreach}
                         </div>
                     </div>
-                    <!-- /.panel-body -->
                 </div>
             </div>
         {/if}
- 
+        -->
     </div>
 </div>
+
