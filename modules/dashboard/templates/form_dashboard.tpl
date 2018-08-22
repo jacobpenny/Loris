@@ -27,18 +27,6 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Populations</h3>
-                <span class="pull-right clickable glyphicon glyphicon-chevron-up"></span>
-                <div class="pull-right">
-                    <div class="btn-group views">
-                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                            Views
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu pull-right" role="menu">
-                            <li class="active"><a data-target="recruitment-project-breakdown">View project breakdown</a></li>
-                        </ul>
-                    </div>
-                </div>
             </div>
             <div class="panel-body">
                     <div class="recruitment-panel" id="recruitment-project-breakdown">
@@ -55,7 +43,7 @@
         <!-- Charts -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Study Progression</h3>
+                <h3 class="panel-title">Data Contributions Over Time</h3>
                 <span class="pull-right clickable glyphicon glyphicon-chevron-up"></span>
                 <div class="pull-right">
                     <div class="btn-group views">
@@ -72,7 +60,7 @@
             </div>
             <div class="panel-body">
                 <div id="recruitment-line-chart-panel">
-                    <h5 class="chart-title">Population per site</h5>
+                    <h5 class="chart-title">Timepoints per site</h5>
                     {if $recruitment['overall']['total_recruitment'] neq 0}
                         <div id="recruitmentChart"></div>
                     {else}
