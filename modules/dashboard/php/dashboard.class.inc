@@ -430,17 +430,12 @@ class Dashboard extends \NDB_Form
         $this->tpl_data['recruitment'][$ID]['title'] = $title;
 
         if (!empty($recruitmentTarget)) {
-            $this->tpl_data['recruitment'][$ID]['recruitment_target']
-                = $recruitmentTarget;
-
             if ($ID == 'overall') {
                 $totalFemales = \Project::getTotalFemales();
             } else {
                 $totalFemales = \Project::getTotalFemales(array($ID));
             }
             $this->tpl_data['recruitment'][$ID]['female_total']   = $totalFemales;
-            $this->tpl_data['recruitment'][$ID]['female_percent']
-                = round($totalFemales / $recruitmentTarget * 100);
 
             if ($ID == 'overall') {
                 $totalMales = \Project::getTotalMales();
@@ -448,8 +443,16 @@ class Dashboard extends \NDB_Form
                 $totalMales = \Project::getTotalMales(array($ID));
             }
             $this->tpl_data['recruitment'][$ID]['male_total']   = $totalMales;
+            
+            $this->tpl_data['recruitment'][$ID]['female_percent']
+                = round($totalFemales / ($totalFemales + $totalMales) * 100);
             $this->tpl_data['recruitment'][$ID]['male_percent']
-                = round($totalMales / $recruitmentTarget * 100);
+                = round($totalMales / ($totalMales + $totalFemales) * 100);
+            $this->tpl_data['recruitment'][$ID]['project_total_recruitment']
+                = $totalMales + $totalFemales;
+            
+            $this->tpl_data['recruitment'][$ID]['recruitment_target']
+                = $totalMales + $totalFemales;
 
             if ($totalRecruitment > $recruitmentTarget) {
                 $this->tpl_data['recruitment'][$ID]['surpassed_recruitment']
