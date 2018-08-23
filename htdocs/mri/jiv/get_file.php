@@ -36,7 +36,6 @@ $client = new NDB_Client();
 if ($client->initialize("../../../project/config.xml") == false) {
     return false;
 }
-
 // Checks that config settings are set
 $config =& NDB_Config::singleton();
 $paths  = $config->getSetting('paths');
@@ -144,7 +143,10 @@ case 'DICOMTAR':
     $MimeType         = 'application/x-tar';
     $DownloadFilename = basename($File);
     $saveAs           = $_GET['saveAs'];
-    if (strpos($saveAs, ".tar") === false) {
+    if (strpos($saveAs, ".tar") === false || !in_array(
+        $saveAs,
+        $_SESSION['State']->getProperty('tarIDToTarLoc')
+    )) {
         $saveAs = $DownloadFilename;
     }
     break;
@@ -166,9 +168,7 @@ if (!empty($DownloadFilename)) {
 
     if ($FileExt === 'DICOMTAR' && !empty($saveAs)) {
         header("Content-Disposition: attachment; filename=$saveAs");
-
     } else {
-
         header("Content-Disposition: attachment; filename=$DownloadFilename");
     }
 }
