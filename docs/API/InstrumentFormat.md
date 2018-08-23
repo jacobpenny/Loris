@@ -7,9 +7,7 @@ API and/or mobile specific versions of Loris.
 This format will supercede the .linst files created by the current instrument builder.
 
 ```
-For the purposes of reviewing the JSON Spec, I am adding my comments wherever
-discussion is required. They will be removed before merge
-ZV 17/12/14
+Comments tagged with 'ZV' indicate discussion points that should be resolved before JSON instruments are merged into LORIS.
 ```
 
 # 1.0: Instrument format overview
@@ -50,7 +48,7 @@ The text displayed will depend on the candidate's preferred language parameter. 
 
 Additionaly, we support HTML tags in labels and descriptions that will be rendered with the element.
 ```
-This was a requirement for CAP, I don't see why it'd be necessary for LORIS though. If it's useful (and safe) we can keep it.
+This was a requirement for CAP. Until a markdown workaround is available, this is the best solution we could find. If it's useful (and safe) we can keep it.
 ZV
 ```
 
@@ -215,7 +213,7 @@ as follows. It denotes a group of values of which the user must select one optio
                        such as date or text.
                        Default: true.
 ```
-I agree that this is how RequireResponse should be done, but ATM there is no not_answered option. A form cannot be completed without a required question being filled. This applies to all RequireResponse fields for all elements.
+I agree that this is how RequireResponse should be done, but ATM there is no not_answered option because it was not supposed to be a feature in CAP. A form cannot be completed without a required question being filled. This applies to all RequireResponse fields for all elements. It can be added as an optional flag.
 ZV
 ```
 
@@ -301,10 +299,6 @@ ZV
 
 ### 2.1.4: NumericElement
 
-```
-No numeric element support as of now, can be added easily
-ZV
-```
 A NumericElement represents a numeric data input and has the general form of:
 
 ```js
@@ -613,7 +607,7 @@ Groups have the general form of:
 
 ## 3.1: Page
 ```
-Not implemented, but in the works
+Not implemented
 ZV
 ```
 A page group represents a group of questions to be displayed on a single page together. It
