@@ -272,7 +272,9 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
 
     function _findElByName($name) {
         foreach($this->instrument['Elements'] as $element) {
-            if ($element['Name'] == $name) return $element;
+            if (isset($element['Name'])) {
+                if ($element['Name'] == $name) return $element;
+            }
         }
     }
 

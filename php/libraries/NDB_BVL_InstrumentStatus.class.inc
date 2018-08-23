@@ -115,7 +115,8 @@ class NDB_BVL_InstrumentStatus
      */
     function getDataEntryStatus()
     {
-        return $this->_status['Data_entry'];
+        if (isset($this->_status['Data_entry'])) return $this->_status['Data_entry'];
+        return null;
     }
 
     /**
