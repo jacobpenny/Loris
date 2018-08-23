@@ -151,8 +151,6 @@ default:
     break;
 }
 
- print "$FullPath";
- print "$File";
 
 if (!file_exists($FullPath)) {
     error_log("ERROR: File $File does not exist");
