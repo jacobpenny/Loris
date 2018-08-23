@@ -143,6 +143,13 @@ case 'DICOMTAR':
     $FullPath         = $imagePath . '/' . $File;
     $MimeType         = 'application/x-tar';
     $DownloadFilename = basename($File);
+    $saveAs           = preg_replace("/[^a-zA-Z0-9._-]/", "", $_GET['saveAs']);
+    if (strpos($saveAs, ".tar") === false || !in_array(
+        $saveAs,
+        $_SESSION['State']->getProperty('tarIDToTarLoc')
+    )) {
+        $saveAs = $DownloadFilename;
+    }
     break;
 default:
     $FullPath         = $DownloadPath . '/' . $File;
@@ -150,7 +157,6 @@ default:
     $DownloadFilename = basename($File);
     break;
 }
-
 
 if (!file_exists($FullPath)) {
     error_log("ERROR: File $File does not exist");
@@ -161,7 +167,11 @@ if (!file_exists($FullPath)) {
 header("Content-type: $MimeType");
 if (!empty($DownloadFilename)) {
 
-    header("Content-Disposition: attachment; filename=$DownloadFilename");
+    if ($FileExt === 'DICOMTAR' && !empty($saveAs)) {
+        header("Content-Disposition: attachment; filename=$saveAs");
+    } else {
+        header("Content-Disposition: attachment; filename=$DownloadFilename");
+    }
 }
 $fp = fopen($FullPath, 'r');
 fpassthru($fp);
