@@ -142,7 +142,7 @@ case 'DICOMTAR':
     $FullPath         = $imagePath . '/' . $File;
     $MimeType         = 'application/x-tar';
     $DownloadFilename = basename($File);
-    $saveAs           = $_GET['saveAs'];
+    $saveAs           = preg_replace("/[^a-zA-Z0-9._-]/", "", $_GET['saveAs']);
     if (strpos($saveAs, ".tar") === false || !in_array(
         $saveAs,
         $_SESSION['State']->getProperty('tarIDToTarLoc')
