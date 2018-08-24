@@ -475,7 +475,7 @@ class NDB_Caller
                 $user->getData("CenterIDs")
             )
         ) {
-            if ($instrument->preview !== true && $this->DataEntry !== 'Direct') {
+            if (property_exists($instrument, 'preview') && $instrument->preview !== true && $this->DataEntry !== 'Direct') {
                 $instrument->freeze();
             }
         }
