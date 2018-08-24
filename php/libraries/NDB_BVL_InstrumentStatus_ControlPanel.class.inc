@@ -73,6 +73,11 @@ class NDB_BVL_InstrumentStatus_ControlPanel extends NDB_BVL_InstrumentStatus
             }
             // create an instance of the instrument
 
+            $subtest = $this->tpl_data['subtest'];
+            if (!isset($subtest)) {
+                $subtest = '';    
+            }
+
             $instrument =& NDB_BVL_Instrument::factory(
                 $_REQUEST['test_name'],
                 $_REQUEST['commentID'],
