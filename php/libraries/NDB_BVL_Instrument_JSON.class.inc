@@ -84,7 +84,8 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
         $timepoint = \TimePoint::singleton($this->getSessionID());
         $candID    = $timepoint->getCandID();
         $candidate = \Candidate::singleton($candID);
-        $lang      = $candidate->getData("DisplayParameters")['Language'];
+        $lang      = isset($candidate->getData("DisplayParameters")['Language'])
+        ? $candidate->getData("DisplayParameters")['Language'] : '';
         $lang      = $lang == 'French' ? 'fr-ca' : 'en-ca';
         return $lang;
     }
@@ -272,7 +273,9 @@ class NDB_BVL_Instrument_JSON extends \NDB_BVL_Instrument
 
     function _findElByName($name) {
         foreach($this->instrument['Elements'] as $element) {
-            if ($element['Name'] == $name) return $element;
+            if (isset($element['Name'])) {
+                if ($element['Name'] == $name) return $element;
+            }
         }
     }
 
