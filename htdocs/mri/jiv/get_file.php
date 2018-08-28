@@ -148,7 +148,11 @@ case 'DICOMTAR':
         $saveAs,
         $_SESSION['State']->getProperty('tarIDToTarLoc')
     )) {
-        $saveAs = $DownloadFilename;
+        //$saveAs = $DownloadFilename;
+	error_log("ERROR: Value saveAs $saveAs has been modified.");
+	header("HTTP/1.1 400 Bad Request");
+	exit(5);
+	
     }
     break;
 default:
@@ -161,7 +165,7 @@ default:
 if (!file_exists($FullPath)) {
     error_log("ERROR: File $File does not exist");
     header("HTTP/1.1 404 Not Found");
-    exit(5);
+    exit(6);
 }
 
 header("Content-type: $MimeType");
