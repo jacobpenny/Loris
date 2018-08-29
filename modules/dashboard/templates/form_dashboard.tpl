@@ -68,7 +68,7 @@
                     {/if}
                 </div>
                 <div id="scans-line-chart-panel" class="hidden">
-                    <h5 class="chart-title">Scan sessions per site</h5>
+                    <h5 class="chart-title">Timepoints with scan per site</h5>
                     {if $total_scans neq 0}
                         <div id="scanChart"></div>
                     {else}

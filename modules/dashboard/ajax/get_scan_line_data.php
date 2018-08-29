@@ -38,10 +38,15 @@ $scanData['labels']
     = createChartLabels($scanStartDate, $scanEndDate);
 $list_of_sites      = Utility::getAssociativeSiteList(true, false);
 foreach ($list_of_sites as $siteID => $siteName) {
-    $scanData['datasets'][] = array(
-                               "name" => $siteName,
-                               "data" => getScanData($siteID, $scanData['labels']),
-                              );
+    if ($siteName != 'Data Coordinating Center') {
+        $scanData['datasets'][] = array(
+                                   "name" => $siteName,
+                                   "data" => getScanData(
+                                       $siteID,
+                                       $scanData['labels']
+                                   ),
+                                  );
+    }
 }
 
 print json_encode($scanData);
