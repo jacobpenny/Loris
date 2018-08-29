@@ -74,9 +74,9 @@ class Dashboard extends \NDB_Form
             }
         }
 
-        $useProjects = $config->getSetting('useProjects');
+        $useProjects           = $config->getSetting('useProjects');
         $useProjectPermissions = $config->getSetting('useProjectPermissions');
-        $projectIDs = $useProjectPermissions ?
+        $projectIDs            = $useProjectPermissions ?
             $user->getProjectIds() :
             array_keys(Utility::getProjectList());
 
@@ -110,12 +110,12 @@ class Dashboard extends \NDB_Form
         // Charts
         $this->tpl_data['total_scans'] = $DB->pselectOne(
             "SELECT COUNT(*) FROM files f
-		LEFT JOIN session s ON (s.ID=f.SessionID)
-		LEFT JOIN candidate c ON (s.CandID=c.CandID)
-		WHERE s.Active='Y' AND c.Active='Y'
-            AND c.ProjectID IN (:projectIDs)
-			AND s.CenterID <> 1",
-            array('projectIDs' => implode(',', $projectIDs))
+        LEFT JOIN session s ON (s.ID=f.SessionID)
+        LEFT JOIN candidate c ON (s.CandID=c.CandID)
+        WHERE s.Active='Y' AND c.Active='Y'
+            AND c.ProjectID IN (".implode(',', $projectIDs).")
+            AND s.CenterID <> 1",
+            array()
         );
 
         // Tasks
@@ -161,8 +161,8 @@ class Dashboard extends \NDB_Form
                         AND c.ProjectID IN (:projectIDs)
 			            AND s.Active='Y' AND c.Active='Y'",
                     array(
-                        'siteID' => implode(',', $siteID),
-                        'projectIDs' => implode(',', $projectIDs)
+                     'siteID'     => implode(',', $siteID),
+                     'projectIDs' => implode(',', $projectIDs),
                     )
                 );
                 $this->tpl_data['conflicts_site'] = 'Sites: All User Sites';
@@ -192,8 +192,8 @@ class Dashboard extends \NDB_Form
                     AND c.ProjectID IN (:projectIDs)
 			          AND s.Active='Y' AND c.Active='Y'",
                     array(
-                        'siteID' => implode(',', $siteID),
-                        'projectIDs' => implode(',', $projectIDs)
+                     'siteID'     => implode(',', $siteID),
+                     'projectIDs' => implode(',', $projectIDs),
                     )
                 );
                 $this->tpl_data['incomplete_forms_site'] = $site;
@@ -435,27 +435,27 @@ class Dashboard extends \NDB_Form
             } else {
                 $totalFemales = \Project::getTotalFemales(array($ID));
             }
-            $this->tpl_data['recruitment'][$ID]['female_total']   = $totalFemales;
+            $this->tpl_data['recruitment'][$ID]['female_total'] = $totalFemales;
 
             if ($ID == 'overall') {
                 $totalMales = \Project::getTotalMales();
             } else {
                 $totalMales = \Project::getTotalMales(array($ID));
             }
-            $this->tpl_data['recruitment'][$ID]['male_total']   = $totalMales;
+            $this->tpl_data['recruitment'][$ID]['male_total'] = $totalMales;
             $totalCount = $totalFemales + $totalMales;
             if ($totalCount != 0) {
                 $this->tpl_data['recruitment'][$ID]['female_percent']
-                        = round($totalFemales / ($totalCount) * 100);
+                    = round($totalFemales / ($totalCount) * 100);
                 $this->tpl_data['recruitment'][$ID]['male_percent']
                     = round($totalMales / ($totalCount) * 100);
             } else {
                 $this->tpl_data['recruitment'][$ID]['female_percent'] = 0;
-                $this->tpl_data['recruitment'][$ID]['male_percent'] = 0;
+                $this->tpl_data['recruitment'][$ID]['male_percent']   = 0;
             }
             $this->tpl_data['recruitment'][$ID]['project_total_recruitment']
                 = $totalMales + $totalFemales;
-            
+
             $this->tpl_data['recruitment'][$ID]['recruitment_target']
                 = $totalMales + $totalFemales;
 
