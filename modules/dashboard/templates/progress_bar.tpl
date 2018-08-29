@@ -1,5 +1,6 @@
  <!-- {if $project['recruitment_target'] neq ""}-->
     <h5>{$project['title']}</h5>
+    <p class="small">Total: {$project['project_total_recruitment']}</p>
     <!--{if $project['surpassed_recruitment'] eq "true"}
         <p>The recruitment target ({$project['recruitment_target']}) has been passed.</p>
         
@@ -38,7 +39,6 @@
                 Males
                 </p>
             </div> 
-            <p style="color:#FFF" class="pull-right small target">Total: {$project['project_total_recruitment']}</p>
         </div>
     <!--{/if}
 {else}

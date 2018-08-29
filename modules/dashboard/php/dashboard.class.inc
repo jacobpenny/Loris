@@ -443,11 +443,16 @@ class Dashboard extends \NDB_Form
                 $totalMales = \Project::getTotalMales(array($ID));
             }
             $this->tpl_data['recruitment'][$ID]['male_total']   = $totalMales;
-            
-            $this->tpl_data['recruitment'][$ID]['female_percent']
-                = round($totalFemales / ($totalFemales + $totalMales) * 100);
-            $this->tpl_data['recruitment'][$ID]['male_percent']
-                = round($totalMales / ($totalMales + $totalFemales) * 100);
+            $totalCount = $totalFemales + $totalMales;
+            if ($totalCount != 0) {
+                $this->tpl_data['recruitment'][$ID]['female_percent']
+                        = round($totalFemales / ($totalCount) * 100);
+                $this->tpl_data['recruitment'][$ID]['male_percent']
+                    = round($totalMales / ($totalCount) * 100);
+            } else {
+                $this->tpl_data['recruitment'][$ID]['female_percent'] = 0;
+                $this->tpl_data['recruitment'][$ID]['male_percent'] = 0;
+            }
             $this->tpl_data['recruitment'][$ID]['project_total_recruitment']
                 = $totalMales + $totalFemales;
             
