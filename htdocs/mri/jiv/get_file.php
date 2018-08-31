@@ -149,10 +149,9 @@ case 'DICOMTAR':
         $_SESSION['State']->getProperty('tarIDToTarLoc')
     )) {
         //$saveAs = $DownloadFilename;
-	error_log("ERROR: Value saveAs $saveAs has been modified.");
-	header("HTTP/1.1 400 Bad Request");
-	exit(5);
-	
+        error_log("ERROR: Value saveAs $saveAs has been modified.");
+        header("HTTP/1.1 400 Bad Request");
+        exit(5);
     }
     break;
 default:
