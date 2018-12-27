@@ -120,6 +120,7 @@ the following format:
     "Description" : "Human readable question text",
     "DisplayIf" : string, /* LORIS Logic Parser formula */
     "HiddenSurvey" : string, /* LORIS Logic Parser formula */
+    "Comment" : string, /* Additional info about field e.g. `Field Note` column */
     "Hidden" : string, /* LORIS Logic Parser formula */
     "Options" : {
         /* TypeDependent JSON Options */
@@ -148,6 +149,8 @@ the following format:
              
 `HiddenSurvey`: A formula that returns true if the element should be hidden
                 from respondants of a survey. Defaults to `false`.
+
+`Comment` : This field may contain additional notes about the column.
                 
 `Hidden`: A formula that returns true if the element should ALWAYS be hidden. Defaults to `false`.
 
