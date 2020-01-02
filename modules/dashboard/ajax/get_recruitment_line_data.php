@@ -33,13 +33,15 @@ $recruitmentData['labels']
 $list_of_sites = Utility::getAssociativeSiteList(true, false);
 
 foreach ($list_of_sites as $siteID => $siteName) {
-    $recruitmentData['datasets'][] = array(
-                                      "name" => $siteName,
-                                      "data" => getRecruitmentData(
-                                          $siteID,
-                                          $recruitmentData['labels']
-                                      ),
-                                     );
+    if ($siteName != 'Data Coordinating Center') {
+        $recruitmentData['datasets'][] = array(
+                                          "name" => $siteName,
+                                          "data" => getRecruitmentData(
+                                              $siteID,
+                                              $recruitmentData['labels']
+                                          ),
+                                         );
+    }
 }
 
 print json_encode($recruitmentData);

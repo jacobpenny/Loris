@@ -26,62 +26,24 @@
         <!-- Recruitment -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Recruitment</h3>
-                <span class="pull-right clickable glyphicon glyphicon-chevron-up"></span>
-                <div class="pull-right">
-                    <div class="btn-group views">
-                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                            Views
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu pull-right" role="menu">
-                            <li class="active"><a data-target="overall-recruitment">View overall recruitment</a></li>
-                            <li><a data-target="recruitment-site-breakdown">View site breakdown</a></li>
-                            {if $useProjects eq "true"}
-                                <li><a data-target="recruitment-project-breakdown">View project breakdown</a></li>
-                            {/if}
-                        </ul>
-                    </div>
-                </div>
+                <h3 class="panel-title">Populations</h3>
             </div>
             <div class="panel-body">
-                <div class="recruitment-panel" id="overall-recruitment">
-                    {include file='progress_bar.tpl' project=$recruitment["overall"]}
-                </div>
-                <div class="recruitment-panel hidden" id="recruitment-site-breakdown">
-                    {if $recruitment['overall']['total_recruitment'] neq 0}
-                        <div class="col-lg-4 col-md-4 col-sm-4">
-                            <div>
-                                <h5 class="chart-title">Total recruitment per site</h5>
-                                <div id="recruitmentPieChart"></div>
-                            </div>
-                        </div>
-                        <div class="col-lg-8 col-md-8 col-sm-8">
-                            <div>
-                                <h5 class="chart-title">Gender breakdown by site</h5>
-                                <div id="recruitmentBarChart"></div>
-                            </div>
-                        </div>
-                    {else}
-                        <p>There have been no candidates registered yet.</p>
-                    {/if}
-                </div>
-                {if $useProjects eq "true"}
-                    <div class="recruitment-panel hidden" id="recruitment-project-breakdown">
+                    <div class="recruitment-panel" id="recruitment-project-breakdown">
+                    	{include file='progress_bar.tpl' project=$recruitment["overall"]}
                         {foreach from=$recruitment key=ID item=project}
                             {if $ID != "overall"}
                                 {include file='progress_bar.tpl' project=$project}
                             {/if}
                         {/foreach}
                     </div>
-                {/if}
             </div>
         </div>
 
         <!-- Charts -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Study Progression</h3>
+                <h3 class="panel-title">Data Contributions Over Time</h3>
                 <span class="pull-right clickable glyphicon glyphicon-chevron-up"></span>
                 <div class="pull-right">
                     <div class="btn-group views">
@@ -90,36 +52,36 @@
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu pull-right" role="menu">
-                            <li class="active"><a data-target="scans-line-chart-panel">View scans per site</a></li>
-                            <li><a data-target="recruitment-line-chart-panel">View recruitment per site</a></li>
+                            <li class="active"><a data-target="recruitment-line-chart-panel">View population per site</a></li>
+                            <li><a data-target="scans-line-chart-panel">View scans per site</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="panel-body">
-                <div id="scans-line-chart-panel">
-                    <h5 class="chart-title">Scan sessions per site</h5>
-                    {if $total_scans neq 0}
-                        <div id="scanChart"></div>
-                    {else}
-                        <p>There have been no scans yet.</p>
-                    {/if}
-                </div>
-                <div id="recruitment-line-chart-panel" class="hidden">
-                    <h5 class="chart-title">Recruitment per site</h5>
+                <div id="recruitment-line-chart-panel">
+                    <h5 class="chart-title">Timepoints per site</h5>
                     {if $recruitment['overall']['total_recruitment'] neq 0}
                         <div id="recruitmentChart"></div>
                     {else}
                         <p>There have been no candidates registered yet.</p>
                     {/if}
                 </div>
+                <div id="scans-line-chart-panel" class="hidden">
+                    <h5 class="chart-title">Timepoints with scan per site</h5>
+                    {if $total_scans neq 0}
+                        <div id="scanChart"></div>
+                    {else}
+                        <p>There have been no scans yet.</p>
+                    {/if}
+                </div>
             </div>
         </div>
-        <small><i>Note that the Recruitment and Study Progression charts include data from ineligible, excluded, and consent withdrawn candidates.</i></small>
+        <small><i>Note that the National Autism Neuroinformatics Data Platform does not include data from any study’s ineligible, excluded, or consent withdrawn participants.</i></small>
     </div>
 
     <div class="col-lg-4">
-        <!-- My Tasks -->
+        <!-- Hiding My Tasks
         {if $new_scans neq "" or $conflicts neq "" or $incomplete_forms neq "" or $radiology_review neq "" or $violated_scans neq "" or $pending_users neq "" or $issues_assigned neq ""}
             <div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
                 <div class="panel panel-default">
@@ -127,7 +89,6 @@
                         <h3 class="panel-title">My Tasks</h3>
                         <span class="pull-right clickable glyphicon glyphicon-chevron-up"></span>
                     </div>
-                    <!-- /.panel-heading -->
                     <div class="panel-body">
                         <div class="list-group tasks">
                             {if $conflicts neq "" and $conflicts neq 0}
@@ -237,11 +198,10 @@
                                 {/if}
                         </div>
                     </div>
-                    <!-- /.panel-body -->
                 </div>
             </div>
         {/if}
-
+        -->
         <!-- Document Repository -->
         {if $document_repository_notifications neq ""}
             <div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
@@ -274,7 +234,7 @@
             </div>
         {/if}
 
-       <!-- Behavioural Feedback -->
+       <!-- Hiding Behavioural Feedback
         {if $bvl_feedback_notifications neq ""}
             <div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
                 <div class="panel panel-default">
@@ -282,7 +242,6 @@
                         <h3 class="panel-title">Behavioural Feedback Notifications</h3>
                         <span class="pull-right clickable glyphicon glyphicon-chevron-up"></span>
                     </div>
-                    <!-- /.panel-heading -->
                     <div class="panel-body">
                         <div class="list-group bvl-feedback-item">
                             {foreach from=$bvl_feedback_notifications item=link}
@@ -297,10 +256,10 @@
                             {/foreach}
                         </div>
                     </div>
-                    <!-- /.panel-body -->
                 </div>
             </div>
         {/if}
- 
+        -->
     </div>
 </div>
+
